@@ -1,0 +1,104 @@
+<?php 
+ /**
+  * CedCommerce
+  *
+  * NOTICE OF LICENSE
+  *
+  * This source file is subject to the End User License Agreement (EULA)
+  * that is bundled with this package in the file LICENSE.txt.
+  * It is also available through the world-wide-web at this URL:
+  * http://cedcommerce.com/license-agreement.txt
+  *
+  * @category    Ced
+  * @package     Ced_Blog
+  * @author   	 CedCommerce Core Team <connect@cedcommerce.com >
+  * @copyright   Copyright CEDCOMMERCE (http://cedcommerce.com/)
+  * @license      http://cedcommerce.com/license-agreement.txt
+  */
+
+?>
+
+<head>
+
+	<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+
+	<meta content="blog_description">
+
+</head>
+
+<?php
+
+ if ($block->getPagerHtml()): ?>
+
+        <div class="order-products-toolbar toolbar bottom"><?php echo $block->getPagerHtml(); ?></div>
+
+    <?php endif; ?>
+
+<?php foreach ($block->getTagCollection() as $data):
+
+if($data->getBlogStatus()=='publish'){?>
+
+<div id ="tag-post">
+
+ 		<a href="<?php echo $data->getPostUrl()?>"><h2 style="color:#f1703d"> <?php echo $data->getTitle() ?></h2></a>
+
+<?php $config_value=$this->scopeConfig->getValue('ced_blog/general/blog_date_activation', \Magento\Store\Model\ScopeInterface::SCOPE_STORE,0);?>
+		<?php if($data->getPublishDate()){?>
+			<h4><?php if($config_value==0){ $str=explode('-',$data->getPublishDate()); if(isset($str)) echo $str[1].'-'.$str[2].'-'.$str[0].' '; $time=explode(' ',$data->getCreatedAt()); echo $time[1];  }?></h4>
+
+	 		<h4><?php if($config_value==1){ $str=explode('-',$data->getPublishDate()); if(isset($str)) echo $str[2].'-'.$str[1].'-'.$str[0].' '; $time=explode(' ',$data->getCreatedAt()); echo $time[1];  }?></h4>
+
+	 		<h4><?php if($config_value==2){ $str=explode('-',$data->getPublishDate()); if(isset($str)) echo $str[0].'-'.$str[1].'-'.$str[2].' '; $time=explode(' ',$data->getCreatedAt()); echo $time[1];  }?></h4>
+ 		<?php }?>
+
+ 		<a href="<?php echo $data->getPostUrl()?>">
+
+ 			<img src="<?php echo $block->getUrl('pub/media/').$data->getFeaturedImage()?>" width="432" height="364"/>
+
+ 		</a>
+
+ 		<?php 
+
+	 	$text_limit=$this->scopeConfig->getValue('ced_blog/general/post_text_limit', \Magento\Store\Model\ScopeInterface::SCOPE_STORE,0);
+
+	 	$str=$data->getPostText(); $text=str_split($str, $text_limit); 
+
+	 	?>
+
+	 	<?php if(isset($text)): ?>
+
+	 	<div class="short_para">
+
+	 		<p><?php $str=$data->getPostText(); $text=str_split($str, $text_limit); echo $text[0]; ?>
+
+			<a href="<?php echo $data->getPostUrl() ?>">
+
+			    Read more »	
+
+			</a>
+
+			</p>
+
+	 	</div>
+
+	 	<?php 
+
+	 		endif;
+
+	 	?>
+
+	 	<hr>
+
+
+
+
+
+</div>
+
+ <?php }?>
+
+ <?php endforeach;?>
+
+ 
+
+ 

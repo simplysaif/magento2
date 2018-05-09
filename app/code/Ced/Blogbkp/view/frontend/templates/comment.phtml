@@ -1,0 +1,131 @@
+<?php 
+ /**
+  * CedCommerce
+  *
+  * NOTICE OF LICENSE
+  *
+  * This source file is subject to the End User License Agreement (EULA)
+  * that is bundled with this package in the file LICENSE.txt.
+  * It is also available through the world-wide-web at this URL:
+  * http://cedcommerce.com/license-agreement.txt
+  *
+  * @category    Ced
+  * @package     Ced_Blog
+  * @author   	 CedCommerce Core Team <connect@cedcommerce.com >
+  * @copyright   Copyright CEDCOMMERCE (http://cedcommerce.com/)
+  * @license      http://cedcommerce.com/license-agreement.txt
+  */
+
+$comment=$block->getCommentInfo();
+
+$post_arr=$block->getPostItemInfo();
+
+?>
+
+<div class ="comment-post">
+	<h3 style="color:#f1703d"> <?php echo $post_arr->getTitle()?></h3>
+	<h5><?php echo $post_arr->getCreatedAt() ?></h5>
+	<a href="<?php echo $post_arr->getPostUrl()?>">
+ 		<img src="<?php echo $block->getUrl('pub/media/').$post_arr->getFeaturedImage()?>" width="432" height="364"/>
+ 	</a>
+	<p><?php echo $post_arr->getPostText();?></p>
+</div>
+<div class ="comment-bookmarks">
+	<?php 
+	 $config_value=$this->scopeConfig->getValue('ced_blog/bookmarks/bookmarks_activation', \Magento\Store\Model\ScopeInterface::SCOPE_STORE,0);
+	 if($config_value){?>	
+ 	<h4>Bookmarks with:</h4>
+ 	<div class="bookmark_container">
+	 	<a class="twitter" href="http://www.twitter.com/share?url=<?php echo $post_arr->getPostUrl()?>" ></a>
+		<a class="googleplus" href="https://plus.google.com/share?url=<?php echo $post_arr->getPostUrl();?>" ></a>
+	 	<a class="linkedin" href="https://www.linkedin.com/cws/share?url=<?php echo $post_arr->getPostUrl();?>" ></a>
+	 	<a class="digg" href="http://digg.com/submit?phase=2&url=<?php echo $post_arr->getPostUrl();?>" ></a>
+	 	<a class="stumbleupon" href="http://www.stumbleupon.com/submit?url=<?php echo $post_arr->getPostUrl();?>"></a>
+	 	<a class="delicio" href="http://del.icio.us/post/?url=<?php echo $post_arr->getPostUrl(); ?>"></a>
+	 	<a class="facebook" href="http://www.facebook.com/sharer.php?u=<?php echo $post_arr->getPostUrl();?>"></a>
+	 	<a class="reddit" href="http://reddit.com/submit?url=<?php echo $post_arr->getPostUrl() ?>"></a>
+ 	</div>
+<?php }?>
+</div>
+<div class ="comment-tags">
+	<h4>Tags:<?php
+		$tags=$post_arr->getTags();
+		$tag=explode(',',$tags);
+		end($tag);         // move the internal pointer to the end of the array
+		$last_key = key($tag);
+		foreach($tag as $key=>$val):?>
+			<a href="<?php echo $post_arr->getTagUrl($val) ?>">
+			<?php if($key==$last_key) 
+					echo $val;
+				elseif($key>=0) 
+					echo $val.',';?></a>
+		<?php 
+		endforeach;?>
+	</h4>
+ 	<hr>
+</div>
+
+<div class ="post-comment">
+	<h5 style="#f1703d">POST COMMENTS</h5>
+	 <?php 
+	 if ($block->getPagerHtml()): ?>
+        <div class="order-products-toolbar toolbar bottom"><?php echo $block->getPagerHtml(); // for display pager block which we create in block file.   ?></div>
+    <?php endif ?>
+    
+	<?php foreach ($comment as $comment_data) {?>
+		<?php
+			 echo $comment_data['description'].'&nbsp&nbsp&nbsp'.'<strong>posted by:'.$comment_data['user'].'</strong>';
+			 echo "<br>" ?>
+	 	<?php }?>
+	<hr>
+</div>
+<?php 
+	$comment_value=$this->scopeConfig->getValue('ced_blog/comment/enable_comments_login', \Magento\Store\Model\ScopeInterface::SCOPE_STORE,0);
+	
+	if ($comment_value){
+?>
+
+<div  class ="comment-form">
+	<form class="form contact"
+	      action="<?php /* @escapeNotVerified */ echo $block->getAction(); ?>" id="contact-form" method="post"
+	      data-hasrequired="<?php /* @escapeNotVerified */ echo __('* Required Fields') ?>"
+	      data-mage-init='{"validation":{}}'>
+	    <fieldset class="fieldset">
+	        <legend class="legend"><span><strong><?php /* @escapeNotVerified */ echo __('Write Your Comment') ?></strong></span></legend><brs/>
+	        <div class="field name required">
+	            <label class="label" for="name"><span><?php /* @escapeNotVerified */ echo __('Name') ?></span></label>
+	            <div class="control">
+	                <input name="user" id="user" title="<?php /* @escapeNotVerified */ echo __('Name') ?>" class="input-text" type="text" data-validate="{required:true}"/>
+	            </div>
+	        </div>
+	        <div class="field email required">
+	            <label class="label" for="email"><span><?php /* @escapeNotVerified */ echo __('Email') ?></span></label>
+	            <div class="control">
+	                <input name="email" id="email" 
+	                <?php $customerSession = $this->objectManager->create('Magento\Customer\Model\Session');?>
+	                value = "<?php  if ($customerSession->isLoggedIn()) { echo $customerSession->getCustomer()->getEmail();}?>" 
+	              "<?php  if ($customerSession->isLoggedIn()) echo 'readonly' ?>"
+	                title="<?php /* @escapeNotVerified */ echo __('Email') ?>"  class="input-text" type="email" data-validate="{required:true, 'validate-email':true}"/>
+	            </div>
+	        </div>
+	        <div class="field description required">
+	            <label class="label" for="description"><span><?php /* @escapeNotVerified */ echo __('Comment') ?></span></label>
+	            <div class="control">
+	            	<textarea name="description" id="review_field" cols="5" rows="3" data-validate="{required:true}"></textarea>
+	            </div>
+	        </div>
+	    </fieldset>
+	    <div class="actions-toolbar">
+	        <div class="primary">
+	            <button type="submit" title="<?php /* @escapeNotVerified */ echo __('Submit') ?>" class="action submit primary">
+	                <span><?php /* @escapeNotVerified */ echo __('Submit') ?></span>
+	            </button>
+	        </div>
+	    </div>
+	</form>
+</div>
+
+<?php }?>
+
+
+

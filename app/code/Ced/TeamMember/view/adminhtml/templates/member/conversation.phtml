@@ -1,0 +1,285 @@
+<!--/**
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the End User License Agreement (EULA)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://cedcommerce.com/license-agreement.txt
+ *
+ * @category    Ced
+ * @package     Ced_CsPurchaseOrder
+ * @author      CedCommerce Core Team <connect@cedcommerce.com>
+ * @copyright   Copyright CedCommerce (http://cedcommerce.com/)
+ * @license      http://cedcommerce.com/license-agreement.txt
+ */ -->
+
+  <?php if($block->getConversation() && !empty($block->getConversation())){?>
+ <div class="purchaseorder-history-block" id="purchaseorder-history-block">
+    <div class="purchaseorder-history-block-data">
+        <label for="history_comment" class="admin__field-label">
+            <?php echo __('Chat History') ?>
+    	</label>
+    </div>
+    <div class="purchaseorder-comment-wrapper">
+	    <ul class="note-list hide">
+			<?php foreach ($block->getConversation() as $_commenthistory){
+             $date_format=explode(",",$_commenthistory->getTime());
+			?>
+			<?php if($_commenthistory->getSender()=='admin'  && $_commenthistory->getReceiver()=='teammember' && $_commenthistory->getReceiverEmail()==$this->getRequest()->getParam('memberemail') && $date_format!=date("d/m/y")){ ?>
+		  		<li class="purchaseorder-left-chat-column">
+			      <?php if ($_commenthistory->getMessage()){ ?>
+			          <div class="purchaseorder-left-chat-column-chat">
+			          <span><?php echo $this->escapeHtml($_commenthistory->getMessage(), ['b', 'br', 'strong', 'i', 'u', 'a']) ?></span><br>
+			           <span><?php echo$_commenthistory->getTime()?></span>
+			          </div>
+			      <?php } ?>
+		  		</li>
+		  		<div class="clear"></div>
+			<?php } else if($_commenthistory->getSender()=='teammember' && $_commenthistory->getSenderEmail()==$this->getRequest()->getParam('memberemail') && $_commenthistory->getReceiver()=='admin' && $date_format!=date("d/m/y")){  ?>
+				<li class="purchaseorder-right-chat-column" >
+			      <?php if ($_commenthistory->getMessage()){ ?>
+			          <div class="note-list-comment">
+			          <span><?php echo $this->escapeHtml($_commenthistory->getMessage(), ['b', 'br', 'strong', 'i', 'u', 'a']) ?></span><br>
+			           <span><?php echo$_commenthistory->getTime()?></span>				          	
+			         </div>
+			      <?php } ?>
+			  	</li>
+			
+			  	</li>
+			  	<div class="clear"></div>
+			<?php } ?>
+			<?php } ?>
+		</ul>
+		<ul class="note-list">
+			<?php foreach ($block->getConversation() as $_commenthistory){
+                $date_format=explode(",",$_commenthistory->getTime());
+				?>
+			<?php if($_commenthistory->getSender()=='admin'  && $_commenthistory->getReceiver()=='teammember' && $_commenthistory->getReceiverEmail()==$this->getRequest()->getParam('memberemail') && $date_format==date("d/m/y")){ ?>
+		  		<li class="purchaseorder-left-chat-column">
+			      <?php if ($_commenthistory->getMessage()){ ?>
+			          <div class="purchaseorder-left-chat-column-chat">
+			          <span><?php echo $this->escapeHtml($_commenthistory->getMessage(), ['b', 'br', 'strong', 'i', 'u', 'a']) ?></span><br>
+			           <span><?php echo$_commenthistory->getTime()?></span>
+			          </div>
+			      <?php } ?>
+		  		</li>
+		  		<div class="clear"></div>
+			<?php } else if($_commenthistory->getSender()=='teammember' && $_commenthistory->getSenderEmail()==$this->getRequest()->getParam('memberemail') && $_commenthistory->getReceiver()=='admin' /*$date_format==date("d/m/y")*/){  ?>
+				<li class="purchaseorder-right-chat-column" >
+			      <?php if ($_commenthistory->getMessage()){ ?>
+			          <div class="note-list-comment">
+			          <span><?php echo $this->escapeHtml($_commenthistory->getMessage(), ['b', 'br', 'strong', 'i', 'u', 'a']) ?></span><br>
+			           <span><?php echo$_commenthistory->getTime()?></span>				          	
+			         </div>
+			      <?php } ?>
+			  	</li>
+			
+			  	</li>
+			  	<div class="clear"></div>
+			<?php } ?>
+			<?php } ?>
+		</ul>
+	</div>
+</div>
+<?php }?>
+<form class="form" action="<?php /* @escapeNotVerified */ echo $this->getUrl('tmember/member/sendmessage',array('memberemail'=>$this->getRequest()->getParam('memberemail')))?>" method="post" id="form-validate" enctype="multipart/form-data" data-hasrequired="<?php /* @escapeNotVerified */ echo __('* Required Fields') ?>" data-mage-init='{"validation":{}}'>
+<fieldset class="fieldset">
+	        <legend class="legend"><span><?php /* @escapeNotVerified */ echo __('Comments Section') ?></span></legend><br>
+
+	        <div class="field comments required">
+	            <label class="label" for="comments"><span><?php /* @escapeNotVerified */ echo __('Comments') ?></span></label>
+	            <div class="control">
+	                <textarea name="message" value="" maxlength ="2000" title="<?php /* @escapeNotVerified */ //echo __('Detailed Description') ?>" class="input-textarea required-entry" id="message"></textarea>
+	            </div>
+	            <input type="hidden" name ="form_key" value="<?php echo $block->getFormKey()?>"/>
+	        </div>
+	        </fieldset>
+            <input type="button" class="action save primary" id="send-btn" title="<?php /* @escapeNotVerified */ echo __('Submit Request') ?>" value ="<?php /* @escapeNotVerified */ echo __('Send') ?>">
+            </input>
+            </form>
+<style type="text/css">
+	.purchaseorder-left-column {
+    width: 50%;
+    float: left;
+	}
+	.purchaseorder-right-column {
+	    width: 50%;
+	    float: right;
+	}
+	.vendor-rma-right-column {
+	    width: 50%;
+	    float: right;
+	}
+	.purchaseorder-left-chat-column {
+	    width: 55%;
+	    float: left;
+	    background: none repeat scroll 0 0 #D3D3D3;
+	    margin-bottom: 7px;
+	    padding: 6px 13px;
+	}
+	.purchaseorder-right-chat-column {
+	    width: 55%;
+	    float: right;
+	    background: none repeat scroll 0 0 #F3F3DF;
+	    margin-bottom: 7px;
+	    padding: 6px 13px;
+	}
+	.vendor-rma-right-chat-column {
+	    width: 55%;
+	    float: right;
+	    background: none repeat scroll 0 0 #E9967A;
+	    margin-bottom: 7px;
+	    padding: 6px 13px;
+	}
+
+	.purchaseorder-history-block {
+	  border: 1px solid #dcdcdc;
+	  margin-bottom: 30px;
+	                              }
+
+ .purchaseorder-history-block-data {
+  background: #dcdcdc none repeat scroll 0 0;
+  padding: 10px;
+    }
+.purchaseorder-comment-wrapper {
+  height: 250px;
+  overflow-y: scroll;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 26px;
+}
+.purchaseorder-comment-wrapper li {
+  list-style: outside none none;
+  margin-bottom: 20px;
+  margin-top: 10px;
+}
+.clear {
+  clear: both;
+}
+
+.hide{
+  display:none;  
+}
+
+.purchaseorder-comment-wrapper li.purchaseorder-left-chat-column::before {
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 7px solid #d3d3d3;
+  content: "";
+  height: 1px;
+  left: -6px;
+  position: absolute;
+  top: 0;
+  transform: rotate(90deg);
+  width: 3px;
+}
+.purchaseorder-comment-wrapper li.purchaseorder-left-chat-column{
+	 border-radius: 0 2px 2px;
+}
+.purchaseorder-comment-wrapper li.purchaseorder-right-chat-column{
+	border-radius: 5px 0 5px 5px;
+}
+.purchaseorder-comment-wrapper li.purchaseorder-right-chat-column::before {
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 7px solid #f3f3df;
+  content: "";
+  height: 1px;
+  position: absolute;
+  right: -6px;
+  top: 0;
+  transform: rotate(-90deg);
+  width: 3px;
+}
+.purchaseorder-comment-wrapper li {
+ 	position: relative;
+}
+</style>
+<script src="http://cedcommerce.com/pub/static/frontend/Ced/ced/en_US/Ced_TeamMember/js/jquery-3.1.1.js"></script>
+<script type="text/javascript">
+require([
+         "jquery",
+         "mage/mage"
+     ], function(){
+
+	jQuery(document).ready(function(){
+	//create a new WebSocket object.
+	var wsUri = "ws://cedcommerce.com:9002/sellkoreagit/server.php"; 	
+	websocket = new WebSocket(wsUri); 
+	var vendorSid="<?php echo $block->getSenderToken()?>";
+	var vendorRid="<?php echo $block->getRecevierToken()?>";
+	var date = new Date();
+    currentDate = date.getDate();     // Get current date
+    month       = date.getMonth() + 1; // current month
+    year        = date.getFullYear();
+    hour = date.getHours();
+    min  = date.getMinutes();
+    sec  = date.getSeconds();
+    var time_stamp= currentDate + "/" + month + "/" + year +","+hour+":"+min+":"+sec;
+	websocket.onopen = function(ev) { // connection is open 
+		alert("Connected!"); //notify user
+	}
+
+	jQuery('#send-btn').click(function(){ //use clicks message send button	
+		var mymessage = jQuery('#message').val(); //get message text
+		var mapdata="admin"+"-"+"teammember";
+		if(mymessage == ""){ //emtpy message?
+			alert("Enter Some message Please!");
+			return;
+		}
+		
+		//prepare json data
+		var msg = {
+		message: mymessage,
+		name: vendorSid,
+		data:mapdata,
+		time:time_stamp
+		};
+		//convert and send data to server
+		websocket.send(JSON.stringify(msg));
+	});
+	
+	//#### Message received from server?
+	websocket.onmessage = function(ev) {
+		var msg = JSON.parse(ev.data); //PHP sends Json data
+		var type = msg.type; //message type
+		var id=msg.name;//get vendor id from server
+		var umsg = msg.message; //message text
+		var time=msg.time;//get message time from
+		//list all client
+
+		if((type == 'usermsg') && (vendorSid==id)) 
+		{
+		
+		jQuery('.note-list').append("<li class='purchaseorder-left-chat-column'><div class='purchaseorder-left-chat-column-chat'><span>"+umsg+"</span><br><span>"+time+"</span></div></li>");
+
+		}
+
+		if((type == 'usermsg') && ((vendorRid==id))) 
+		{
+		
+		jQuery('.note-list').append("<li class='purchaseorder-right-chat-column'><div class='purchaseorder-right-chat-column-chat'><span>"+umsg+"</span><br><span>"+time+"</span></div></li>");
+
+		}
+
+		if(type == 'system')
+		{
+			alert(umsg);
+		}
+		
+		jQuery('#message').val(''); //reset text
+	};
+	
+	websocket.onerror	= function(ev){
+	var notified="Error Occurred-"+ev.data;
+	alert(notified);
+	}; 
+	websocket.onclose 	= function(ev){
+		alert("Connection Closed")
+	}; 
+});
+
+	 });
+</script>

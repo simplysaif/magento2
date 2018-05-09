@@ -1,0 +1,157 @@
+<?php
+
+/**
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the End User License Agreement (EULA)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://cedcommerce.com/license-agreement.txt
+ *
+ * @category    Ced
+ * @package     Ced_RequestToQuote
+ * @author      CedCommerce Core Team <connect@cedcommerce.com>
+ * @copyright   Copyright CedCommerce (http://cedcommerce.com/)
+ * @license      http://cedcommerce.com/license-agreement.txt
+ */
+
+?>
+<?php /** @var $block \Magento\Sales\Block\Adminhtml\Order\View\Tab\Info */ ?>
+<?php 
+        
+      $quote_data = $block->getQuoteData();
+      $customer_data = $block->getCustomer();
+      $address = $block->getCustomerAddress();
+      $quotes = $block->getItems();
+      $quoteData = $block->getQuoteData();
+      $products = $block->getProductId();
+      $vendor_id = $block->getVendorId();
+
+?>
+
+<form method="POST" action="<?php echo $block->getPOUrl();?>">
+    <?php echo $this->getChildHtml('account_information');?>
+    <?php echo $this->getChildHtml('shipping_information');?>
+    <?php echo $this->getChildHtml('items_information');?>
+    
+</form>
+<style>
+.fieldset > .field:last-child, .fieldset > .fields > .field:last-child{
+    margin-bottom: 28px !important;
+}
+.order-billing-address{
+    float: left;
+    width: 47%;
+}
+.order-shipping-address{
+    float: right;
+    width: 47%;
+}
+.order-totals{
+    float: none;
+    width: 70%;
+}
+</style>
+
+<script type="text/javascript">
+
+    require(['jquery'], function($) {
+        
+        $("#edit-order-table").on('keyup', '.qty-field-po',function(){    
+            var data =new Array();
+            var shipping = $('#shipprice').val();
+              var qty = $(this).val();
+               var price = $(this).parents('tr').find('.po-price-updated').val();   
+                     $(this).parents('tr').find('.subtotal-po').val(qty*price);
+                     $(this).parents('tr').find('.row-total').val(qty*price);      
+              $(this).parents('table').find('input.common').each( function(index){
+                    data.push($(this).val());
+                });
+              var sum=0;
+              for(var i=0;i<data.length;i+=3){
+                   sum += parseFloat(data[i+2]);
+              }
+              var total = parseFloat(sum)+parseFloat(shipping);
+              $('#subtotalofpo').val(sum.toFixed(2));
+              $('#grandtotalofpo').val(total.toFixed(2));
+              $('#totaldue').val(total.toFixed(2));
+
+
+        });
+                     
+
+        $("#edit-order-table").on('keyup', '.po-price-updated',function(){    
+            var data =new Array();
+            var shipping = $('#shipprice').val();
+            var price = $(this).val();
+            var qty = $(this).parents('tr').find('.qty-field-po').val();
+            $(this).parents('tr').find('.subtotal-po').val(qty*price);      
+            $(this).parents('tr').find('.row-total').val(qty*price);   
+                    
+            $(this).parents('table').find('input.common').each( function(index){
+                data.push($(this).val());
+            });
+              
+          var sum=0;
+          for(var i=0;i<data.length;i+=3){
+             
+               sum += parseFloat(data[i+2]);
+          }
+            var total = parseFloat(sum)+parseFloat(shipping);
+            $('#subtotalofpo').val(sum.toFixed(2));
+            $('#grandtotalofpo').val(total.toFixed(2));
+            $('#totaldue').val(total.toFixed(2));
+        });
+
+        $(".numbersOnly").keydown(function (e) {
+        // Allow: backspace, delete, tab, escape, enter and .
+            if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+                 // Allow: Ctrl+A, Command+A
+                (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) || 
+                 // Allow: home, end, left, right, down, up
+                (e.keyCode >= 35 && e.keyCode <= 40)) {
+                     // let it happen, don't do anything
+                     return;
+            }
+        // Ensure that it is a number and stop the keypress
+            if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                e.preventDefault();
+            }
+        });
+        
+    });
+
+
+
+</script>
+
+<style>
+    .admin__page-section-item.order-totals {
+        float: none;
+        width: 70%;
+    }
+    .admin__table-primary th, .admin__table-primary td{
+        padding: 10px 8px;
+    }
+    .actions{
+        margin-top: 10px;
+    }
+</style>
+<script type="text/javascript">
+require([
+'jquery', 
+'jquery/ui', 
+'jquery/validate',
+'mage/translate'
+], function($){ 
+
+    $('.qty-field-po').keyup(function(){
+        if ($(this).val() > $(this).attr('max')){
+            $(this).val($(this).attr('max'));
+        }
+    });
+});
+ </script>
+    

@@ -1,0 +1,212 @@
+<?php
+/**
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the End User License Agreement (EULA)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://cedcommerce.com/license-agreement.txt
+ *
+ * @category    Ced
+ * @package     Ced_Blog
+ * @author   	 CedCommerce Core Team <connect@cedcommerce.com >
+ * @copyright   Copyright CEDCOMMERCE (http://cedcommerce.com/)
+ * @license      http://cedcommerce.com/license-agreement.txt
+ */
+?>
+
+<?php
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$scopeConfig = $objectManager->create('Magento\Framework\App\Config\ScopeConfigInterface');
+$model = $block->getCollection();
+
+/*codes for pagination*/
+if ($block->getPagerHtml()): ?>
+    <div class="order-products-toolbar toolbar bottom"><?php echo $block->getPagerHtml();?></div>
+<?php endif;
+$post_limit=$scopeConfig
+    ->getValue('ced_blog/general/post_activation', \Magento\Store\Model\ScopeInterface::SCOPE_STORE,0);
+$count=0;
+//print_r($model->getData());die('test');
+?>
+<?php foreach ($model as $post):
+    if($post['blog_status']=='publish'):
+        $customPostUrl = $post->getPostUrl().'?id='.$post->getId();
+        ?>
+
+        <div class ="post-section">
+            <a href="<?php echo $customPostUrl ?>">
+                <h2 style="color:#f1703d"> <?php echo $post->getTitle() ?></h2>
+            </a>
+            <?php  $config=	$scopeConfig->getValue('ced_blog/general/blog_date_activation', \Magento\Store\Model\ScopeInterface::SCOPE_STORE,0);
+            ?>
+            <h4 class="date_time"><?php if($config==0){ $str=explode('-',$post->getPublishDate()); if(isset($str[1])) echo $str[1].'-'.$str[2].'-'.$str[0].' '; $time=explode(' ',$post->getCreatedAt()); echo $time[1];  }?></h4>
+            <h4 class="date_time"><?php if($config==1){ $str=explode('-',$post->getPublishDate()); if(isset($str[2]))
+                    echo $str[2].'-'.$str[1].'-'.$str[0].' '; $time=explode(' ',$post->getCreatedAt()); echo $time[1]; }?></h4><?php  ?>
+            <h4 class="date_time"><?php if($config==2){ $str=explode('-',$post->getPublishDate()); if(isset($str[0])) echo $str[0].'-'.$str[1].'-'.$str[2].' '; $time=explode(' ',$post->getCreatedAt()); echo $time[1];  }?></h4>
+            <h4 class="poster_name"><span>Posted by:</span>
+                <a href="<?php echo $post->getProfileUrl().'?id='.$post->getUserId()?>">
+                    <?php echo $post->getAuthor()?>
+                </a>
+            </h4>
+
+            <div class="clear"></div>
+            <div class="post_image">
+                <a href="<?php echo $customPostUrl ?>">
+                    <img src="<?php echo $block->getUrl('pub/media/').$post->getFeaturedImage()?>" width="432" height="364"/>
+                </a>
+            </div>
+
+            <?php
+            $text_limit=$scopeConfig->getValue('ced_blog/general/post_text_limit', \Magento\Store\Model\ScopeInterface::SCOPE_STORE,0);
+            $str=$post->getPostText(); $text=str_split($str, $text_limit);
+            ?>
+
+            <?php if(isset($text)): ?>
+                <div class="short_para" style="display: block">
+                    <p><?php $str=$post->getPostText(); $text=str_split($str, $text_limit); echo $text[0]; ?>
+                        <a href="<?php echo $customPostUrl ?>">
+                            Read more »
+                        </a>
+                    </p>
+                </div>
+
+                <?php
+            endif;
+            ?>
+        </div>
+
+        <?php $comment_type=$scopeConfig->getValue('ced_blog/comment/type', \Magento\Store\Model\ScopeInterface::SCOPE_STORE,0);
+
+        if($comment_type=='default'):
+            ?>
+            <div class ="post-comment">
+                <a href="<?php echo $block->getUrl('blog/index/comment',array('id'=>$post->getId()))
+                //echo $this->_objectManager->create('Ced\Blog\Model\BlogComment')->getCommentUrl().$post->getUrl()?>">
+                    <?php
+                    $config_value_comment=$scopeConfig->getValue('ced_blog/comment/enable_comments', \Magento\Store\Model\ScopeInterface::SCOPE_STORE,0);
+                    $post_model = $this->_objectManager->create('Ced\Blog\Model\BlogComment')->getCollection()
+                        ->addFieldToFilter('post_id',$post->getId())
+                        ->addFieldToFilter('status',1);
+                    $count = count($post_model);
+                    if($config_value_comment){
+                        if(!empty($count))
+                        {
+                            if($count==1)
+                            {
+                                echo $count.'comment';
+                            }
+                            elseif($count>1)
+
+                            {
+
+                                echo $count.'comments';
+
+                            }
+
+                            else {
+
+                                echo 'comment';
+
+                            }
+
+                        }
+
+                        else {
+
+                            echo 'comment';
+
+                        }
+                    }
+
+                    ?>
+
+                </a>
+
+            </div>
+
+        <?php endif; ?>
+
+        <?php
+        $config_value_book=$scopeConfig->getValue('ced_blog/general/bookmarks_activation', \Magento\Store\Model\ScopeInterface::SCOPE_STORE,0);
+        if($config_value_book):	 ?>
+            <div class ="post-bookmarks">
+                <h4>Bookmarks with:</h4>
+                <div class="bookmark_container">
+                    <a class="twitter" href="http://www.twitter.com/share?url=<?php echo $customPostUrl; ?>" ></a>
+
+                    <a class="googleplus" href="https://plus.google.com/share?url=<?php echo $customPostUrl;?>" ></a>
+
+                    <a class="linkedin" href="https://www.linkedin.com/cws/share?url=<?php echo $customPostUrl;?>" ></a>
+
+                    <a class="digg" href="http://digg.com/submit?phase=2&url=<?php echo $customPostUrl;?>" ></a>
+
+                    <a class="stumbleupon" href="http://www.stumbleupon.com/submit?url=<?php echo $customPostUrl;?>"></a>
+
+                    <a class="delicio" href="http://del.icio.us/post/?url=<?php echo $customPostUrl; ?>"></a>
+
+                    <a class="facebook" href="http://www.facebook.com/sharer.php?u=<?php echo $customPostUrl;?>"></a>
+
+                    <a class="reddit" href="http://reddit.com/submit?url=<?php echo $customPostUrl; ?>"></a>
+                </div>
+            </div>
+        <?php endif;?>
+        <?php $tag_value=$scopeConfig->getValue('ced_blog/general/tag_menu_activate', \Magento\Store\Model\ScopeInterface::SCOPE_STORE,0); ?>
+        <div class ="post-tags">
+            <h4>Tags:<?php
+                $tags=$post->getTags();
+                $tag=explode(',',$tags);
+                end($tag);         // move the internal pointer to the end of the array
+
+                $last_key = key($tag);
+
+                foreach($tag as $key=>$val):?>
+                    <a href="<?php echo $post->getTagUrl($val) ?>">
+                        <?php if($key==$last_key)
+                            echo $val;
+                        elseif($key>=0)
+                            echo $val.',';?></a>
+                <?php endforeach;?>
+            </h4>
+        </div>
+        <hr>
+
+        <?php
+
+    endif;
+
+    $count++;
+
+endforeach;?>
+
+<?php  if ($block->getPagerHtml()): ?>
+
+    <div class="order-products-toolbar toolbar bottom"><?php echo $block->getPagerHtml(); ?></div>
+
+<?php endif ?>
+
+
+
+<script>
+
+    /* var jq = jQuery.noConflict();
+
+     jq(document).ready(function(){
+
+     jq('#view_more').click(function(){
+
+     jq('.short_para').css("display", "none");
+
+     jq('.post_text').css("display", "block");
+
+
+
+     })
+
+     });*/
+
+</script>
+
+ 	 

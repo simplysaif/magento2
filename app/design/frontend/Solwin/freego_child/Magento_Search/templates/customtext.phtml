@@ -1,0 +1,12 @@
+<nav class="navigation" role="navigation">
+    <ul data-mage-init='{"menu":{"responsive":true, "expanded":true, "position":{"my":"left top","at":"left bottom"}}}'>
+        <?php if ($showhomelink) { ?>
+            <li class="level0 level-top <?php if ($ishome) { ?> active <?php } ?>">
+                <a class="level-top" href="<?php echo $baseUrl; ?>">
+                    Home
+                </a>
+            </li>
+        <?php } ?>
+        <?php /* @escapeNotVerified */ echo $_menu; ?>
+    </ul>
+</nav>

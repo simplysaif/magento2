@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the End User License Agreement (EULA)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://cedcommerce.com/license-agreement.txt
+ *
+ * @category    Ced
+ * @package     Ced_RequestToQuote
+ * @author      CedCommerce Core Team <connect@cedcommerce.com>
+ * @copyright   Copyright CedCommerce (http://cedcommerce.com/)
+ * @license      http://cedcommerce.com/license-agreement.txt
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <quote>
+            <cart>
+                <delete_quote_after>30</delete_quote_after>
+                <redirect_to_cart>0</redirect_to_cart>
+            </cart>
+            <cart_link>
+                <use_qty>1</use_qty>
+            </cart_link>
+            <sidebar>
+                <display>1</display>
+                <count>5</count>
+            </sidebar>
+            <payment_failed>
+                <identity>general</identity>
+                <receiver>general</receiver>
+            </payment_failed>
+        </quote>
+        <requesttoquote_configuration>
+            <active>
+                <enable>1</enable>
+            </active>
+        </requesttoquote_configuration>
+    </default>
+</config>

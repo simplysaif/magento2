@@ -1,0 +1,125 @@
+<?php 
+/**
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the End User License Agreement (EULA)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://cedcommerce.com/license-agreement.txt
+ *
+ * @category    Ced
+ * @package     Ced_Vbadges
+ * @author      CedCommerce Core Team <connect@cedcommerce.com>
+ * @copyright   Copyright CedCommerce (http://cedcommerce.com/)
+ * @license      http://cedcommerce.com/license-agreement.txt
+ */
+?>
+<div class="row">
+<div class="col-md-12" style="margin-top:10px;">
+		<div >
+			<div>
+				<div >
+						<div class="panel panel-default">
+							<div class="panel-heading col-md-12 uptransform item" style="font-weight:bold;padding:4px 15px;">
+								<?php  echo __("Your Badges"); ?>
+							</div>
+							<div class="panel-body">
+								<div class="general-wrapper">
+								<?php $badges= $block->getbadges();
+								if(sizeof($badges["order"])>0){
+									foreach($badges["order"] as $key=>$value){
+										if($value!=""){
+											echo "<div style='width:150px;float:left'>";
+											echo '<img src="' . $value. '" width="150px" height="150px" ></br>';
+											$width = $block->countsales();
+											echo "<center><a href='".$this->getUrl("csorder/vorders/index")."'>($width Sales)</a></center></div>";
+										}
+									}
+								}
+								if(sizeof($badges["review"])>0){
+									foreach($badges["review"] as $key=>$value){
+										if($value!=""){
+											echo "<div style='width:150px;float:left'>";
+											echo '<img src="' . $value. '" width="150px" height="150px" ></br>';
+											$width = $block->countofreviews();
+											$rating='<div class="rating-summary">
+														<div title="'.$width.'%" class="rating-result">
+															<span style="width:'.$width.'%;"><span>'.$width.'%</span></span>
+														</div>'.($width/20).'
+													</div>';
+											echo $rating."</div>";
+											
+										}
+									}
+								}
+								if($badges["order"][0]="" && $badges["review"][1]==""){
+									echo __("You have not received any badges");
+								}
+?>
+								</div>
+							</div>
+						</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<style>
+.rating-summary {
+    overflow: hidden;
+    white-space: nowrap;
+}
+.rating-summary .rating-result::before {
+    color: #c7c7c7;
+    content: '\f005' '\f005' '\f005' '\f005' '\f005';
+    display: block;
+    font-family: "fontawesome";
+    font-size: 16px;
+    font-style: normal;
+    font-weight: normal;
+    height: 16px;
+    left: 0;
+    letter-spacing: 2px;
+    line-height: 16px;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 1;
+}
+.rating-summary .rating-result {
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+    width: 88px;
+}
+.rating-summary .rating-result > span::before {
+    color: #ff5501;
+    content: '\f005' '\f005' '\f005' '\f005' '\f005';
+    display: block;
+    font-family: "fontawesome";
+    font-size: 16px;
+    font-style: normal;
+    font-weight: normal;
+    height: 16px;
+    letter-spacing: 2px;
+    line-height: 16px;
+    position: relative;
+    z-index: 2;
+}
+.rating-summary .rating-result > span {
+    display: block;
+    overflow: hidden;
+}
+.rating-summary .rating-result > span span {
+    border: 0 none;
+    clip: rect(0px, 0px, 0px, 0px);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+</style>

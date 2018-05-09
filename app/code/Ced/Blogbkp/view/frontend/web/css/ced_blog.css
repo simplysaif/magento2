@@ -1,0 +1,219 @@
+.bookmark_container a {
+
+
+  background-position: 4px 3px;
+
+
+  background-repeat: no-repeat;
+
+
+  background-size: 15px auto;
+
+
+  padding-left: 25px;
+
+
+}
+
+
+.bookmark_container .twitter{
+
+
+    background-image: url('../images/twitter.png');
+
+
+}
+
+
+.bookmark_container .googleplus{
+
+
+    background-image: url('../images/googleplus.png');
+
+
+}
+
+
+.bookmark_container .linkedin{
+
+
+    background-image: url('../images/Linkedin.png');
+
+
+}
+
+
+.bookmark_container .digg{
+
+
+    background-image: url('../images/digg-com.gif');
+
+
+}
+
+
+.bookmark_container .stumbleupon{
+
+
+    background-image: url('../images/stumbleupon-com.gif');
+
+
+}
+
+
+.bookmark_container .delicio{
+
+
+    background-image: url('../images/del-icio-us.gif');
+
+
+}
+
+
+.bookmark_container .facebook{
+
+
+    background-image: url('../images/facebook-com-.gif');
+
+
+}
+
+
+.bookmark_container .reddit{
+
+
+    background-image: url('../images/reddit-com.gif');
+
+
+}
+
+
+.sidebar-additional a h5 {
+
+
+  color: #333 !important;
+
+
+  font-size: 15px;
+
+
+  font-weight: normal;
+
+
+  line-height: 20px;
+
+
+  margin: 0;
+
+
+  padding: 6px 0;
+
+
+}
+
+
+.date_time {
+
+
+  float: left;
+
+
+  font-style: italic;
+
+
+  line-height: 30px;
+
+
+  margin: 10px 0;
+
+
+}
+
+
+.poster_name {
+
+
+  float: right;
+
+
+  font-style: italic;
+
+
+  line-height: 30px;
+
+
+  margin: 10px 0;
+
+
+}
+
+
+.poster_name > span {
+
+
+  margin-right: 5px;
+
+
+}
+
+
+.pager .label.pages-label {
+
+
+  display: inline-block !important;
+
+
+  margin-right: 10px;
+
+
+  margin-top: -12px;
+
+
+  overflow: visible;
+
+
+  position: static !important;
+
+
+  width: auto;
+
+
+}
+
+
+.pager .pages{
+
+
+    text-align: right;
+
+
+}
+
+
+.pager .pages .item{
+
+
+    float: left;
+
+
+
+
+}
+
+
+.pager .pages .item .action.next{
+
+
+    display: block;
+
+
+}
+
+
+.clear {
+
+
+  clear: both;
+
+
+}

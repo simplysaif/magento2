@@ -1,0 +1,93 @@
+<?php
+
+/**
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the End User License Agreement (EULA)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://cedcommerce.com/license-agreement.txt
+ *
+ * @category    Ced
+ * @package     Ced_Blog
+ * @author   	 CedCommerce Core Team <connect@cedcommerce.com >
+ * @copyright   Copyright CEDCOMMERCE (http://cedcommerce.com/)
+ * @license      http://cedcommerce.com/license-agreement.txt
+ */
+
+?>
+
+<?php
+$ar=$block->getCategoryPost()->getData();
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$redirect = $objectManager->get('\Magento\Framework\App\Response\Http');
+if (empty($ar)){
+    $newUrl = $this->getBaseUrl().''.'blog';
+    $redirect->setRedirect($newUrl);
+}
+if(empty($ar))
+{
+    $cat_id=$this->getRequest()->getParams();
+    $post_collection = $this->objectManager->create('Ced\Blog\Model\Blogcat')->load($cat_id);
+    $category=$post_collection->getData();
+    ?>
+    <h2><?php echo 'no post assigned in "'.$category['title'].'" category'; ?></h2>
+    <?php
+}
+
+?>
+<?php  if ($block->getPagerHtml()){ ?>
+    <div class="order-products-toolbar toolbar bottom"><?php echo $block->getPagerHtml(); ?></div>
+<?php }?>
+<?php foreach ($block->getCategoryPost() as $postdata) {
+    $post_collection = $this->objectManager->create('Ced\Blog\Model\BlogPost')->load($postdata->getPostId());
+    $customPostUrl = $post_collection->getPostUrl().'?id='.$post_collection->getId();
+    ?>
+    <div class ="category-post-section">
+        <a href="<?php echo $customPostUrl?>"><h2 style="color:#f1703d">
+                <?php echo $post_collection->getTitle();?></h2>
+        </a>
+        <?php  $config=	$this->scopeConfig->getValue('ced_blog/general/blog_date_activation', \Magento\Store\Model\ScopeInterface::SCOPE_STORE,0);?>
+        <h4 class="date_time">
+            <?php //if($config==0){ $str=explode('-',$post_collection->getPublishDate()); if(isset($str[1])) echo $str[1].'-'.$str[2].'-'.$str[0].' '; $time=explode(' ',$post_collection->getCreatedAt()); echo $time[1];  }?>
+
+        </h4>
+        <h4 class="date_time">
+            <?php if($config==1){ $str=explode('-',$post_collection->getPublishDate()); if(isset($str[2]))
+                echo $str[2].'-'.$str[1].'-'.$str[0].' '; $time=explode(' ',$post_collection->getCreatedAt()); if(isset($time[1])) echo $time[1];  } ?>
+        </h4>
+        <h4 class="date_time">
+            <?php //if($config==2){ $str=explode('-',$post_collection->PublishDate()); if(isset($str[0])) echo $str[0].'-'.$str[1].'-'.$str[2].' '; $time=explode(' ',$post_collection->getCreatedAt()); echo $time[1];  }?>
+        </h4>
+        <h4 class="poster_name">
+            <span>Posted by:</span>
+            <a href="<?php echo $post_collection->getProfileUrl()?>"><?php echo $post_collection->getAuthor()?></a>
+        </h4>
+        <div class="clear"></div>
+        <div class="post_image">
+            <a href="<?php echo $customPostUrl?>">
+                <img src="<?php echo $block->getUrl('pub/media/').$post_collection->getFeaturedImage()?>"/>
+            </a>
+        </div>
+        <?php
+        $text_limit=$this->scopeConfig->getValue('ced_blog/general/post_text_limit', \Magento\Store\Model\ScopeInterface::SCOPE_STORE,0);
+        $str=$post_collection->getPostText(); $text=str_split($str, $text_limit);
+        ?>
+        <?php if(isset($text)): ?>
+            <div class="short_para" style="display: block">
+                <p><?php $str=$post_collection->getPostText(); $text=str_split($str, $text_limit); echo $text[0]; ?>
+                    <a href="<?php echo $customPostUrl?>">
+                        Read more »
+                    </a>
+                </p>
+            </div>
+            <?php
+        endif;
+        ?>
+    </div>
+    <hr>
+<?php }?>
+
+ 

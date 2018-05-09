@@ -1,0 +1,82 @@
+<?php
+/**
+ * Copyright © 2016 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+?>
+<?php
+$loaderurl = $block->getViewFileUrl('images/loader-2.gif');
+/**
+ * Edit customer address template
+ *
+ * @var $block \Magento\Customer\Block\Address\Edit
+ */
+?>
+<form class="form-addres" action="<?php /* @escapeNotVerified */ echo $this->getUrl('*/*/save',array('id'=>$this->getRequest()->getParam('teammemberid'))); ?>" method="post" id="form-validate" enctype="multipart/form-data" data-hasrequired="<?php /* @escapeNotVerified */ echo __('* Required Fields') ?>" data-mage-init='{"validation":{}}'>
+    <fieldset class="fieldset">
+        <legend class="legend"><span><?php /* @escapeNotVerified */ echo __('Profile Information') ?></span></legend><br>
+            <div class="field productname required">
+                <label class="label" for="product_name"><span><?php /* @escapeNotVerified */ echo __('Name') ?></span></label>
+                <div class="control">
+                    <input type="text" name="name" value="<?php echo $block->getTeamMember()->getName()?>" title="<?php /* @escapeNotVerified */ echo __('Name') ?>" class="input-text required-entry" id="product_name">
+                </div>
+            </div>
+
+        
+        <div class="field color required">
+            <label class="label" for="color"><span><?php /* @escapeNotVerified */ echo __('Email') ?></span></label>
+            <div class="control">
+                <input type="text" name="email1" value="<?php echo $block->getTeamMember()->getEmail()?>" title="<?php /* @escapeNotVerified */ echo __('Email') ?>" id="color" class="input-text required-entry validate-email">
+            </div>
+        </div>
+        
+        
+         <div class="field size/type/volume required">
+            <label class="label" for="size_type"><span><?php /* @escapeNotVerified */ echo __('Contact') ?></span></label>
+            <div class="control">
+                <input type="text" name="contact_no" value="<?php echo $block->getTeamMember()->getContactNo()?>" title="<?php /* @escapeNotVerified */ echo __('Contact No') ?>" id="size_type" class="input-text required-entry validate-no">
+            </div>
+        </div>
+        
+        <div class="field category required">
+            <label class="label" for="category"><span><?php /* @escapeNotVerified */ echo __('Address') ?></span></label>
+            <div class="control">
+                <input type="text" name="address" value="<?php echo $block->getTeamMember()->getAddress()?>" title="<?php /* @escapeNotVerified */ echo __('Address') ?>" class ="required-entry" id="category">
+            </div>
+        </div>
+        
+         <div class="field price required">
+            <label class="label" for="price"><span><?php /* @escapeNotVerified */ echo __('City') ?></span></label>
+            <div class="control">
+                <input type="text" name="city" value="<?php echo $block->getTeamMember()->getCity()?>" title="<?php /* @escapeNotVerified */ echo __('City') ?>" class ="required-entry" id="price">
+            </div>
+        </div>
+        
+        <div class="field store_url required">
+        <?php if($block->getTeamMember()->getLogo()){?>
+            <img src="<?php echo $block->getImageSrc().$block->getTeamMember()->getLogo() ?>" id="profile_picture_image" title="" alt="" class="small-image-preview v-middle" width="22" height="22">
+        <?php }?>
+            <label class="label" for="store_url"><span><?php /* @escapeNotVerified */ echo __('Logo') ?></span></label>
+            <div class="control">
+                <input type="file" name="logo" value="<?php //echo $block->getStoreUrl()?>" title="<?php /* @escapeNotVerified */ echo __('Logo') ?>" class = "" id="store_url">
+            </div>
+            <?php if($block->getTeamMember()->getLogo()){?>
+            <span class="delete-image">
+            <input name="profile_delete" value="1" class="checkbox" id="profile_picture_delete" type="checkbox">
+            <label for="profile_picture_delete"> Delete Image</label>
+            <input name="profile_delete_logo" value="<?php echo $block->getMediaDirectory().$block->getTeamMember()->getLogo()?>" type="hidden">
+            </span>
+            <?php }?>
+        </div>
+        
+        <div class="primary">
+            <button type="submit" class="action save primary" title="<?php /* @escapeNotVerified */ echo __('Submit') ?>">
+                <span><?php /* @escapeNotVerified */ echo __('Submit') ?></span>
+            </button>
+        </div>
+      
+        
+        </fieldset>
+
+

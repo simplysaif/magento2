@@ -1,0 +1,242 @@
+<!--/**
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the End User License Agreement (EULA)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://cedcommerce.com/license-agreement.txt
+ *
+ * @category    Ced
+ * @package     Ced_CsPurchaseOrder
+ * @author      CedCommerce Core Team <connect@cedcommerce.com>
+ * @copyright   Copyright CedCommerce (http://cedcommerce.com/)
+ * @license      http://cedcommerce.com/license-agreement.txt
+ */ -->
+ 
+  <?php if($block->getConversation() && !empty($block->getConversation())){?>
+ <div class="purchaseorder-history-block" id="purchaseorder-history-block">
+    <div class="purchaseorder-history-block-data">
+        <label for="history_comment" class="admin__field-label">
+            <?php echo __('Chat History') ?>
+    	</label>
+    	<span id="status"></span>
+    </div>
+    <div class="purchaseorder-comment-wrapper">
+	    <ul class="note-list">
+			<?php foreach ($block->getConversation() as $_commenthistory){?>
+			<?php if($_commenthistory->getSender()=='teammember' && $_commenthistory->getSenderEmail()==$this->session->getTeamMemberDataAsLoggedIn()->getEmail() && $_commenthistory->getReceiver()=='admin'){ ?>
+		  		<li class="purchaseorder-left-chat-column">
+			     <div class="image"><img width="42" src="<?php echo $this->getViewFileUrl('Ced_TeamMember::images/logo.jpeg')?>"/>
+			      </div>
+			      <?php if ($_commenthistory->getMessage()){ ?>
+			          <div class="purchaseorder-left-chat-column-chat">
+			          <span><?php echo $this->escapeHtml($_commenthistory->getMessage(), ['b', 'br', 'strong', 'i', 'u', 'a']) ?></span><br>
+			          <span><?php echo$_commenthistory->getTime()?></span>	
+			          </div>
+			      <?php } ?>
+		  		</li>
+			<?php } else if($_commenthistory->getSender()=='admin' && $_commenthistory->getReceiver()=='teammember'){  ?>
+				<li class="purchaseorder-right-chat-column" >
+				  <div class="image"><img width="42" src="<?php echo $this->getViewFileUrl('Ced_TeamMember::images/logo.jpeg')?>">
+			      </div>		                   
+			      <?php if ($_commenthistory->getMessage()){ ?>
+			          <div class="note-list-comment">
+			          <span><?php echo $this->escapeHtml($_commenthistory->getMessage(), ['b', 'br', 'strong', 'i', 'u', 'a']) ?></span><br>
+				      <span><?php echo$_commenthistory->getTime()?></span>    	
+			         </div>
+			      <?php } ?>
+			  	</li>
+			
+			  	</li>
+			<?php } ?>
+			<?php } ?>
+		</ul>
+	</div>
+</div>
+<?php }?>
+<form class="form" action="<?php /* @escapeNotVerified */ echo $this->getUrl('teammember/admin/send')?>" method="post" id="form-validate" enctype="multipart/form-data" data-hasrequired="<?php /* @escapeNotVerified */ echo __('* Required Fields') ?>" data-mage-init='{"validation":{}}'>
+<fieldset class="fieldset">
+	        <legend class="legend"><span><?php /* @escapeNotVerified */ echo __('Comments Section') ?></span></legend><br>
+
+	        <div class="field comments required">
+	            <label class="label" for="comments"><span><?php /* @escapeNotVerified */ echo __('Comments') ?></span></label>
+	            <div class="control">
+	                <textarea name="message" value="" maxlength ="2000" title="<?php /* @escapeNotVerified */ //echo __('Detailed Description') ?>" class="input-textarea required-entry" id="message"></textarea>
+	            </div>
+	        </div>
+	        </fieldset>
+	        <input type="button" class="action save primary" id="send-btn" title="<?php /* @escapeNotVerified */ echo __('Submit Request') ?>" value ="<?php /* @escapeNotVerified */ echo __('Send') ?>">
+            </input>
+            </form>
+<style type="text/css">
+	.purchaseorder-right-chat-column {
+    float: right;
+    width: 55%;
+    text-align: left;
+}
+.purchaseorder-right-chat-column .note-list-comment {
+    max-width: 75%;
+    float: right;
+    background: none repeat scroll 0 0 #F3F3DF;
+    padding: 20px 20px;
+    box-shadow: 0px 3px 3px #E3E4E6;
+    border-radius: 30px 5px 5px 9px;
+}
+.purchaseorder-right-chat-column .image {
+    min-width: 10%;
+    float: right;
+}
+.purchaseorder-right-chat-column .image img {
+    border-radius: 50%;
+}
+.note-list::after {
+    clear: both;
+    content: '';
+    display: table;
+}
+#maincontent ul li {
+    list-style: none;
+    clear: both;
+}
+.purchaseorder-left-chat-column {
+    float: left;
+    width: 55%;
+}
+.purchaseorder-left-chat-column .image {
+    min-width: 10%;
+    float: left;
+}
+.purchaseorder-left-chat-column .purchaseorder-left-chat-column-chat {
+    float: left;
+    max-width: 75%;
+    margin-left: 5px;
+    background: none repeat scroll 0 0 #f5f5f5;
+ padding: 20px 20px;
+ border-radius: 5px 30px 10px 5px;
+ box-shadow: 0px 3px 3px #E3E4E6;
+}
+.purchaseorder-left-chat-column .image img {
+    border-radius: 50%;
+}
+
+.purchaseorder-comment-wrapper {
+    padding: 30px;
+    max-height: 500px;
+    overflow: auto;
+}
+
+.online {
+    background-color: #7fba00;
+    border-radius: 50%;
+    display: inline-block;
+    height: 3px;
+    padding: 4px;
+    width: 3px;
+}
+
+.offline {
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    display: inline-block;
+    height: 0;
+    padding: 4px;
+    width: 0;
+}
+.admin__field-label {
+    display: inline-block;
+    margin-right: 8px;
+}
+
+</style>
+<script src="http://cedcommerce.com/pub/static/frontend/Ced/ced/en_US/Ced_TeamMember/js/jquery-3.1.1.js"></script>
+<script type="text/javascript">
+require([
+         "jquery",
+         "mage/mage"
+     ], function(){
+
+	jQuery(document).ready(function(){
+	//create a new WebSocket object.
+	var wsUri = "ws://cedcommerce.com:9002/sellkoreagit/server.php"; 	
+	websocket = new WebSocket(wsUri); 
+	var vendorSid="<?php echo $block->getSenderToken()?>";
+	var vendorRid="<?php echo $block->getRecevierToken()?>";
+	
+	websocket.onopen = function(ev) { // connection is open 
+		//alert("Connected!"); //notify user
+		jQuery("#status").addClass("online");
+	}
+
+	jQuery('#send-btn').click(function(){ //use clicks message send button	
+		var mymessage = jQuery('#message').val(); //get message text
+		var mapdata="teammember"+"-"+"admin";
+		var date = new Date();
+        currentDate = date.getDate();     // Get current date
+        month       = date.getMonth() + 1; // current month
+        year        = date.getFullYear();
+        hour = date.getHours();
+        min  = date.getMinutes();
+        sec  = date.getSeconds();
+        var time_stamp= currentDate + "/" + month + "/" + year +","+hour+":"+min+":"+sec;
+		if(mymessage == ""){ //emtpy message?
+			alert("Enter Some message Please!");
+			return;
+		}
+		
+		//prepare json data
+		var msg = {
+		message: mymessage,
+		name: vendorSid,
+		data:mapdata,
+		time:time_stamp
+		};
+		//convert and send data to server
+		websocket.send(JSON.stringify(msg));
+	});
+	
+	//#### Message received from server?
+	websocket.onmessage = function(ev) {
+		var msg = JSON.parse(ev.data); //PHP sends Json data
+		var type = msg.type; //message type
+		var id=msg.name;//get vendor id from server
+		var umsg = msg.message; //message text
+		var time=msg.time;//get message time from
+		//list all client
+
+		if((type == 'usermsg') && (vendorSid==id)) 
+		{
+		
+		jQuery('.note-list').append("<li class='purchaseorder-left-chat-column'><div class='image'><img width='42' src='<?php echo $this->getViewFileUrl('Ced_TeamMember::images/logo.jpeg')?>'/></div><div class='purchaseorder-left-chat-column-chat'><span>"+umsg+"</span><br><span>"+time+"</span></div></li>");
+
+		}
+
+		if((type == 'usermsg') && ((vendorRid==id))) 
+		{
+		
+		jQuery('.note-list').append("<li class='purchaseorder-right-chat-column'><div class='image'><img width='42' src='<?php echo $this->getViewFileUrl('Ced_TeamMember::images/logo.jpeg')?>'/></div><div class='purchaseorder-right-chat-column-chat'><span>"+umsg+"</span><br><span>"+time+"</span></div></li>");
+
+		}
+
+		if(type == 'system')
+		{
+			//alert(umsg);
+		}
+		
+		jQuery('#message').val(''); //reset text
+	};
+	
+	websocket.onerror	= function(ev){
+	var notified="Error Occurred-"+ev.data;
+	//alert(notified);
+	}; 
+	websocket.onclose 	= function(ev){
+		// alert("Connection Closed")
+		jQuery("#status").removeClass("online");
+		jQuery("#status").addClass("offline");
+	}; 
+});
+
+	 });
+</script>

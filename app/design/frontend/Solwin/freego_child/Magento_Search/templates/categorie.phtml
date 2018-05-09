@@ -1,0 +1,58 @@
+<?php
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+// @codingStandardsIgnoreFile
+?>
+<?php
+/**
+ * Top menu for store
+ *
+ * @see \Magento\Theme\Block\Html\Topmenu
+ */
+?>
+<?php $columnsLimit = $block->getColumnsLimit() ? : 0; ?>
+<?php $_menu = $block->getHtml('level-top', 'submenu', $columnsLimit) ?>
+<?php
+$helper = $this->helper('Solwin\Cpanel\Helper\Data');
+$baseUrl = $helper->getBaseUrl();
+$curr_Url = $helper->getCurrentUrl();
+$ishome = $helper->getIsHomePage();
+$showhomelink = $helper->getEnablehomelink();
+?>
+<div class="nav-yaxa hidden-xs">
+    <span><?php echo __('Categories') ?></span>
+    <nav class="navigation-yaxa" role="navigation">
+        <ul >
+        <?php if (0) { ?>
+            <!-- <li class="level0 level-top <?php if ($ishome) { ?> active <?php } ?>">
+                <a class="level-top" href="<?php echo $baseUrl; ?>">
+                    HomeYaxa
+                </a>
+            </li> -->
+            <?php
+            $servidor= "172.19.0.231";
+            $usuario="admin";
+            $password="2s5d52wwdvb";
+            $bd="market";
+            $conexion = mysqli_connect($servidor,$usuario,$password,$bd);
+            $query="SELECT ccv.value,ccv1.value FROM yx_catalog_category_entity_int cci INNER JOIN yx_catalog_category_entity cce ON cce.entity_id = cci.row_id AND cce.level = 2 INNER JOIN yx_catalog_category_entity_varchar ccv ON ccv.row_id = cci.row_id AND ccv.attribute_id = 41 INNER JOIN yx_catalog_category_entity_varchar ccv1 ON ccv1.row_id = cci.row_id AND ccv1.attribute_id = 43 WHERE cci.attribute_id = 42 AND cci.value = 1 GROUP BY cci.row_id LIMIT 15;";
+            
+            if(!$conexion){
+                echo "Error conectando a la base de datos";
+                exit();
+            }
+            else{
+                $result= mysqli_query($conexion,$query);
+                while($linea = mysqli_fetch_array($result)){
+                    $valor=$linea[0];
+                    $valor1=$linea[1];
+                    echo"<FONT COLOR = 00000> <A CLASS = 'level10' HREF = https://market.yaxa.co/$valor1.html><BR> $valor </A> </FONT>";
+                }
+            }
+            ?> <?php } ?>
+        <?php /* @escapeNotVerified */ echo $_menu; ?>
+        </ul>
+    </nav>
+</div>

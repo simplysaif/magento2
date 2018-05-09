@@ -1,0 +1,58 @@
+<?php
+$po_data = $block->getPoData();
+$customer_data = $block->getCustomerData();
+?><section class="admin__page-section order-view-account-information">
+    <div class="admin__page-section-title">
+        <span class="title"><?php echo __("PO Information");?></span>
+    </div>
+    <div class="admin__page-section-content">
+        <div class="admin__page-section-item order-information">
+            <div class="admin__page-section-item-title">
+                <span class="title"><?php echo '# '.$po_data->getPoIncrementId(); ?></span>
+            </div>
+            <div class="admin__page-section-item-content">
+                <table class="admin__table-secondary order-information-table">
+                    <tbody>
+                        <tr>
+                            <th><?php echo __("PO Date");?></th>
+                            <td><?php echo $po_data->getCreatedAt();?></td>
+                        </tr>
+                        <tr>
+                            <th><?php echo __("PO Status");?></th>
+                            <td><span id="order_status"><?php echo $block->getStatus(); ?></span></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="admin__page-section-item order-account-information">
+            <div class="admin__page-section-item-title">
+                <span class="title"><?php echo __("Account Information");?></span>
+                <div class="actions"></div>
+            </div>
+            <div class="admin__page-section-item-content">
+                <table class="admin__table-secondary order-account-information-table">
+                    <tbody>
+                        <tr>
+                            <th><?php echo __("Customer Name");?></th>
+                            <td>
+                                <span><?php echo $customer_data->getName();?></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th><?php echo __("Email Id");?></th>
+                            <td><?php echo $customer_data->getEmail();?></td>
+
+                        </tr>
+                        <tr>
+                            <th><?php echo __("Customer Group");?></th>
+                            <td><?php echo $block->getCustomerGroup($customer_data->getId())?></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>

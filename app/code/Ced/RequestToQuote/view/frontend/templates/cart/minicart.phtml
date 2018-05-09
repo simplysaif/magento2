@@ -1,0 +1,238 @@
+<?php
+/**
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the End User License Agreement (EULA)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://cedcommerce.com/license-agreement.txt
+ *
+ * @category    Ced
+ * @package     Ced_RequestToQuote
+ * @author      CedCommerce Core Team <connect@cedcommerce.com>
+ * @copyright   Copyright CedCommerce (http://cedcommerce.com/)
+ * @license      http://cedcommerce.com/license-agreement.txt
+ */
+
+/** @var $block \Magento\Checkout\Block\Cart\Sidebar */
+$loaderurl = $block->getViewFileUrl('images/loader-2.gif');
+//print_r($block->getSessionaData());die('fdfdfd');
+?>
+<style type="text/css">
+    .minicart-wrapper .action.quotecart::before{
+        color: #8f8f8f;
+        content: "";
+        display: inline-block;
+        font-family: "luma-icons";
+        font-size: 22px;
+        font-weight: normal;
+        line-height: 28px;
+        margin: 0;
+        overflow: hidden;
+        text-align: center;
+        vertical-align: top;
+    }
+
+    .quotetext{
+        border: 0 none;
+        clip: rect(0px, 0px, 0px, 0px);
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        padding: 0;
+        position: absolute;
+        width: 1px;
+        }
+
+    .minicart-wrapper .action.showcart .counter.qty{
+        color: #fff;
+        line-height: 24px;
+        text-align: center;
+        white-space: normal;
+
+    }
+    .minicart-wrapper .action.quotecart .counter.qty {
+    background: #ff5501 none repeat scroll 0 0;
+    border-radius: 2px;
+    color: #fff;
+    display: inline-block;
+    height: 24px;
+    line-height: 24px;
+    margin: 3px 0 0;
+    min-width: 18px;
+    overflow: hidden;
+    padding: 0 3px;
+    text-align: center;
+    white-space: normal
+    }
+
+    .secondary {
+    margin-top: 10px;
+    text-align: center;
+    }
+
+    .minicart-items-wrapper {
+    max-height: 357px;
+    }
+</style>
+<?php
+	$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+	$session = $objectManager->create('\Magento\Customer\Model\Session');
+	$login = $session->isLoggedIn();
+	$custGroups = $block->getAllowedCustomerGroups();
+	if(empty($login)){
+	    $groupId =  '0';
+	}
+	else{
+	    $groupId =  $session->getCustomer()->getGroupId();
+	}
+?>
+<?php if (in_array($groupId, $custGroups)){ ?>
+    <?php if (count($block->getSessionaData())>0){ ?>
+    <div data-block="quotecart" class="minicart-wrapper">
+    <a class="action quotecart" href="<?php /* @escapeNotVerified */ echo $block->getQuoteCartUrl(); ?>"
+       data-bind="scope: 'quotecart_content'">
+        <span class="quotetext"><?php /* @escapeNotVerified */ echo __('My Quotes'); ?></span>
+         <span class="counter qty empty"
+              data-bind="css: { empty: !!getCartParam('summary_count') == false }, blockLoader: isLoading">
+            <span class="counter-label"><?php echo count($block->getSessionaData());?>
+            </span>
+        </span>
+    </a>
+        <div class="block block-minicart empty"
+             data-role="dropdownDialog"
+             data-mage-init='{"dropdownDialog":{
+                "appendTo":"[data-block=quotecart]",
+                "triggerTarget":".quotecart",
+                "timeout": "2000",
+                "closeOnMouseLeave": false,
+                "closeOnEscape": true,
+                "triggerClass":"active",
+                "parentClass":"active",
+                "buttons":[]}}'>
+            <div id="minicart-content-wrapper" data-bind="scope: 'quotecart_content'">
+            	<div class="custom_login">
+				     <div class="items-total">
+				          <span class="count"><?php echo count($block->getSessionaData())?>
+				             <span><?php echo __('items');?></span>
+				     </div>
+                     <div class="subtotal">
+    					<span class="label">
+      						<span><?php echo __('Quote Subtotal')?></span>
+    					</span>
+						<div class="amount price-container">
+	            			<span class="price-wrapper" data-bind="html: cart().subtotal_excl_tax"><span class="price"><?php echo $block->getQuoteSubtotal()?></span></span>
+						</div>
+					</div>
+                    <!-- <div class="actions">
+			            <div class="primary">
+			                <button id="top-cart-btn-checkout" type="button" class="action primary checkout" data-bind="attr: {title: $t('Go to Checkout')}" title="Go to Checkout">
+	                             <span>Go to Checkout</span>
+			                </button>
+			                <div data-bind="html: getCartParam('extra_actions')"></div>
+			            </div>
+        			</div> -->
+        			<div data-action="scroll" class="minicart-items-wrapper">
+        				<ol id="mini-cart" class="minicart-items" data-bind="foreach: { data: getCartParam('items'), as: 'item' }">            
+							
+							<?php foreach($block->getSessionaData() as $_quote):?>
+							<li class="item product product-item odd last" data-role="product-item">
+    							<div class="product">
+        							<a data-bind="attr: {href: product_url, title: product_name}" tabindex="-1" class="product-item-photo" href="http://192.168.0.198/Training/rfqmagento2/compete-track-tote.html" title="Compete Track Tote">
+										<span class="product-image-container" data-bind="style: {width: width + 'px'}" style="width: 75px;">
+										    <span class="product-image-wrapper" data-bind="style: {'padding-bottom': height/width*100 + '%'}" style="padding-bottom: 100%;">
+										        <img class="product-image-photo" data-bind="attr: {src: src, alt: alt}, style: {width: width + 'px', height: height + 'px'}" src="<?php echo $block->getImage($_quote['product_id'])?>" alt="<?php echo $block->getProduct($_quote['product_id'])->getName()?>" style="width: 75px; height: 75px;">
+										    </span>
+										</span>
+        							</a>
+        							<div class="product-item-details">
+            							<strong class="product-item-name">
+                							<a data-bind="attr: {href: product_url}, text: product_name" href="<?php echo $block->getProduct($_quote['product_id'])->getProductUrl()?>"><?php echo $block->getProduct($_quote['product_id'])->getName()?></a>
+            							</strong>
+            							<div class="product-item-pricing">
+											<div class="price-container">
+  												<span class="price-wrapper" data-bind="html: price">
+    												<span class="price-excluding-tax" data-label="Excl. Tax">
+            											<span class="minicart-price">
+            												<span class="price"><?php echo $block->getFormattedPrice($_quote['quote_price'])?></span>        
+            											</span>
+        											</span>
+												</span>
+											</div>
+                							<div class="details-qty qty">
+                    							<label class="label" data-bind="i18n: 'Qty', attr: {
+                           								for: 'cart-item-'+item_id+'-qty'}" for="cart-item-6-qty"><?php echo __('Qty')?></label>
+                    							<input size="4" class="item-qty cart-item-qty" maxlength="12" id="cart-item-6-qty" data-cart-item="6" data-item-qty="1" data-cart-item-id="24-WB02" value ="<?php echo $_quote['quote_qty'];?>" readonly type="number">
+                    							
+               					 		 </div>
+            						</div>
+						            <div class="product actions">
+						                <div class="secondary">
+						                    <a href="javascript:void(0)" value ="<?php echo $_quote['product_id']?>" class="action delete delete-item"  title="Remove item">
+						                       
+						                        <span data-bind="i18n: 'Remove'"><?php echo __('Remove');?></span>
+						                    </a>
+						                     <input type ="hidden" value ="<?php echo $_quote['product_id']?>">
+						                </div>
+						            </div>
+        					  </div>
+    					  </div>
+					  </li>
+					  <?php endforeach;?>
+        	      </ol>
+             </div>
+        			
+            <div class="actions">
+		        <div class="secondary">
+		            <a class="action viewcart" data-bind="attr: {href: shoppingCartUrl}" href="<?php echo $block->getQuoteCartUrl()?>">
+		                <span><span class="action primary"><?php echo __('View and Edit Quote')?></span></span>
+		            </a>
+		        </div>
+           </div>					
+       </div>
+     </div>
+ </div>        
+</div>
+    <?php } else{?>
+    <div data-block="quotecart" class="minicart-wrapper">
+	    <a class="action quotecart" href="<?php /* @escapeNotVerified */ echo $block->getQuoteCartUrl(); ?>"
+	       data-bind="scope: 'quotecart_content'">
+	    </a>
+		  <div class="block block-minicart empty"
+		             data-role="dropdownDialog"
+		             data-mage-init='{"dropdownDialog":{
+		                "appendTo":"[data-block=quotecart]",
+		                "triggerTarget":".quotecart",
+		                "timeout": "2000",
+		                "closeOnMouseLeave": false,
+		                "closeOnEscape": true,
+		                "triggerClass":"active",
+		                "parentClass":"active",
+		                "buttons":[]}}'>
+	                 <div id="minicart-content-wrapper" data-bind="scope: 'quotecart_content'">
+	                 <?php echo __('You Have No Item In Your Quote');?>
+	                 </div>
+             </div>
+       </div>
+  <?php }?>
+ <?php }?>
+  <div data-role="loader" class="loading-mask" style="display: none;" id ="loader"><div class="loader"><img src="<?php echo $loaderurl;?>" alt="Loading..."><p>Please wait...</p></div></div>
+  <script>
+
+  require(['jquery'], function($) {
+		$(".minicart-items-wrapper").on('click', '.delete-item',function(){	
+			jQuery('.loading-mask').show()
+			$.ajax({
+				type: "POST",
+				url: "<?php echo $this->getUrl('requesttoquote/quotes/delete')?>",
+				data: {productid: parseInt($(this).next().val())},
+				success: function(html){
+					 window.location.reload(); 
+				}
+			});
+	});
+ });
+
+  </script>

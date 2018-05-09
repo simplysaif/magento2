@@ -1,0 +1,187 @@
+<?php
+/**
+ * CedCommerce
+  *
+  * NOTICE OF LICENSE
+  *
+  * This source file is subject to the End User License Agreement (EULA)
+  * that is bundled with this package in the file LICENSE.txt.
+  * It is also available through the world-wide-web at this URL:
+  * http://cedcommerce.com/license-agreement.txt
+  *
+  * @category    Ced
+  * @package     Ced_CsRequestToQuote
+  * @author   	 CedCommerce Core Team <connect@cedcommerce.com >
+  * @copyright   Copyright CEDCOMMERCE (http://cedcommerce.com/)
+  * @license      http://cedcommerce.com/license-agreement.txt
+  */
+?>
+
+<div id="sales_order_view_tabs_order_info_content" style="" data-ui-id="sales-order-tabs-tab-content-order-info" aria-labelledby="sales_order_view_tabs_order_info" class="ui-tabs-panel ui-widget-content ui-corner-bottom" role="tabpanel" aria-expanded="true" aria-hidden="false">
+
+
+
+<div id="order-messages">
+    </div>
+<form id="edit_form" class="order-invoice-edit" method="post" action="<?php echo $block->getSaveUrl(); ?>" novalidate="novalidate">
+
+<?php echo $this->getChildHtml('order_account_info');?>
+<?php echo $this->getChildHtml('account_information');?>
+<?php echo $this->getChildHtml('item_information');?>
+<?php echo $this->getChildHtml('totals_information');?>
+</form>
+
+
+
+<script type="text/javascript">
+function setLocation(url)
+{
+    window.location.href=url;
+}
+</script>
+<script type="text/javascript">
+
+    require(['jquery'], function($) {
+
+        $("#edit-order-table").on('keyup', '.qty-field-po',function(){
+            var data =new Array();
+            var shipping = $('#shiping_and_handling_charges').val();
+            var qty = $(this).val();
+            var price = $(this).parents('tr').find('.po-price-updated').val();
+            $(this).parents('tr').find('.subtotal-po').val(qty*price);
+            $(this).parents('tr').find('.row-total').val(qty*price);
+            $(this).parents('table').find('input.common').each( function(index){
+                data.push($(this).val());
+            });
+            var sum=0;
+            for(var i=0;i<data.length;i+=3){
+                sum += parseFloat(data[i+2]);
+            }
+            var total = parseFloat(sum)+parseFloat(shipping);
+            $('#subtotalofpo').val(sum.toFixed(2));
+            $('#grandtotalofpo').val(total.toFixed(2));
+            $('#totaldue').val(total.toFixed(2));
+
+
+        });
+
+
+        $("#edit-order-table").on('keyup', '.po-price-updated',function(){
+            var data =new Array();
+            var shipping = $('#shiping_and_handling_charges').val();
+            var price = $(this).val();
+            var qty = $(this).parents('tr').find('.qty-field-po').val();
+            $(this).parents('tr').find('.subtotal-po').val(qty*price);
+            $(this).parents('tr').find('.row-total').val(qty*price);
+
+            $(this).parents('table').find('input.common').each( function(index){
+                data.push($(this).val());
+            });
+
+            var sum=0;
+            for(var i=0;i<data.length;i+=3){
+
+                sum += parseFloat(data[i+2]);
+            }
+
+            var total = parseFloat(sum)+parseFloat(shipping);
+            $('#subtotalofpo').val(sum.toFixed(2));
+            $('#grandtotalofpo').val(total.toFixed(2));
+            $('#totaldue').val(total.toFixed(2));
+        });
+
+        $(document).ready(function(){
+            $('.message_history').hide();
+            $('#showhistory').on('click', function(event) {
+
+                $('#message_history').toggle();
+            });
+        });
+
+        $(".numbersOnly").keydown(function (e) {
+        // Allow: backspace, delete, tab, escape, enter and .
+        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+             // Allow: Ctrl+A, Command+A
+            (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) || 
+             // Allow: home, end, left, right, down, up
+            (e.keyCode >= 35 && e.keyCode <= 40)) {
+                 // let it happen, don't do anything
+                 return;
+        }
+        // Ensure that it is a number and stop the keypress
+        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+            e.preventDefault();
+        }
+    });
+
+    });
+
+
+
+</script>
+<style>
+    .currency{
+        display: inline-block;
+        width: 90% !important;
+
+    }
+
+    .note-list .purchaseorder-left-chat-column {
+        background: #f3f3df none repeat scroll 0 0;
+        float: left;
+        margin-top: 10px;
+        padding: 5px;
+        width: 55%;
+    }
+    .note-list .purchaseorder-right-chat-column {
+        background: #d3d3d3 none repeat scroll 0 0;
+        float: right;
+        margin-top: 10px;
+        padding: 5px;
+        width: 55%;
+    }
+
+    .message_history {
+        max-height: 250px;
+        overflow-y: auto;
+        padding: 10px;
+    }
+
+    .admin__field-control textarea {
+        height: auto;
+        margin-bottom: 20px;
+    }
+
+    .note-list li {
+        list-style: outside none none;
+    }
+
+    .order-totals .order-subtotal-table input, .order-totals .order-subtotal-table select {
+        width: 90%;
+    }
+    .viewhistory {
+        margin-bottom: 20px;
+    }
+    .viewhistory > input {
+        background: #35302C none repeat scroll 0 0;
+        border: medium none;
+        color: #fff;
+        padding: 5px 20px;
+    }
+    .order-comments-history{
+        float: left;
+        width: 47%;
+    }
+    .order-totals{
+        float: right;
+        width: 47%;
+    }
+    .order-information{
+    float: left;
+    width: 47%;
+    }
+    .order-account-information{
+        float: right;
+        width: 47%;
+    }
+</style>

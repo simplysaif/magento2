@@ -1,0 +1,113 @@
+<?php
+
+/**
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the End User License Agreement (EULA)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://cedcommerce.com/license-agreement.txt
+ *
+ * @category    Ced
+ * @package     Ced_RequestToQuote
+ * @author      CedCommerce Core Team <connect@cedcommerce.com>
+ * @copyright   Copyright CedCommerce (http://cedcommerce.com/)
+ * @license      http://cedcommerce.com/license-agreement.txt
+ */
+
+?>
+<?php 
+
+
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$chatshistory = $objectManager->create('Ced\RequestToQuote\Model\Message')->getCollection()->addFieldToFilter('quote_id',$this->getRequest()->getParam('id'));
+
+if($chatshistory && count($chatshistory)>0 && !empty($chatshistory->getData())){
+?>    	
+<div class="order-history-block" id="history_form">
+    <div class="admin__field">
+        <label for="history_comment" class="admin__field-label">
+            <?php echo __('Chat History') ?>
+    	</label>
+    </div>
+    <div class="ui-wrapper order-items">
+	    <ul class="note-list">
+			<?php foreach ($chatshistory as $_chathistory){?>
+			<?php if($_chathistory->getSentBy()=='Admin'){ ?>
+		  		<li class="purchaseorder-left-chat-column">
+		  		<span class="purchaseorder-left-chat-column-date"><?php  echo __('Message') ?></span>
+		  		 <span class="separator">|</span>
+			      <span class="purchaseorder-left-chat-column-date"><?php  echo $this->formatDate($_chathistory
+			      		->getCreatedAt(), \IntlDateFormatter::MEDIUM) ?></span>
+			      <span class="purchaseorder-left-chat-column-date"><?php  echo $this->formatTime($_chathistory
+			      		->getCreatedAt(), \IntlDateFormatter::MEDIUM) ?></span>
+			      <span class="separator">|</span>
+	              <span class="purchaseorder-left-chat-column-sender">
+	                    <strong><?php //?></strong>
+	              </span>
+			      <?php if ($_chathistory->getMessage()){ ?>
+			          <div class="purchaseorder-left-chat-column-chat"><?php echo $this->escapeHtml($_chathistory->getMessage(), ['b', 'br', 'strong', 'i', 'u', 'a']) ?>
+			          	
+			          </div>
+			      <?php } ?>
+		  		</li>
+			<?php } else{  ?>
+				<li class="purchaseorder-right-chat-column" >
+			      <span class="purchaseorder-right-chat-column-date"><?php  echo $this->formatDate($_chathistory
+			      		->getCreatedAt(), \IntlDateFormatter::MEDIUM) ?></span>
+			      <span class="purchaseorder-right-chat-column-time"><?php  echo $this->formatTime($_chathistory
+			      		->getCreatedAt(), \IntlDateFormatter::MEDIUM) ?></span>
+			      <span class="separator">|</span>
+	              
+			      <?php if ($_chathistory->getMessage()){ ?>
+			          <div class="note-list-comment"><?php echo $this->escapeHtml($_chathistory->getMessage(), ['b', 'br', 'strong', 'i', 'u', 'a']) ?>
+				          	
+			         </div>
+			      <?php } ?>
+			  	</li>
+			
+			  	</li>
+			<?php } ?>
+			<?php } ?>
+		</ul>
+	</div>
+</div>
+<?php } ?>
+<style type="text/css">
+	.purchaseorder-left-column {
+    width: 50%;
+    float: left;
+	}
+	.purchaseorder-right-column {
+	    width: 50%;
+	    float: right;
+	}
+	.vendor-rma-right-column {
+	    width: 50%;
+	    float: right;
+	}
+	.purchaseorder-left-chat-column {
+	    width: 60%;
+	    float: left;
+	    background: none repeat scroll 0 0 #D3D3D3;
+	    margin-bottom: 7px;
+	    padding: 6px 13px;
+	}
+	.purchaseorder-right-chat-column {
+	    width: 60%;
+	    float: right;
+	    background: none repeat scroll 0 0 #F3F3DF;
+	    margin-bottom: 7px;
+	    padding: 6px 13px;
+	}
+	.vendor-rma-right-chat-column {
+	    width: 55%;
+	    float: right;
+	    background: none repeat scroll 0 0 #E9967A;
+	    margin-bottom: 7px;
+	    padding: 6px 13px;
+	}
+
+</style>

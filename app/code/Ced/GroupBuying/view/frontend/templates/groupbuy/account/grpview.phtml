@@ -1,0 +1,128 @@
+<?php 
+/**
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+*
+ * @category    design
+ * @package     base_default
+ * @author 		CedCommerce Core Team <coreteam@cedcommerce.com>
+ * @copyright   Copyright CEDCOMMERCE (http://cedcommerce.com/)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+ 
+$_gift=$block->getGift();
+$data=$block->getAllGuest();
+$guest=$data->getData();
+$product=$block->getImages();
+$des=$block->getImageUrl();
+$_helper=$block->gethelper();
+$allowed_guest = 5; 
+
+
+?>
+<style>
+ul{
+	list-style-type:none;
+}
+em{
+	color:red;
+}
+</style>
+<div class="page-title">
+	<h1><?php echo __('Group #'.$_gift->getId()) ?></h1>
+</div>
+<div>
+   <div class="product media" style="border: 2px solid;padding: 20px; 
+    width: 300px;resize: both;overflow: auto;">
+				<div class="gallery-placeholder" data-gallery-role="gallery-placeholder">
+					<a href="<?php echo $des; ?>">
+					<p class="product-image">
+						<?php
+						$store = $this->_objectManager->get('Magento\Store\Model\StoreManagerInterface')->getStore();
+						
+						$imageUrl = $store->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) . 'catalog/product' . $product->getImage();
+						
+						
+						$_img = '<img src="'.$imageUrl.'" />';
+							echo $_helper->productAttribute($product, $_img, 'image');
+						?>
+					</p>
+					</a>
+				</div>
+	</div>
+	 <div style="border: 2px solid;padding: 20px; width: 300px;resize: both;overflow: auto;">
+	                    <?php $cnt=1; ?>
+			            <table border="2">
+						    <tr>
+								<td><?php echo __('Sl No '); ?></td>
+								<td><?php echo __('Name '); ?></td>
+								<td><?php echo __('Contribution (QTY)'); ?></td>
+								<td><?php echo __('Group Status'); ?></td>
+							</tr>
+							<?php foreach($guest as $key => $value){ 
+
+							
+
+							?>
+
+								<tr>
+								    <td><?php echo $cnt ?></td>
+									<td><?php echo $value['guest_name']; ?></td>
+									<td><?php echo $value['quantity']; ?></td>
+									<?php if($value['request_approval']==1):?>
+									<td><?php echo "Leave"; ?></td>
+									<?php endif ?>
+									<?php if($value['request_approval']>=2):?>
+									<td><?php echo "Join"; ?></td>
+									<?php endif ?>
+									<?php if($value['request_approval']==0):?>
+									<td><?php echo ".In Progress.."; ?></td>
+									<?php endif ?>
+
+								</tr>
+							<?php $cnt++; ?>	
+
+							<?php } ?>
+
+							
+
+						</table>
+			</div>
+</div>	        
+
+
+
+<script type="text/x-magento-init">
+	{
+		"#myform": {
+			"validation": {}
+		}
+	}
+</script>
+<script>
+require([
+	'jquery',
+	'mage/mage'
+], function($){
+
+	var dataForm = $('#myform');
+	var ignore = null;
+
+	dataForm.mage('validation', {
+			ignore: ignore ? ':hidden:not(' + ignore + ')' : ':hidden'
+		}).find('input:text').attr('autocomplete', 'off');
+   
+
+});
+</script>
+
+
+
+
+

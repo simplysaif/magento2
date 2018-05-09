@@ -1,0 +1,55 @@
+<?php 
+        
+      $quote_data = $block->getQuoteData();
+      $customer_data = $block->getCustomer();
+      $address = $block->getCustomerAddress();
+      $quotes = $block->getItems();
+      $quoteData = $block->getQuoteData();
+      $products = $block->getProductId();
+      $vendor_id = $block->getVendorId();
+
+?>
+
+<section class="admin__page-section order-addresses">
+        
+        <div class="admin__page-section-title">
+            <span class="title"><?php echo __("Address And Shipping Information");?></span>
+        </div>
+        
+        <div class="admin__page-section-content">
+            <div class="admin__page-section-item order-billing-address">
+                <div class="admin__page-section-item-title">
+                    <span class="title"><?php echo __("Customer Address Information");?>
+                    </span>
+                </div>
+                <address class="admin__page-section-item-content"><?php echo $customer_data->getName();?><br>
+                        <?php echo $address['street'];?>
+                    <br>
+                        <?php echo $address['city'];?>, <?php echo $address['state'];?> - <?php echo $address['pincode'];?>  
+                    <br>
+                        <?php echo $address['country'];?> 
+                    <br>
+                        T: <?php echo $address['telephone'];?> 
+                </address>
+            </div>
+            <div class="admin__page-section-item order-shipping-address">
+                <div class="admin__page-section-item-title">
+                    <span class="title"><?php echo __('Shipping Information');?></span>
+                </div>
+                <div class="admin__page-section-item-content">
+                    <div class="shipping-description-wrapper">
+                        <div class="shipping-description-title">
+                            Shippment Method Selected:<?php echo $quoteData->getShipmentMethod();?>
+                        </div>
+                        <div class="shipping-description-content">
+                            Total Shipping Charges: 
+                            <?php 
+                            $objectManager = \Magento\Framework\App\ObjectManager::getInstance(); 
+                            $priceHelper = $objectManager->create('Magento\Framework\Pricing\Helper\Data');
+                            ?>                           
+                            <span class="price"><?php echo $priceHelper->currency($quoteData->getShippingAmount(), true, false);?></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>

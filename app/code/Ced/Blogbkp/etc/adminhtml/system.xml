@@ -1,0 +1,157 @@
+<?xml version="1.0"?>
+<!-- /**
+  * CedCommerce
+  *
+  * NOTICE OF LICENSE
+  *
+  * This source file is subject to the End User License Agreement (EULA)
+  * that is bundled with this package in the file LICENSE.txt.
+  * It is also available through the world-wide-web at this URL:
+  * http://cedcommerce.com/license-agreement.txt
+  *
+  * @category  Ced
+  * @package   Ced_Blog
+  * @author    CedCommerce Core Team <connect@cedcommerce.com >
+  * @copyright Copyright CEDCOMMERCE (http://cedcommerce.com/)
+  * @license      http://cedcommerce.com/license-agreement.txt
+  */ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../Magento/Config/etc/system_file.xsd">
+    <system>
+        <!--  <tab id="cedcommerce" translate="label" sortOrder="100">
+             <label><![CDATA[<div style="position: absolute; margin-left: -8px;"><img src="http://cedcommerce.com/media/cedcore/cedcommerce-extensions.png" alt="CedCommerce Extensions" border="0" /></div>&nbsp;]]></label>
+        </tab> -->
+        <section id="ced_blog" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+            <class>separator-top</class>
+            <label>Blog</label>
+            <tab>cedcommerce</tab>
+            <resource>Ced_Blog::config</resource>
+            
+            <!-- General Configuration -->
+            
+            <group id="general" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>General</label>
+				<field id="activation" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Blog Extension</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>      
+                <field id="post_activation" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Posts per Page</label>
+                </field>   
+                
+                <!-- Route for front end -->
+                       
+                <field id="route_activation" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Route to Blog</label>
+                </field>  
+                <!--  blog title-->
+                
+                <field id="blog_date_activation" translate="label" type="select" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Date Format</label>
+                	<source_model>Ced\Blog\Model\Config\Source\Dateoptions</source_model>
+                </field>   
+            
+                <!-- Show Bookmarks in Posts -->
+                
+                <field id="bookmarks_posts_activation" translate="label" type="select" sortOrder="7" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Show Bookmarks in Posts</label>
+                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field> 
+                
+                <!--  Recent Posts-->
+                
+                <field id="recent_post_activate" translate="label" type="text" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Recent Posts </label>
+                </field> 
+                
+                 <field id="post_text_limit" translate="label" type="text" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Post text show limit</label>
+                </field> 
+                
+                <!--Tags to Display  -->
+			
+                <field id="tag_menu_activate" translate="label" type="text" sortOrder="9" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Tags to Display</label>
+                </field> 
+            </group>   
+
+                <!-- comment types -->
+
+            <group id="comment" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Comments</label>
+                <field id="type" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Comments</label>
+                    <source_model>Ced\Blog\Model\Config\Source\CommentType</source_model>
+                </field>
+
+                <field id="number_of_comments" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Number of Comments</label>
+                    <depends>
+                        <field id="type">facebook</field>
+                    </depends>
+                </field>
+
+                <field id="fb_app_id" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Facebook Application ID</label>
+                    <depends>
+                        <field id="type">facebook</field>
+                    </depends>
+                    <comment><![CDATA[
+                        <a href="https://help.yahoo.com/kb/SLN18861.html" target="_blank">
+                            How do I get a Facebook Application ID?
+                        </a>
+                    ]]></comment>
+                </field>
+
+                <field id="disqus_forum_shortname" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label> Disqus Forum Shortname</label>
+                    <depends>
+                        <field id="type">disqus</field>
+                    </depends>
+                    <comment><![CDATA[
+                        <a href="https://help.disqus.com/customer/portal/articles/466208" target="_blank">
+                            What's a shortname?
+                        </a>
+                    ]]></comment>
+                </field>
+
+                <field id="enable_comments" translate="label" type="select" sortOrder="100" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Comments</label>
+                     <depends>
+                        <field id="type">default</field>
+                    </depends>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field> 
+                
+                <!--  Login Required to Comment-->
+                
+                <field id="enable_comments_login" translate="label" type="select" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Login Required to Comment</label>
+                    <depends>
+                        <field id="type">default</field>
+                    </depends>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>  
+                
+                <!-- Auto Approve Comments -->
+                
+                <field id="auto_approve_comments" translate="label" type="select" sortOrder="300" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Auto Approve Comments</label>
+                    <depends>
+                        <field id="type">default</field>
+                    </depends>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>        
+            </group>
+
+            <group id="rss_feed" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Rss Feed</label>
+                <field id="title" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Feed Title</label>
+                </field>
+                <field id="description" translate="label comment" type="textarea" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Feed Description</label>
+                </field>
+            </group>
+        </section>            
+    </system>
+</config>

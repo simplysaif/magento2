@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the End User License Agreement (EULA)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://cedcommerce.com/license-agreement.txt
+ *
+ * @category    Ced
+ * @package     Ced_Vbadges
+ * @author    CedCommerce Core Team <connect@cedcommerce.com>
+ * @copyright   Copyright CedCommerce (http://cedcommerce.com/)
+ * @license      http://cedcommerce.com/license-agreement.txt
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../Magento/Config/etc/system_file.xsd">
+    <system>
+        <tab id="csmarketplace" sortOrder="1">
+            <label>Marketplace</label>
+        </tab>
+        <section id="ced_csmarketplace" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+            <tab>csmarketplace</tab>
+            <label>Vendor Configuration</label>
+            <resource>Ced_CsMarketplace::ced_csmarketplace</resource>
+
+            <group id="vbadge" translate="label" type="text" sortOrder="9" showInDefault="1" showInWebsite="1" showInStore="0">
+            	<label>Vendor Badges</label>
+            	<field id="actives" translate="label comment" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Vendor Badge System</label>
+                    <source_model>Ced\Vbadges\Model\Source</source_model>
+                    <config_path>advanced/modules_disable_output/Ced_Vbadges</config_path>
+                </field>
+                <field id="active" translate="label comment" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Show From Menu</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+            </group>		
+        </section>
+    </system>
+</config>

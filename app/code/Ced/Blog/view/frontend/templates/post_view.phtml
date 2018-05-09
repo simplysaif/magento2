@@ -1,0 +1,211 @@
+<?php
+/**
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the End User License Agreement (EULA)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://cedcommerce.com/license-agreement.txt
+ *
+ * @category    Ced
+ * @package     Ced_Blog
+ * @author   	 CedCommerce Core Team <connect@cedcommerce.com >
+ * @copyright   Copyright CEDCOMMERCE (http://cedcommerce.com/)
+ * @license      http://cedcommerce.com/license-agreement.txt
+ */
+
+
+$comment=$block->getCommentInfo();
+$post_arr=$block->getItem();
+$id=$this->getRequest()->getParams();
+
+?>
+<div id ="category">
+    <?php $model = $this->_objectManager->create('Ced\Blog\Model\BlogPost');
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $redirect = $objectManager->get('\Magento\Framework\App\Response\Http');
+    if (empty($post_arr['url'])){
+        $newUrl = $this->getBaseUrl().''.'blog';
+        $redirect->setRedirect($newUrl);
+    }
+    $customUrl = $model->getPostUrl().$post_arr['url'];
+    ?>
+    <a href="<?php ?>"><h3 style="color:#f1703d">
+            <?php echo $post_arr['title'] ?>
+        </h3>
+    </a>
+</div>
+<?php
+$config_value=$this->scopeConfig->getValue('ced_blog/general/blog_date_activation', \Magento\Store\Model\ScopeInterface::SCOPE_STORE,0);
+if(isset($post_arr['publish_date'])):
+    ?>
+    <div id ="date">
+        <h4 class="date_time"><?php if($config_value==0){ $str=explode('-',$post_arr['publish_date']); if(isset($str)) echo $str[1].'-'.$str[2].'-'.$str[0].' '; $time=explode(' ',$post_arr['created_at']); echo $time[1];  }?></h4>
+        <h4 class="date_time"><?php if($config_value==1){ $str=explode('-',$post_arr['publish_date']); if(isset($str)) echo $str[2].'-'.$str[1].'-'.$str[0].' '; $time=explode(' ',$post_arr['created_at']); echo $time[1];  }?></h4>
+        <h4 class="date_time"><?php if($config_value==2){ $str=explode('-',$post_arr['publish_date']); if(isset($str)) echo $str[0].'-'.$str[1].'-'.$str[2].' '; $time=explode(' ',$post_arr['created_at']); echo $time[1];  }?></h4>
+        <?php $model = $this->_objectManager->create('Ced\Blog\Model\BlogPost'); ?>
+        <h4 class="poster_name"><span>Posted by:
+	<a href="<?php echo $model->getProfileUrl().$post_arr['author'].'?id='.$post_arr['id'] ?>" ></span>
+            <?php echo $post_arr['author']?></a></h4>
+        <div class="clear"></div>
+    </div>
+<?php endif;?>
+<div id ="post">
+    <!-- <a href="<?php echo $model->getPostUrl().$post_arr['url'] ?>" > -->
+    <img src="<?php echo $block->getUrl('pub/media/').$post_arr['featured_image']?>" width="432" height="364"/>
+    <!-- </a> -->
+    <p>
+        <?php echo $post_arr['post_text'] ?>
+    </p>
+</div>
+<?php
+$config_value_act=$this->scopeConfig->getValue('ced_blog/bookmarks/bookmarks_activation', \Magento\Store\Model\ScopeInterface::SCOPE_STORE,0);
+if($config_value_act):
+    ?>
+    <h4>Bookmarks with:</h4>
+    <div class="bookmark_container">
+        <a class="twitter" href="http://www.twitter.com/share?url=<?php echo $model->getPostUrl().$post_arr['url'];?>" ></a>
+        <a class="googleplus" href="https://plus.google.com/share?url=<?php echo $model->getPostUrl().$post_arr['url'];?>" ></a>
+        <a class="linkedin" href="https://www.linkedin.com/cws/share?url=<?php echo $model->getPostUrl().$post_arr['url'];?>" ></a>
+        <a class="digg" href="http://digg.com/submit?phase=2&url=<?php echo $model->getPostUrl().$post_arr['url'];?>" ></a>
+        <a class="stumbleupon" href="http://www.stumbleupon.com/submit?url=<?php echo $model->getPostUrl().$post_arr['url'];?>"></a>
+        <a class="delicio" href="http://del.icio.us/post/?url=<?php echo $model->getPostUrl().$post_arr['url'];?>"></a>
+        <a class="facebook" href="http://www.facebook.com/sharer.php?u=<?php echo $model->getPostUrl().$post_arr['url'];;?>"></a>
+        <a class="reddit" href="http://reddit.com/submit?url=<?php echo $model->getPostUrl().$post_arr['url']; ?>"></a>
+    </div>
+    <?php
+endif;?>
+<?php $tag_value=$this->scopeConfig->getValue('ced_blog/menu/tag_menu_activate', \Magento\Store\Model\ScopeInterface::SCOPE_STORE,0); ?>
+<div class = "post-view-tag">
+    <h4>Tags:</h4>
+
+    <?php
+    $tags=$post_arr['tags'];
+    $tag=explode(',',$tags);
+    foreach($tag as $val){ ?>
+        <a href="<?php echo $model->getTagUrl($val);?>">
+            <?php if(count($val)>1)
+                echo $val.',';
+            else
+                echo $val;
+            ?>
+        </a>
+    <?php }?>
+    <hr>
+</div>
+<?php
+$comment_type = $this->scopeConfig->getValue('ced_blog/comment/type', \Magento\Store\Model\ScopeInterface::SCOPE_STORE,0);
+if($comment_type=='default'):
+    ?>
+    <div class ="post-comment">
+        <h5 style="#f1703d">POST COMMENTS</h5>
+        <?php
+        if ($block->getPagerHtml()): ?>
+            <div class="order-products-toolbar toolbar bottom"><?php //echo $block->getPagerHtml(); // for display pager block which we create in block file.   ?></div>
+        <?php endif ?>
+        <?php foreach ($comment as $comment_data) {?>
+            <?php
+            echo $comment_data['description'].'&nbsp&nbsp&nbsp'.'<strong>posted by:'.$comment_data['user'].'</strong>';
+            echo "<br>" ?>
+        <?php }?>
+        <hr>
+    </div>
+<?php endif; ?>
+
+<div class="block comments">
+    <?php
+    if ($comment_type == 'facebook') {
+        $appId=$this->scopeConfig->getValue('ced_blog/comment/fb_app_id', \Magento\Store\Model\ScopeInterface::SCOPE_STORE,0);
+        $no_of_comment=$this->scopeConfig->getValue('ced_blog/comment/number_of_comments', \Magento\Store\Model\ScopeInterface::SCOPE_STORE,0);
+
+        ?>
+        <div id="fb-root"></div>
+        <script>(function(d, s, id) {
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) return;
+                js = d.createElement(s); js.id = id;
+                js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.5&appId=<?php echo $appId ?>";
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));</script>
+        <div class="post-comments clear">
+            <div class="fb-comments" data-href="<?php echo $model->getPostUrl().$post_arr['url'] ?>" data-width="100%" data-numposts="<?php
+            echo $no_of_comment ?>">
+            </div>
+        </div>
+    <?php }?>
+</div>
+<?php  if ($comment_type == 'disqus') {
+    $disqus_shortname=$this->scopeConfig->getValue('ced_blog/comment/disqus_forum_shortname', \Magento\Store\Model\ScopeInterface::SCOPE_STORE,0);
+    ?>
+    <div id="disqus_thread"></div>
+    <script>
+        var disqus_config = function () {
+            this.page.url = "<?php echo $model->getPostUrl().$post_arr['url'] ?>" ;
+            this.page.identifier = "<?php echo $post_arr['url'] ?>"
+        };
+
+        (function() {
+            var d = document, s = d.createElement('script');
+            s.src = '//<?php echo $disqus_shortname ?>.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+<?php } ?>
+
+<?php $comment_value=$this->scopeConfig->getValue('ced_blog/comment/enable_comments_login', \Magento\Store\Model\ScopeInterface::SCOPE_STORE,0);
+if ($comment_type=='default'){
+    ?>
+    <div class ="comment-form">
+        <form class="form contact" action="<?php /* @escapeNotVerified */ echo $block->getAction(); ?>"
+              id="contact-form"
+              method="post"
+              data-hasrequired="<?php /* @escapeNotVerified */ echo __('* Required Fields') ?>"
+              data-mage-init='{"validation":{}}'>
+            <fieldset class="fieldset">
+                <legend class="legend"><span><?php /* @escapeNotVerified */ echo __('Write Your Comment') ?></span></legend><brs/>
+                <div class="field name required">
+                    <label class="label" for="name"><span><?php /* @escapeNotVerified */ echo __('Name') ?></span></label>
+                    <div class="control">
+                        <input name="user" id="user" title="<?php /* @escapeNotVerified */ echo __('Name') ?>" class="input-text" type="text" data-validate="{required:true}"/>
+                    </div>
+                </div>
+                <div class="field email required">
+                    <label class="label" for="email"><span><?php /* @escapeNotVerified */ echo __('Email') ?></span></label>
+                    <div class="control">
+                        <input name="email" id="email"
+                               value = "<?php $customerSession = $this->_objectManager->create('Magento\Customer\Model\Session');
+                               if ($customerSession->isLoggedIn()) {
+                                   echo $customerSession->getCustomer()->getEmail();
+                               }
+                               ?>"
+                               title="<?php /* @escapeNotVerified */ echo __('Email') ?>"  class="input-text" type="email" data-validate="{required:true, 'validate-email':true}"
+                        "<?php  if ($customerSession->isLoggedIn()) echo 'readonly' ?>"
+                        />
+                    </div>
+                </div>
+                <div class="field description required">
+                    <label class="label" for="description"><span><?php /* @escapeNotVerified */ echo __('Comment') ?></span></label>
+                    <div class="control">
+                        <textarea name="description" id="review_field" cols="5" rows="3" data-validate="{required:true}"></textarea>
+                    </div>
+                </div>
+                <?php echo $block->getChildHtml('form.additional.info'); ?>
+            </fieldset>
+            <div class="actions-toolbar">
+                <div class="primary">
+                    <input type="hidden" name="hideit" id="hideit" value="" />
+                    <button type="submit" title="<?php /* @escapeNotVerified */ echo __('Submit') ?>" class="action submit primary">
+                        <span><?php /* @escapeNotVerified */ echo __('Submit') ?></span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+<?php }?>
+
+  
+
+

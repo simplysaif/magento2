@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2016 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="teammember-2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd" label="Customer My Account (All Pages)" design_abstraction="custom">
+    <head>
+    <css src="Ced_TeamMember::css/teammember.css" /> 
+    </head>
+    <body>
+        <attribute name="class" value="account"/>
+        <referenceContainer name="sidebar.main">
+            <block class="Magento\Framework\View\Element\Html\Links" name="teammember_account_navigation" before="-" template="Ced_TeamMember::account/navigation.phtml">
+                <block class="Magento\Framework\View\Element\Html\Link\Current" name="teammember-account-navigation-account-link">
+                    <arguments>
+                        <argument name="label" xsi:type="string" translate="true">Contact Vendors</argument>
+                        <argument name="path" xsi:type="string">teammember/vendor/</argument>
+                    </arguments>
+                </block>
+                <block class="Magento\Framework\View\Element\Html\Link\Current" name="teammember-account-navigation-account-edit-link">
+                    <arguments>
+                        <argument name="label" xsi:type="string" translate="true">Contact Customer</argument>
+                        <argument name="path" xsi:type="string">teammember/customer/</argument>
+                    </arguments>
+                </block>
+                <block class="Magento\Framework\View\Element\Html\Link\Current" name="teammember-account-navigation-address-link">
+                    <arguments>
+                        <argument name="label" xsi:type="string" translate="true">Chat With Admin</argument>
+                        <argument name="path" xsi:type="string">teammember/admin/chat</argument>
+                    </arguments>
+                </block>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

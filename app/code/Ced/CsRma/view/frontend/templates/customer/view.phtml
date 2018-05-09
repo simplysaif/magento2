@@ -1,0 +1,180 @@
+<!-- /**
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the End User License Agreement (EULA)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://cedcommerce.com/license-agreement.txt
+ *
+ * @category    Ced
+ * @package     Ced_CsRma
+ * @author      CedCommerce Core Team <connect@cedcommerce.com>
+ * @copyright   Copyright CedCommerce (http://cedcommerce.com/)
+ * @license      http://cedcommerce.com/license-agreement.txt
+ */ -->
+ <?php $_request = $block->getRmaData();
+    $_order = $block->getOrderData();
+    $_items = $block->getRmaItemsData()->getData();   
+    
+?>
+
+<fieldset class="fieldset" style="float: left; padding: 10px;">
+    <legend class="legend" id="customer-order-header"><span><?php  echo __('Order Information') ?></span></legend><br>
+    <div class="block-order-details-view" id="customer-order-body">
+        <div class="ced-rma-order-detail">
+            <strong class="ced-rma-title">
+                <span><?php echo __('Order Id') ?></span>
+            </strong>
+            <div class="ced-rma-content">
+               <span class="order-status"><?php echo "#".$_request->getOrderId() ?></span>
+                <span class="order-status"><?php /* @escapeNotVerified */ echo $_request->getStatus() ?></span>
+            </div>
+        </div>
+        <br/>
+        <div class="ced-rma-reason">
+            <strong class="ced-rma-title">
+                <span><?php /* @escapeNotVerified */ echo __('Reason') ?></span>
+            </strong>
+            <div class="ced-rma-content">
+                <select title="Package Condition For RMA " name="rma_pk_condition" id="rma_pk_condition" readonly="readonly">
+                    <option value="<?php echo $_request->getReason() ?>">
+                        <?php echo $_request->getReason() ?>
+                    </option>
+                </select>
+            </div>
+        </div>
+        <br/>
+        <div>
+            <strong class="ced-rma-pk">
+                <span><?php /* @escapeNotVerified */ echo __('Package Condition') ?></span>
+            </strong>
+            <div class="ced-rma-content">
+                <select title="Package Condition For RMA " name="rma_pk_condition" id="rma_pk_condition" readonly="readonly">
+                    <option value="<?php echo $_request->getPackageCondition() ?>">
+                         <?php echo $_request->getPackageCondition() ?>
+                    </option>
+                </select>
+            </div>
+        </div>
+        <br/>
+        <div>
+           <strong class="ced-rma-pk">
+                <span><?php /* @escapeNotVerified */ echo __('Resolution Requested') ?></span>
+            </strong>
+            <div class="ced-rma-content">
+                <select title="Package Condition For RMA " name="rma_pk_condition" id="rma_pk_condition" readonly="readonly">
+                    <option value="<?php echo $_request->getResolutionRequested() ?>">
+                        <?php echo $_request->getResolutionRequested() ?>
+                    </option>
+                </select>
+            </div>
+        </div>
+    </div>
+</fieldset>
+
+<fieldset class="fieldset" style="float: right;padding: 10px;">
+    <legend class="legend" id="customer-customer-header"><span><?php  echo __('Customer Information') ?></span></legend><br>
+    <div class="block-order-details-view" id="customer-customer-body">
+        <div class="ced-rma-customer-detail">
+            <strong class="ced-rma-title">
+                <span><?php /* @escapeNotVerified */ echo __('Customer Name') ?></span>
+            </strong>
+            <div class="ced-rma-content">
+                <?php echo $_request->getCustomerName() ?>
+            </div>
+        </div>
+        <div class="ced-rma-customer-detail">
+            <strong class="bced-rma-title">
+                <span><?php /* @escapeNotVerified */ echo __('Customer Email') ?></span>
+            </strong>
+             <div class="ced-rma-content">
+                <?php echo $_request->getCustomerEmail() ?>
+            </div>
+        </div>
+        <div class="ced-rma-customer-detail">
+            <strong class="ced-rma-title">
+                <span><?php /* @escapeNotVerified */ echo __('Customer Group') ?></span>
+            </strong>
+             <div class="ced-rma-content">
+                <?php  $group = $this->groupRepository->getById($_order->getCustomerGroupId())
+                           ->getCode() ?>
+                <p><?php echo $group ?></p>
+            </div>
+        </div>
+        <div class="ced-rma-customer-detail">
+            <strong class="ced-rma-title">
+                <span><?php /* @escapeNotVerified */ echo __('Customer Group') ?></span>
+            </strong>
+             <div class="ced-rma-content">
+               <address> <?php echo $block->rmaDataHelper->getAddress($_order) ?></address>
+            </div>
+        </div>
+    </div>
+</fieldset>
+
+<fieldset class="fieldset" style="padding: 10px;">
+    <legend class="legend" id="customer-item-header"><span><?php  echo __('Items Information') ?></span></legend><br>
+    <div class="table-wrapper order-items" id="customer-item-body">
+        <table class="data table table-order-items" id="my-orders-table" summary="<?php /* @escapeNotVerified */ echo __('Items Ordered') ?>">
+            <caption class="table-caption"><?php /* @escapeNotVerified */ echo __('Items Ordered') ?></caption>
+            <thead>
+                <tr>
+                    <th class="col name"><?php echo __('Product') ?></th>
+                    <th class="col price"><?php echo __('Price') ?></th>
+                    <th class="col rma-qty"><?php  echo __('RMA Qty') ?></th>
+                    <th class="col price"><?php  echo __('Row Total') ?></th>
+                </tr>
+            </thead>
+            <tbody>
+              <?php foreach ($_items as $key ) { ?>
+                <tr id="order-item-row-6">
+                    <td data-th="Product Name" class="col name">
+                        <strong class="product name product-item-name">
+                            <?php echo $key['item_name']?>
+                            <br><?php echo $key['sku']?>
+                        </strong>
+                    </td>
+                    <td data-th="Price" class="col price">
+                        <span class="price"><?php echo $key['price'] ?></span>
+                    </td>
+                    <td data-th="Rma Qty" class="col rma-qty">
+                        <span class="qty summary">
+                            <input type="text" value=" <?php echo $key['rma_qty']?>" name="rma-qty" class="input-text admin__control-text qty-input" readonly="readonly">
+                        </span>
+
+                    </td>
+                     <td data-th="Price" class="col price">
+                        <span class="price"><?php echo $key['row_total'] ?></span>
+                    </td>
+                </tr>
+                <?php }?>
+            </tbody>
+        </table>
+    </div>
+</fieldset>
+<?php if($_request->getStatus() != "Completed"):?>
+<?php if($this->rmaConfigHelper->getAllowChats()): ?>
+<fieldset class="fieldset" style="float: left;padding: 10px;">
+    <legend class="legend" id="customer-chat-header"><span><?php  echo __('New Chat') ?></span></legend><br>
+    <div class="block block-order-details-view" id="customer-chat-body">
+        <?php echo $block->getChildHtml('customer_rma_chat'); ?>
+    </div>
+</fieldset>
+
+<fieldset class="fieldset" style="float: right;padding: 10px;">
+    <legend class="legend" id="customer-chat-header"><span><?php  echo __('Chat History') ?></span></legend><br>
+    <div class="block block-order-details-view" id="customer-chat-body">
+        <?php echo $block->getChildHtml('customer_rma_history'); ?>
+    </div>
+</fieldset>
+<?php endif;?>
+<?php endif;?>
+<fieldset class="fieldset">
+    <legend class="legend" id="customer-chat-header"><span><?php  echo __('Activity Notification') ?></span></legend><br>
+    <div class="block block-order-details-view" id="customer-chat-body">
+       <?php echo $block->getChildHtml('customer_rma_notification'); ?>
+    </div>
+</fieldset>
+

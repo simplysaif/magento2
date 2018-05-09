@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!-- /**
+  * CedCommerce
+  *
+  * NOTICE OF LICENSE
+  *
+  * This source file is subject to the End User License Agreement (EULA)
+  * that is bundled with this package in the file LICENSE.txt.
+  * It is also available through the world-wide-web at this URL:
+  * http://cedcommerce.com/license-agreement.txt
+  *
+  * @category  Ced
+  * @package   Ced_Blog
+  * @author    CedCommerce Core Team <connect@cedcommerce.com >
+  * @copyright Copyright CEDCOMMERCE (http://cedcommerce.com/)
+  * @license   http://cedcommerce.com/license-agreement.txt
+  */ -->
+  
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../Backend/etc/menu.xsd">
+    <menu>
+        <add id="Ced_Blog::blog" title="Blog" module="Ced_Blog" sortOrder="30" resource="Ced_Blog::blog"/>
+
+        <add id="Ced_Blog::blog_post" title="Manage Blog Post" module="Ced_Blog" sortOrder="50" parent="Ced_Blog::blog" action="blog/post/index" resource="Ced_Blog::post"/>
+
+        <add id="Ced_Blog::blog_comment" title="Manage Blog Comments" module="Ced_Blog" sortOrder="70" parent="Ced_Blog::blog" action="blog/comment/index" resource="Ced_Blog::comment"/>
+
+    	<add id="Ced_Blog::blog_category" title=" Manage Blog Category" module="Ced_Blog" sortOrder="60" parent="Ced_Blog::blog" action="blog/category/index" resource="Ced_Blog::category"/>
+
+    	<add id="Ced_Blog::blog_settings" title="Blog Configuration" module="Ced_Blog" sortOrder="400" parent="Ced_Blog::blog" action="adminhtml/system_config/edit/section/ced_blog" resource="Ced_Blog::configuration"/>
+
+    	<add id="Ced_Blog::blog_users" title=" Manage Users" module="Ced_Blog" sortOrder="300" parent="Ced_Blog::blog" action="adminhtml/user" resource="Ced_Blog::category"/>
+    </menu>
+</config>
+
+
+

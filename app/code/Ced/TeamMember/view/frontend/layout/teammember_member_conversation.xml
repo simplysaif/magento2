@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  layout="2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+  	  <head>
+  	  	<!-- <css src="Ced_CustomerMembership::css/membership.css" />  -->
+              <script src="Ced_TeamMember::js/jquery-3.1.1.js"/>
+  	  </head>
+  	  <update handle="teammember_account"/>
+    <body>
+        <referenceContainer name="content">
+            <block class="Ced\TeamMember\Block\Member\Conversation" name="teammember-conversation" template="Ced_TeamMember::member/conversation.phtml" cacheable="false"/>
+        </referenceContainer>
+    </body>
+</page>

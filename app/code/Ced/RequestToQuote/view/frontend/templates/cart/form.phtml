@@ -1,0 +1,427 @@
+<?php
+/**
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the End User License Agreement (EULA)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://cedcommerce.com/license-agreement.txt
+ *
+ * @category    Ced
+ * @package     Ced_RequestToQuote
+ * @author      CedCommerce Core Team <connect@cedcommerce.com>
+ * @copyright   Copyright CedCommerce (http://cedcommerce.com/)
+ * @license      http://cedcommerce.com/license-agreement.txt
+ */
+
+/**  @var $block \Magento\Checkout\Block\Cart */
+?>
+<?php 
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$code =  $objectManager->create('\Magento\Store\Model\StoreManagerInterface')->getStore()->getCurrentCurrency()->getCode();
+$currency = $objectManager->create('Magento\Directory\Model\CurrencyFactory')->create()->load($code)->getCurrencySymbol();
+
+?>
+<?php $mergedCells = ($this->helper('Magento\Tax\Helper\Data')->displayCartBothPrices() ? 2 : 1); ?>
+<?php echo $block->getChildHtml('form_before') ?>
+
+<?php $rates = $block->getShippingRates();
+if(empty($rates)){
+    $rates = __('Sorry, no quotes are available at this moment for current zipcode.Try a different one.');
+}
+$address = $block->getAddress();?>
+<form action="<?php /* @escapeNotVerified */ echo $block->getUrl('requesttoquote/cart/updatePost') ?>"
+          method="post"
+          id="form-validate"
+          data-mage-init='{"validation":{}}'
+          class="form form-cart">
+    <?php echo $block->getBlockHtml('formkey'); ?>
+    <div class="cart table-wrapper<?php echo $mergedCells == 2 ? ' detailed' : ''; ?>">
+        <table id="shopping-cart-table"
+               class="cart items data table"
+               data-mage-init='{"shoppingCart":{"emptyCartButton": "action.clear",
+               "updateCartActionContainer": "#update_cart_action_container"}}'>
+            <caption role="heading" aria-level="2" class="table-caption"><?php /* @escapeNotVerified */ echo __('Shopping Cart Items') ?></caption>
+            <thead>
+                <tr>
+                    <th class="col item" scope="col"><span style="align-content: center;"><?php /* @escapeNotVerified */ echo __('Item') ?></span></th>
+                    <th class="col item" scope="col"><span style="align-content: center;"><?php /* @escapeNotVerified */ echo __('Product Name') ?></span></th>
+                    <th class="col price" scope="col"><span style="align-content: center;"><?php /* @escapeNotVerified */ echo __('Sku') ?></span></th>
+                    <th class="col price" scope="col"><span style="align-content: center;"><?php /* @escapeNotVerified */ echo __('Base Price') ?></span></th>
+                    <th class="col qty" scope="col"><span style="align-content: center;"><?php /* @escapeNotVerified */ echo __('Qty') ?></span></th>
+                    <th class="col subtotal" scope="col"><span style="align-content: center;"><?php /* @escapeNotVerified */ echo __('Subtotal') ?></span></th>
+                    <th class="col subtotal" scope="col"><span style="align-content: center;"><?php /* @escapeNotVerified */ echo __('Action') ?></span></th>
+                </tr>
+            </thead>
+            <?php $quoteData = $block->getItems();
+                    foreach ($quoteData as $value) { ?>
+                <tr>
+                    <td>
+                        <span><img width="100" height="100" src="<?php echo $value['image']?>" /></span>
+                    </td>
+                    <td>
+                        <span><a href="<?php echo $value['product_url'] ?>"><?php echo $value['productname'] ?></a></span>
+                    </td>
+                    <td>
+                        <span><?php echo $value['sku'] ?></span>
+                    </td>
+                    <td>
+                        <span><?php echo $value['price'] ?></span>
+                    </td>
+                    <td>
+                        <span><?php echo $value['quote_qty'] ?></span>
+                    </td>
+                    <td>
+                        <span><?php echo $value['quote_price'] ?></span>
+                    </td>
+                    <td>
+                        <a class="action continue" href="<?php echo $block->getUrl('requesttoquote/quotes/deletevalue', ['product_id'=>$value['product_id'],'qty'=>$value['quote_qty']]); ?>">
+                                   <span><?php /* @escapeNotVerified */ echo __('Delete Quote') ?></span></a>
+                    </td>
+
+                </tr>
+           <?php } ?>
+        </table>
+    </div>
+</form>
+<form method="post" action="<?php echo $block->getActionUrl(); ?>" id="addressForm">
+    <div class="cart-summary"><strong class="summary title"><?php echo $block->escapeHtml(__('Summary')); ?></strong>
+        <div id="block-shipping" class="block shipping" data-collapsible="true" role="tablist">
+            <div class="label">
+                <span id="block-shipping-heading" role="heading" >
+                    <?php echo $block->escapeHtml(__(' Customer Name')); ?> </span>
+            </div>
+            <div>
+                <input class="input-text" type="text" name="customername" value="<?php echo $block->getCustomerName(); ?>" readonly>
+            </div>
+
+
+            <div class="label">
+                <span id="block-shipping-heading" role="heading" >
+                    <?php echo $block->escapeHtml(__(' Customer Email')); ?> </span>
+            </div>
+            <div>
+                <input class="input-text" type="text" name="customeremail" value="<?php echo $block->getCustomerEmail(); ?>" readonly>
+                <input class="input-text" type="hidden" name="customerId" value="<?php echo $block->getId(); ?>">
+            </div>
+
+            <div class="field" >
+                <div class="label">
+                    <span id="block-shipping-heading" role="heading" >
+                        <?php echo $block->escapeHtml(__('Country')); ?> </span>
+                </div>
+                <div id="country">
+                    <?php echo $block->getCountryCollection(); ?>
+                </div>
+            </div>
+
+            <div class="label">
+                <span id="block-shipping-heading" role="heading" >
+                    <?php echo $block->escapeHtml(__('State')); ?> </span>
+            </div>
+
+
+            <div class="control" >
+                <?php 
+                $country = '';
+                $region = '';
+                $region_id = '';
+                if(isset($address)){ 
+                    $country = $address['country_id'];
+                    if(isset($address['region']))
+                        $region = $address['region'];
+                    if(isset($address['region_id']))
+                        $region_id = $address['region_id'];
+                    ?>
+                    <select id="region_id" name="region_id" title="<?php echo __('State/Province') ?>" class="validate-select" >
+                                <option value=""><?php echo __('Please select a region, state or province.') ?></option>
+                            </select>
+                        <input type="text" id="region" name="region" value=""  title="<?php echo __('State/Province') ?>" class="input-text"  aria-required="true"/>
+                <?php } else{ ?>
+                    <!-- <input class="input-text  required-entry" id="state" name="state" type="text" > -->
+                    <select id="region_id" name="region_id" title="<?php echo __('State/Province') ?>" class="validate-select" >
+                                <option value=""><?php echo __('Please select a region, state or province.') ?></option>
+                            </select>
+                        <input type="text" id="region" name="region" value=""  title="<?php echo __('State/Province') ?>" class="input-text" aria-required="true"/>
+                <?php } ?>
+            </div>
+
+            <div class="label">
+                <span id="block-shipping-heading" role="heading" >
+                    <?php echo $block->escapeHtml(__('City')); ?> </span>
+            </div>
+
+            <div class="control" >
+                <?php if(isset($address)){ ?>
+                    <input class="input-text  required-entry" id="city" name="city" type="text" value="<?php echo $address['city']; ?>">
+                <?php } else{ ?>
+                    <input class="input-text  required-entry" id="city" name="city" type="text">
+                <?php } ?>
+            </div>
+
+            <div class="label">
+                <span id="block-shipping-heading" role="heading" >
+                    <?php echo $block->escapeHtml(__('Address')); ?> </span>
+            </div>
+
+            <div class="control" >
+                <?php if(isset($address)){ ?>
+                    <input class="input-text  required-entry" id="street" name="street" type="text" value="<?php echo $address['street']; ?>">
+                    <input class="input-text" id="area" style="margin-top: 10px;" name="area" type="text" value="<?php echo $address['area']; ?>">
+                <?php } else{ ?>
+                    <input class="input-text  required-entry" id="street" name="street" type="text">
+                    <input class="input-text" id="area" style="margin-top: 10px;" name="area" type="text">
+
+                <?php } ?>
+
+            </div>
+
+            <div class="label">
+                <span id="block-shipping-heading" role="heading" >
+                    <?php echo $block->escapeHtml(__('Zip Code')); ?> </span>
+            </div>
+
+            <div class="control zipcode" >
+                <?php if(isset($address)){ ?>
+                    <input class="input-text validate-zip-international required-entry" id="zipcode" name="zipcode" type="text" value="<?php echo $address['postcode']; ?>">
+                <?php } else{ ?>
+                    <input class="input-text validate-zip-international required-entry" id="zipcode" name="zipcode" type="text">
+                <?php } ?>
+
+            </div>
+
+            <div class="label">
+                <span id="block-shipping-heading" role="heading" >
+                    <?php echo $block->escapeHtml(__('Contact Info')); ?> </span>
+            </div>
+
+            <div class="control" >
+                <?php if(isset($address)){ ?>
+                    <input class="required required-entry validate-number validate-zero-or-greater" name="telephone" type="text" value="<?php echo $address['telephone']; ?>">
+                <?php } else{ ?>
+                    <input class="required required-entry validate-number validate-zero-or-greater" name="telephone" type="text">
+                <?php } ?>
+
+            </div>
+
+            <div class="label">
+                <span id="block-shipping-heading" role="heading" >
+                    <?php echo $block->escapeHtml(__('Message or Comment')); ?> </span>
+            </div>
+
+            <div class="control" >
+                <?php if(isset($address['message'])){ ?>
+                    <input class="input-text" name="message" type="text" value="<?php echo $address['message']; ?>">
+                <?php } else{ ?>
+                    <input class="input-text" name="message" type="text">
+                <?php } ?>
+
+            </div>
+
+        </div>
+
+        <button type="submit" id="shiprate" value="getShiprate" class="action multicheckout common primary">
+            <span><?php echo $block->escapeHtml(__('Get Shipping Rates')); ?></span>
+        </button>
+
+        <fieldset class="fieldset rate"  style="">
+
+            <dl class="items methods">
+                <span >Main Website</span>
+                <?php foreach ($rates as $shipMethod){ ?>
+                <dd class="item-options  vendor-rates">
+                    <div class="field choice item">
+
+                        <input class="radio"  value="<?php echo $shipMethod['title'].'/'.$block->getToCurrency($shipMethod['price']); ?>" id="" name="method" type="radio">
+                        <label class="" >
+                            <span><?php echo $shipMethod['title']; ?></span>
+                            <input type="hidden" value="<?php echo $block->getToCurrency($shipMethod['price']); ?>">
+                        </label>
+                        <span> <?php echo $block->getToCurrency($shipMethod['price']); ?></span>
+                        <input id="shipprice" type="hidden" value="<?php echo $shipMethod['price']; ?>" name="<?php echo $shipMethod['title']; ?>">
+                    </div>
+
+                </dd>
+            </dl>
+            <?php } ?>
+        </fieldset>
+
+
+        <div id="cart-totals" class="cart-totals">
+
+            <div class="table-wrapper">
+                <table class="data table totals">
+                    <caption class="table-caption"><?php echo $block->escapeHtml(__('Totals')); ?></caption>
+                    <tbody>
+
+                    <tr class="totals sub">
+                        <th  class="mark" scope="row"><?php echo $block->escapeHtml(__('Subtotal')); ?></th>
+                        <td class="amount">
+                            <span class="price"><?php echo $block->getToCurrency($block->getSubtotal()); ?></span>
+                            <input type="hidden" id="totalamt" value="<?php echo $block->getSubtotal(); ?>" />
+                        </td>
+                    </tr>
+
+
+                    <tr class="grand totals">
+                        <th class="mark" scope="row">
+                            <strong ><?php echo $block->escapeHtml(__('Quote Total')); ?></strong>
+                        </th>
+                        <td  class="amount" data-th="Order Total">
+                            <strong><span><?php echo $block->getCurrencyCode(); ?></span><span id="finalprice"></span></strong>
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+
+        </div>
+        <ul class="checkout methods items checkout-methods-items">
+            <li class="item">    <button type="submit" value="submitQuote" data-role="proceed-to-checkout" title="Submit Quote Request " class="action primary checkout common">
+                    <span><?php echo $block->escapeHtml(__('Submit Quote')); ?></span>
+                </button>
+            </li>
+        </ul>
+    </div>
+
+</form>
+
+<script>
+        require([
+                 'jquery',
+                 'mage/mage'
+             ], function($){
+
+                 var dataForm = $('#addressForm');
+                 var ignore = null;
+                 dataForm.mage('validation', {
+                         ignore: ignore ? ':hidden:not(' + ignore + ')' : ':hidden'
+                     }).find('input:text').attr('autocomplete', 'off');
+             });
+</script>
+
+<script>
+
+    require(['jquery'], function($) {
+        var country_id = '<?php echo $country;?>';
+        var region = '<?php echo $region;?>';
+        var region_id = '<?php echo $region_id;?>';
+        //alert(region_id);
+        //$('#country option[value=country_id]').attr('selected','selected');
+        $('#country option[value="' + country_id + '"]').prop('selected', true);
+        $('#country').val(country_id);
+        $('#region_id').val(region_id);
+        $('#region').val(region);
+        setTimeout(function(){ 
+            //alert($('#region').val());
+            $('#region').prop("disabled", false);
+            $('#region').removeAttr("disabled");
+            $('#region_id').prop("disabled", false);
+            $('#region_id').removeAttr("disabled");
+            $('#region_id option[value="' + region_id + '"]').prop('selected', true);
+        }, 5000);
+
+        $( document ).ready(function() {
+        $('#region_id option[value="' + region_id + '"]').prop('selected', true);
+        $('#region').prop("disabled", false);
+        $('#region').removeAttr("disabled");
+        $('#region_id').prop("disabled", false);
+        $('#region_id').removeAttr("disabled");
+        });
+        
+        $('select').on('change', function (e) {
+           setTimeout(function(){ 
+                $('#region').prop("disabled", false);
+                $('#region').removeAttr("disabled");
+                $('#region_id').prop("disabled", false);
+                $('#region_id').removeAttr("disabled");
+            }, 500);
+            
+        });
+       
+        $("#addressForm").on('click', '.common',function(){
+
+            var v = $(this).val();
+            if(v == 'getShiprate'){
+                $('#addressForm').attr('action', "<?php echo $this->getUrl('requesttoquote/cart/getrate')?>" );
+            }
+            else{
+                $('#addressForm').attr('action', "<?php echo $this->getUrl('requesttoquote/quotes/submit')?>" );
+            }
+
+            });
+        /*$("#finalprice").html("<b>New value</b>");
+        var total = 'saasdqw';
+                    $("#finalprice").html("<b>"+total+"</b>");
+                
+        $('.rate').on('click', 'radio',function(){
+            alert("nwewe");
+            var total = 'saasdqw';
+                if (total>0) {
+                    alert
+                    $("#finalprice").html("<b></b>");
+                }
+        });
+*/
+            $(".radio").click(function(){
+                var radioValue = $("input[name='method']:checked").val();
+                 var rate = radioValue.split("<?php echo $currency?>"); 
+                 console.log(rate);           
+                if(rate[1]){
+                    var subtotal = $("#totalamt").val();
+                    var sum = parseFloat(subtotal)+parseFloat(rate[1]);
+                    $("#finalprice").html("<b>"+sum.toFixed(2)+"</b>");
+                    
+                }
+
+            });
+         
+
+    });
+
+</script>
+<script type="text/x-magento-init">
+    {
+        "#form-validate": {
+            "validation": {}
+        },
+        "#country": {
+            "regionUpdater": {
+                "optionalRegionAllowed": <?php /* @escapeNotVerified */ echo($block->getConfig('general/region/display_all') ? 'true' : 'false'); ?>,
+                "regionListId": "#region_id",
+                "regionInputId": "#region",
+                "postcodeId": "#zip",
+                "form": "#form-validate",
+                "regionJson": <?php /* @escapeNotVerified */ echo $this->helper('Magento\Directory\Helper\Data')->getRegionJson() ?>,
+                "defaultRegion": "<?php /* @escapeNotVerified */ echo $block->getRegionId() ?>",
+                "countriesWithOptionalZip": <?php /* @escapeNotVerified */ echo $this->helper('Magento\Directory\Helper\Data')->getCountriesWithOptionalZip(true) ?>
+            }
+        }
+    }
+</script>
+<style>
+.cart.table-wrapper .col.price, .order-items.table-wrapper .col.price, .cart.table-wrapper .col.qty, .order-items.table-wrapper .col.qty, .cart.table-wrapper .col.subtotal, .order-items.table-wrapper .col.subtotal, .cart.table-wrapper .col.msrp, .order-items.table-wrapper .col.msrp{
+    text-align: left;
+}
+.label{
+    font-weight: 600;
+    margin: 6px 0 8px;
+}
+.page-main .cart-summary .block{
+    margin: 0 0 16px;
+}
+.fieldset {
+    border: 0 none;
+    letter-spacing: -0.31em;
+    margin: 30px 0 40px;
+    padding: 0;
+}
+.methods > span{
+    font-weight: 700;
+}
+</style>
+

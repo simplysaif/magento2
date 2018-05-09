@@ -1,0 +1,30 @@
+<?php
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php
+/**
+ * @var $block \Magento\Catalog\Block\Adminhtml\Product\Edit
+ */
+?>
+<?php if ($block->getUseContainer()): ?>
+<form action="<?php /* @escapeNotVerified */ echo $block->getSaveUrl() ?>" method="post" enctype="multipart/form-data"
+      data-form="edit-product" data-product-id="<?php /* @escapeNotVerified */ echo $block->getProduct()->getId()?>">
+    <?php endif; ?>
+    <?php echo $block->getBlockHtml('formkey')?>
+    <input type="hidden" id="url_key" value="<?php /* @escapeNotVerified */ //echo $block->getProduct()->getUrlKey()?>"/>
+    <button type="submit" class="hidden"></button>
+</form>
+<script>
+    require([
+        "jquery",
+        "mage/mage",
+    ], $form.mage('validation', {validationUrl: '<?php /* @escapeNotVerified */ echo $block->getValidationUrl() ?>'});
+
+    });
+</script>

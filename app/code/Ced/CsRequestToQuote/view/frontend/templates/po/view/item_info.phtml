@@ -1,0 +1,115 @@
+<?php
+$poData = $block->getPoItemsData();
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$priceHelper = $objectManager->create('Magento\Framework\Pricing\Helper\Data');
+$quoteData = $block->getQuoteData();
+?>
+<section class="admin__page-section">
+    <div class="admin__page-section-title">
+        <span class="title">Items Invoiced</span>
+    </div>
+
+    <div id="invoice_item_container" class="admin__page-section-content">
+        <div class="admin__table-wrapper">
+            <table class="data-table admin__table-primary order-invoice-tables">
+                <thead>
+                    <tr class="headings">
+                        <th class="col-product"><span><?php echo __("Product ");?></span></th>
+                        <th class="col-price"><span><?php echo __("Original Price ");?></span></th>
+                        <th class="col-price"><span><?php echo __("Quoted Price ");?></span></th>
+                        <th class="col-price"><span><?php echo __("PO Price ");?></span></th>
+                        <th class="col-qty"><span><?php echo __("Quoted Qty ");?></span></th>
+                        <th class="col-qty"><span><?php echo __("PO Qty ");?></span></th>
+                        <th class="col-qty"><span><?php echo __("Remaining Qty ");?></span></th>
+                        <th class="col-total last"><span><?php echo __("PO Row Total");?></span></th>
+                    </tr>
+                </thead>
+                <tbody class="even">
+                    <?php 
+                    $subtotal = 0;
+                    foreach ($poData->getData() as $value) {
+                       
+                        $product_id = $value['product_id'];
+                        $product = $block->getProduct($product_id);
+                        $unitprice = $block->getProductIndividualPrice($product_id);
+                        $remainingQty = $block->getRemainingData($product_id);
+                        if(!$remainingQty)
+                            $remainingQty = 0;
+                        $subtotal += $value['po_price'];
+                        //print_r($value);die("dfkshf0");
+                        ?>
+                    <tr>
+                        <td class="col-product">
+                            <div id="order_item_1_title" class="product-title"><?php echo $product->getName();  ?>
+                                    </div>
+
+                            <div class="product-sku-block">
+                                <span>SKU:</span> <?php echo $product->getSku();  ?>    </div>
+
+                        </td>
+                        <td class="col-price">
+
+                            <div class="price-excl-tax">
+
+                                <span class="price"><span><?php echo $block->getCurrencyCode();  ?></span><span class="price"><?php echo $product->getPrice();  ?></span></span>
+                            </div>
+                        </td>
+                        <td class="col-price">
+
+                            <div class="price-excl-tax">
+
+                                <span class="price"><span><?php echo $block->getCurrencyCode();  ?></span><span class="price"><?php echo $value['quoted_price'];  ?></span></span>
+                            </div>
+                        </td>
+                        <td class="col-qty"><?php echo $block->getCurrencyCode();  ?><?php echo $value['po_price'];  ?></td>
+                        <td class="col-qty"><?php echo $value['quoted_qty'];  ?></td>
+                        <td class="col-qty"><?php echo $value['product_qty'];  ?></td>
+                        <td class="col-qty"><?php echo $remainingQty;  ?></td>
+                        <td class="col-qty"><?php echo $priceHelper->currency($value['po_price'], true, false);  ?></td>
+
+                    </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<section class="admin__page-section">
+    <div class="admin__page-section-title">
+        <span class="title">Order Total</span>
+    </div>
+    <div class="admin__page-section-content">
+        <div class="admin__page-section-item order-totals">
+            <div class="admin__page-section-item-title">
+                <span class="title">Order Totals</span>
+            </div>
+            <table class="data-table admin__table-secondary order-subtotal-table">
+                <tfoot>
+                    <tr class="col-0">
+                        <td class="">
+                            <strong><?php echo __('Grand Total');?></strong>
+                        </td>
+                        <td>
+                            <strong><span class="price"><?php echo $priceHelper->currency($block->getGrandTotal(), true, false);  ?></span></strong>
+                        </td>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    <tr class="col-0">
+                        <td class=""><?php echo __('Subtotal');?></td>
+                        <td>
+                            <span><span class="price"><?php echo $priceHelper->currency($subtotal, true, false);?></span></span>
+                        </td>
+                    </tr>
+                    <tr class="col-1">
+                        <td class=""><?php echo __('Shipping &amp; Handling');?></td>
+                            <td>
+                                <span><span class="price"><?php echo $priceHelper->currency($quoteData->getShippingAmount(), true, false);?></span></span>
+                            </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>

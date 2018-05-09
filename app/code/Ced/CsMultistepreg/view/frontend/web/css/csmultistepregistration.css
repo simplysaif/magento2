@@ -1,0 +1,172 @@
+/**
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the End User License Agreement (EULA)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://cedcommerce.com/license-agreement.txt
+ *
+ * @category    Ced
+ * @package     Ced_CsMultistepregistration
+ * @author      CedCommerce Core Team <connect@cedcommerce.com>
+ * @copyright   Copyright CedCommerce (http://cedcommerce.com/)
+ * @license      http://cedcommerce.com/license-agreement.txt
+ */
+ 
+ .hidden
+{
+    visibility: hidden;
+}
+#myProgress {
+  position: relative;
+  width: 100%;
+  background-color: #ddd;
+}
+
+#myBar {
+  position: absolute;
+  width: 0%;
+  height: 100%;
+  background-color: #4CAF50;
+}
+
+#label {
+  text-align: center;
+  line-height: 30px;
+  color: white;
+}
+.error {
+	color: red;
+}
+/*CED DeSigner CSS*/
+.register-panel.panel.panel-default > div#myProgress {
+    padding: 15px 0;
+    text-align: center;
+}
+.register-panel.panel.panel-default > div#myProgress li{
+    
+    display: inline-block;
+    margin-left: 35px;
+    margin-right: 35px;
+}
+.register-panel.panel.panel-default > div#myProgress li span{
+  border: 2px solid #fff;
+    height: 45px;
+    padding: 10px 12px;
+    width: 65px;
+    display: inline-block;
+    position: relative;
+}
+.register-panel.panel.panel-default > div#myProgress li span::after {
+    background: #fff none repeat scroll 0 0;
+    content: "";
+    height: 2px;
+    position: absolute;
+    width: 38px;
+    top: 20px;
+    right: -40px;
+}
+.register-panel.panel.panel-default > div#myProgress li span::before {
+    background: #fff none repeat scroll 0 0;
+    content: "";
+    height: 2px;
+    position: absolute;
+    width: 38px;
+    top: 20px;
+    left: -40px;
+}
+.register-panel.panel.panel-default > div#myProgress li:first-child span::before {
+    background: #fff none repeat scroll 0 0;
+    content: "";
+    height: 0px;
+    position: absolute;
+    width: 0px;
+    top: 0px;
+    right: 0px;
+}
+.register-panel.panel.panel-default > div#myProgress li:last-child span::after{
+    background: #fff none repeat scroll 0 0;
+    content: "";
+    height: 0px;
+    position: absolute;
+    width: 0px;
+    top: 0px;
+    left: 0px;
+}
+.register-panel #myProgress li.done span {
+    background-color: #95d195;
+}
+.register-panel #myProgress li.active span {
+    background-color: #7763da;
+}
+.register-panel.panel.panel-default > div#myProgress li span i {
+    color: #fff;
+    display: inline-block;
+    font-size: 20px;
+    display: none;
+}
+.register-panel #myProgress li.active span i.fa-pencil{
+  display: flex!important;
+  margin-left: 10px;
+}
+.register-panel #myProgress li.done span i.fa-check{
+  display: flex!important;
+  margin-bottom: 20px;
+  margin-left: 10px;
+}
+.register-panel.panel.panel-default {
+    padding: 0;
+}
+.panel.panel-default {
+    padding: 15px;
+}
+.select.multiselect {
+    height: 95px;
+}
+.buttons-set {
+    text-align: right;
+}
+.register-panel.panel.panel-default > div#myProgress li strong {
+  display: block;
+}
+
+
+
+@media only screen and (max-width: 767px){
+  /*.register-panel.panel.panel-default > div#myProgress li {
+    margin-left: 12px;
+    margin-right: 12px;
+}
+.register-panel.panel.panel-default > div#myProgress li span {
+    height: 35px;
+    width: 35px;
+}
+.register-panel.panel.panel-default > div#myProgress {
+    padding-top: 23px;
+}
+.register-panel #myProgress li.active span i.fa-pencil {
+    margin-left: 0px;
+}
+.register-panel.panel.panel-default > div#myProgress li span i {
+    font-size: 15px;
+}*/
+  .register-panel.panel.panel-default > div#myProgress li {
+      display: block;
+      margin-bottom: 10px;
+      margin-top: 10px;
+  }
+  .register-panel.panel.panel-default > div#myProgress li span::after {
+    background: #fff none repeat scroll 0 0;
+    top: 100%;
+    left: 50%;
+    content: "";
+    height: 17px;
+    position: absolute;
+    width: 2px;
+}
+.register-panel.panel.panel-default > div#myProgress li span::before {
+    display: none;
+}
+}

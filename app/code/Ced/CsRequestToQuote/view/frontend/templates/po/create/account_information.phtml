@@ -1,0 +1,49 @@
+<?php 
+        
+      $quote_data = $block->getQuoteData();
+      $customer_id = $block->getCustomerId();
+      $customer_email = $block->getCustomer($customer_id)->getEmail();
+      $customer_name = $block->getCustomer($customer_id)->getName(); 
+      $address = $block->getCustomerAddress();
+      $quotes = $block->getItems();
+      $quoteData = $block->getQuoteData();
+      $products = $block->getProductId();
+      $vendor_id = $block->getVendorId();
+
+?>
+<section id="order-form_account" class="admin__page-section order-account-information">
+    <input  name="quote_id" value="<?php echo $quote_data->getId();?>" type="hidden">       
+    <div class="admin__page-section-title head-account">
+        <span class="title"><?php echo __("Account Information");?></span>
+        <div class="actions"></div>
+    </div>
+    <div id="customer_account_fieds" class="admin__page-section-content">
+        <fieldset class="fieldset admin__fieldset " id="main">    
+            <div class="admin__field field field-group_id  required _required" data-ui-id="billing-address-fieldset-element-form-field-group-id">
+                <label class="admin__field-label" for="group_id" data-ui-id="billing-address-fieldset-element-select-order-account-group-id-label">   <span><?php echo __("Customer Group");?></span>
+                </label>
+                <div class="admin__field-control control">
+                    <input id="email" name="" data-ui-id="billing-address-fieldset-element-text-order-account-email" value="<?php echo $block->getCustomerGroup($customer_id);?>" class="validate-email admin__control-text input-text admin__control-text" type="text" disabled="disabled">
+                </div>
+            </div>
+
+            <div class="admin__field field field-email " data-ui-id="billing-address-fieldset-element-form-field-email" style="width: 35%;">
+                    
+                <label class="admin__field-label" for="email" data-ui-id="billing-address-fieldset-element-text-order-account-email-label"><span><?php echo __("Customer Email");?></span>
+                </label>
+                <div class="admin__field-control control">
+                    <input id="email" name="customer_email" data-ui-id="billing-address-fieldset-element-text-order-account-email" value="<?php echo $customer_email;?>" class="validate-email admin__control-text input-text admin__control-text" type="text" readonly>
+                </div>
+            </div>  
+
+            <div class="admin__field field field-email " data-ui-id="billing-address-fieldset-element-form-field-email" style="width: 35%;">
+                    
+                <label class="admin__field-label" for="email" data-ui-id="billing-address-fieldset-element-text-order-account-email-label"><span><?php echo __("Customer Name");?></span>
+                </label>
+                <div class="admin__field-control control">
+                    <input id="email" name="customer_email" data-ui-id="billing-address-fieldset-element-text-order-account-email" value="<?php echo $customer_name;?>" class="validate-email admin__control-text input-text admin__control-text" type="text" readonly>
+                </div>
+            </div>   
+        </fieldset>    
+    </div>
+</section>

@@ -1,0 +1,40 @@
+<?php 
+/**
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+*
+ * @category    design
+ * @package     base_default
+ * @author 		CedCommerce Core Team <coreteam@cedcommerce.com>
+ * @copyright   Copyright CEDCOMMERCE (http://cedcommerce.com/)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+	if($block->islogin()){	
+		$url = $this->getUrl('groupbuying/registry/index');
+		if($block->isgrouped()){		
+ ?>
+		<button style="padding-left: 4px;margin-left:10px;" id="create_group_gift" class="button btn-crt validation-passed" type="button" 
+			title="<?php echo __('Create Group Buying'); ?>" onclick="customFormsubmit2(this);return false;" value="<?php echo $url ?>">
+			<span>
+				<span><?php echo __('Create Group Buying'); ?></span>
+			</span>
+		</button>
+
+<?php } else { ?>	
+		<button style="padding-left: 4px;" id="create_group_gift" class="action primary tocart button btn-crt validation-passed" type="button" 
+			title="<?php echo __('Create Group Buying'); ?>" onclick="customFormsubmit(this);return false;" value="<?php echo $url ?>">
+			<span>
+				<span><?php echo __('Create Group Buying'); ?></span>
+			</span>
+		</button>
+
+<?php } 
+	} 		
+?>

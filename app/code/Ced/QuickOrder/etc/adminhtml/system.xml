@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+/**
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the End User License Agreement (EULA)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://cedcommerce.com/license-agreement.txt
+ *
+ * @category    Ced
+ * @package     Ced_QuickOrder
+ * @author 		CedCommerce Core Team <connect@cedcommerce.com>
+ * @copyright   Copyright CedCommerce (http://cedcommerce.com/)
+ * @license      http://cedcommerce.com/license-agreement.txt
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+<system>
+  <tab id="b2bextension_tab" translate="label" sortOrder="1000">
+            <label>B2B Extensions</label>
+        </tab>
+        <section id="b2bextension" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+             <tab>b2bextension_tab</tab>
+            <resource>Ced_QuickOrder::config</resource>
+            <label>B2B Extensions Configuration</label>
+            <group id="quickorder" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>B2B Quick Order</label>
+                 <field id="enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable B2B Quick Order List</label>
+                    <config_path>ced_quickorder/general/activation</config_path>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>    
+                </field>
+            </group>
+
+        </section>
+</system>
+</config>

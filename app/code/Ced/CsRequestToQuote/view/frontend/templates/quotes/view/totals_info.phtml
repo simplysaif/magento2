@@ -1,0 +1,11 @@
+<?php
+
+$quoteData = $block->getQuoteData();
+$quoteItems = $block->getItems();
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$chatshistory = $objectManager->create('Ced\RequestToQuote\Model\Message')->getCollection()->addFieldToFilter('quote_id',$block->getQuoteId());
+$total = 0;
+/*print_r($quoteData->getData());
+die("sdfdsklfhdsklf");*/
+
+?>

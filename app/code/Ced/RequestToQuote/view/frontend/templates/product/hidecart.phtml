@@ -1,0 +1,95 @@
+<?php
+/**
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the End User License Agreement (EULA)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://cedcommerce.com/license-agreement.txt
+ *
+ * @category    Ced
+ * @package     Ced_RequestToQuote
+ * @author      CedCommerce Core Team <connect@cedcommerce.com>
+ * @copyright   Copyright CedCommerce (http://cedcommerce.com/)
+ * @license      http://cedcommerce.com/license-agreement.txt
+ */
+
+use Magento\Framework\App\Action\Action;
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php
+/**
+ * Product list template
+ *
+ * @var $block \Magento\Catalog\Block\Product\ListProduct
+ */
+?>
+<style type="text/css">
+    .button {
+        -webkit-appearance: button;
+        -moz-appearance: button;
+        appearance: button;
+
+        text-decoration: none;
+        font-size: 15px;   
+    }
+
+    .sendquote{
+        margin-top: 10%;
+        color: #333333;
+    }
+
+</style>
+<?php
+
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$scopeconfig=$objectManager->create('\Magento\Framework\App\Config\ScopeConfigInterface');
+if($scopeconfig->getValue('requesttoquote_configuration/active/enable')){
+    $session = $objectManager->create('\Magento\Customer\Model\Session');
+    $login = $session->isLoggedIn();
+    $custGroups = $block->getAllowedCustomerGroups();
+    $hideGroups = $block->getAddtoCartCustomers();
+    $priceGroups = $block->getPriceHideCustomers();
+    if(empty($login)){
+        $groupId =  '0';
+    }
+    else{
+        $groupId =  $session->getCustomer()->getGroupId();
+    }
+    if (in_array($groupId, $hideGroups)){ 
+        $hideto = "yes";
+    }
+    else{
+        $hideto = "no";
+    }?>
+<input type="hidden" id="hideto" value="<?php echo $hideto; ?>"></ins>
+<script>
+    
+    require(['jquery'],
+        function ($) {
+
+            $(document).ready(function () {
+                /*var hidecart = '<?php //echo $hideto; ?>';
+                
+                if(hidecart == 'yes'){
+                    var id = $('.product-item-inner').find('input').attr('name', 'product').val();*/
+
+                    var hide = $('#hideto').val();
+                    if(hide == 'yes'){
+                        $('.product-item-inner').find('button').remove();
+                    }
+                
+                
+                alert(hideprice);
+                alert(hidecart);
+            });
+
+            $(".admin__field[data-index='ced_productcommission']").remove();
+        });
+    
+</script>
+<?php } ?>

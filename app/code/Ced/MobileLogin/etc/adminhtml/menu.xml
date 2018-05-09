@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the End User License Agreement (EULA)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://cedcommerce.com/license-agreement.txt
+ *
+ * @category    Ced
+ * @package     Ced_MobileLogin
+ * @author 		CedCommerce Core Team <connect@cedcommerce.com>
+ * @copyright   Copyright CedCommerce (http://cedcommerce.com/)
+ * @license      http://cedcommerce.com/license-agreement.txt
+ */
+-->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../Magento/Config/etc/system_file.xsd">
+    <menu>
+        <add id="Ced_MobileLogin::mobilelogin" title="Mobile Login" module="Ced_MobileLogin" sortOrder="20" resource="Ced_MobileLogin::mobilelogin"/>
+        <add id="Ced_MobileLogin::mobilelogin_setting" title="Manage Mobile Login" module="Ced_MobileLogin" action="adminhtml/system_config/edit/section/ced_mobilelogin" sortOrder="10" parent="Ced_MobileLogin::mobilelogin" resource="Ced_MobileLogin::mobilelogin_setting"/>
+    </menu>
+</config>

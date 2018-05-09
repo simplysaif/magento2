@@ -1,0 +1,33 @@
+<?php
+ /**
+  * CedCommerce
+  *
+  * NOTICE OF LICENSE
+  *
+  * This source file is subject to the End User License Agreement (EULA)
+  * that is bundled with this package in the file LICENSE.txt.
+  * It is also available through the world-wide-web at this URL:
+  * http://cedcommerce.com/license-agreement.txt
+  *
+  * @category    Ced
+  * @package     Ced_Blog
+  * @author     CedCommerce Core Team <connect@cedcommerce.com >
+  * @copyright   Copyright CEDCOMMERCE (http://cedcommerce.com/)
+  * @license      http://cedcommerce.com/license-agreement.txt
+  */
+ 
+ $_postCollection = $block->getPostCollection(); ?>
+<rss version="2.0">
+<channel>
+   <title><?php echo $block->escapeHtml($this->getTitle()) ?></title>
+   <link><?php echo $block->getUrl() ?></link>
+   <description><?php echo $block->escapeHtml($this->getDescription()) ?></description>
+   <?php foreach($_postCollection as $_post) { ?>
+   <item>
+      <title><?php echo $block->escapeHtml($_post->getTitle(), null, true) ?></title>
+      <link><?php echo $_post->getPostUrl() ?></link>
+      <description><![CDATA[<?php echo substr($block->stripTags($_post->getPostText()), 0, 255) ?>]]></description>
+   </item>
+   <?php } ?>
+</channel>
+</rss>

@@ -1,0 +1,46 @@
+<?php
+
+/**
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * You can check the licence at this URL: http://cedcommerce.com/license-agreement.txt
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ *
+ * @category    Ced
+ * @package     Ced_CsMarketplace
+ * @author 		CedCommerce Core Team <connect@cedcommerce.com>
+ * @copyright   Copyright CedCommerce (http://cedcommerce.com/)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+	<button style="line-height: 1.2em; float: right;" class="button btn btn-primary uptransform" onclick="window.location='<?php echo $this->getUrl('teammember/account/edit',array('_secure'=>true,'teammemberid'=>$this->session->getTeamMemberId())); ?>';" title="Edit" type="button">
+				<span>
+					<span><?php echo __('Edit') ?></span>
+				</span>
+			</button>
+	<div>
+		<div class="ced-teammember">
+			<p class="hello"><strong><?php  echo __('Hello, '.$block->escapeHtml($this->getTeamMember())) ?>!</strong></p>
+			<p><?php echo __('From your Dashboard you have the ability to view a snapshot of your total orders , total sales , total sales country wise, sales statistics (week, month or year wise) and recent activity on your associated products.') ?></p>
+		</div>
+	</div>
+	<div class="dash-view">
+		<?php  echo $block->getChildHtml('profile-info') ?>
+	</div>
+	
+<style type="text/css">
+	.back-link > a {
+    background: #337ab7 none repeat scroll 0 0;
+    border-radius: 4px;
+    color: #fff !important;
+    padding: 5px 13px;
+}
+.column.main {
+    background-color: #eeeeee;
+    padding: 10px !important;
+}
+</style>

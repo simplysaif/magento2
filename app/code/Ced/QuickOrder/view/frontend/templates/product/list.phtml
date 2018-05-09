@@ -1,0 +1,1128 @@
+<?php
+
+/**
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the End User License Agreement (EULA)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://cedcommerce.com/license-agreement.txt
+ *
+ * @category    Ced
+ * @package     Ced_QuickOrder
+ * @author 		CedCommerce Core Team <connect@cedcommerce.com>
+ * @copyright   Copyright CedCommerce (http://cedcommerce.com/)
+ * @license      http://cedcommerce.com/license-agreement.txt
+ */
+use Magento\Framework\App\Action\Action;
+$options = [];
+$optionss =[];
+$productsArray=[];
+$selectionArray = [];
+$optionsArray =[];
+$optionss =[];
+$_objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$currency = $_objectManager->get('Magento\Directory\Model\Currency');
+$checkoutdata = $_objectManager->create('Magento\Checkout\Model\Session');
+$pricewcurrency = $_objectManager->get('Magento\Framework\Pricing\Helper\Data');
+$category = $_objectManager->create('Magento\Catalog\Model\Category')
+->load($this->getLayer()->getCurrentCategory()->getId());
+$_productCollection = $block->getLoadedProductCollection();
+$_helper = $this->helper('Magento\Catalog\Helper\Output');
+$ob = $block->getLayout()->createBlock('Magento\Checkout\Block\Cart\AbstractCart');
+$store = $_objectManager->get('Magento\Store\Model\StoreManagerInterface')->getStore();
+$imageUrl = $store->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) . 'catalog/product';
+if($category->getUrlKey()=='b2bquickorder'){
+	if($_objectManager->create('Magento\Customer\Model\Session')->isLoggedIn()){
+	 $mergedCells = ($this->helper('Magento\Tax\Helper\Data')->displayCartBothPrices() ? 2 : 1); 
+	 echo $block->getChildHtml('form_before') ?>
+	<form action="<?php /* @escapeNotVerified */ echo $block->getUrl('quickorder/quickorder/bulkaddtocart') ?>"
+	          method="post"
+	          id="product_addtocart_form"
+	          data-mage-init='{"validation":{}}'
+	          class="form form-cart" novalidate ="novalidate">
+	    <?php echo $block->getBlockHtml('formkey'); ?>
+	    <div class="cart table-wrapper<?php echo $mergedCells == 2 ? ' detailed' : ''; ?>">
+	        <table id="shopping-cart-table"
+	               class="cart items data table ced-b2b-quick-order"
+	               data-mage-init='{"shoppingCart":{"emptyCartButton": "action.clear",
+	               "updateCartActionContainer": "#update_cart_action_container"}}'>
+	            <caption role="heading" aria-level="2" class="table-caption"><?php /* @escapeNotVerified */ echo __('Shopping Cart Items') ?></caption>
+	            <thead>
+	                <tr>
+	                   <th class="select-checkbox"></th>
+	                    <th class="col item" scope="col"><span><?php /* @escapeNotVerified */ echo __('Item') ?></span></th>
+	                    <th class="col price" scope="col"><span><?php /* @escapeNotVerified */ echo __('Price') ?></span></th>
+	                    <th class="col qty" scope="col"><span><?php /* @escapeNotVerified */ echo __('Qty') ?></span></th>
+	                    <th class="col subtotal" scope="col"><span><?php /* @escapeNotVerified */ echo __('Subtotal') ?></span></th>   
+	                </tr>
+	            </thead>
+              <tbody class="cart item">
+	            <?php foreach ($_productCollection as $_item): ?>
+	              <?php if($_item->getTypeId()=='simple' && $_item->getData('has_options'))continue;?>
+	                <?php if($_item->getTypeId()=='virtual' || $_item->getTypeId()=='simple'){?>
+	             
+	             	<tr class="item-info">
+		             	<td>
+			             	<div class="checkbox">
+			                    <label>
+			                      <input type="checkbox" name ="<?php echo $_item->getId()?>[checkbox]" value ="<?php echo $_item->getId()?>" id ="select-product-checkbox" class="select-product-checkbox"><span class="checkbox-material"><span class="check"></span></span>
+			                    </label>          
+		                  	</div> 
+		             	</td>
+		             	<td data-th="Item" class="col product-image">
+	             			<a href="<?php echo $_item->getProductUrl()?>" title="<?php echo $_item->getName();?>" tabindex="-1" class="product-item-photo">
+	            				<span class="product-image-container" style="width:165px;">
+    							      <span class="product-image-wrapper" style="padding-bottom: 100%;">
+    							      <?php  $productImage = $block->getImage($_item, 'category_page_grid');
+    							      echo $productImage->toHtml()?>			      
+                        			</span>
+								 </span>
+	                    	</a>
+	                  	<span class ="product-item-name"><?php echo $_item->getName()?></span>
+		              </td>
+		              <td class="col price" data-th="Price">
+	    					<span class="price-excluding-tax" data-label="Excl. Tax">
+	                    		<span class="cart-price">
+	                        		<?php echo $currency->getCurrencySymbol()?><span id = "<?php echo $_item->getId()?>price"class="price default-price"><?php echo $_item->getPrice()?></span>            
+	                        	</span>
+	            			</span>
+	            	 </td>
+	            	<td class="col product-main-qty" data-th="Qty">
+	            		<div class="field qty">
+	                		<label class="label" for="cart-161-qty">
+	                   			<span><?php echo __('Qty')?></span>
+	               			</label>
+		                	<div class="control qty">
+		                    			<input id="cart-<?php echo $_item->getId()?>-qty" name="<?php echo $_item->getId()?>[qty]" data-cart-item-id="<?php echo $_item->getName()?>" value="1" size="4" title="Qty" class="input-text qty qty-selection-product" maxlength="12" data-validate="{'validate-greater-than-zero':true}" data-role="cart-item-qty" type="number">
+		                	</div>
+	            		</div>
+	            	<div class ="error-message-qty"></div>
+	        	</td>
+	        	<td class="col subtotal" data-th="Subtotal">                    
+		    		<span class="price-excluding-tax" data-label="Excl. Tax">
+		                  <span class="cart-price">
+		                      <?php echo $currency->getCurrencySymbol()?><span id = "<?php echo $_item->getId()?>subtotalprice" class="price subtotal-price"><?php if($_item->getSpecialPrice())echo $_item->getSpecialPrice();else echo $_item->getPrice()?></span>
+		                   </span>
+		            </span>
+	       		</td>
+       		</tr>
+      <?php } elseif($_item->getTypeId()=='configurable'){?>
+	   <tr class="item-info">
+	   		<td>
+	   			<div class="checkbox">
+                    <label>
+                      <input type="checkbox" name ="<?php echo $_item->getId()?>[checkbox]" value ="<?php echo $_item->getId()?>" id ="select-product-checkbox" class="select-product-checkbox"><span class="checkbox-material"><span class="check"></span></span>
+                 	</label>
+	              </div>
+		   	</td>
+            <td data-th="Item" class="col product-image">
+             	<a href="<?php echo $_item->getProductUrl()?>" title="<?php echo $_item->getName();?>" tabindex="-1" class="product-item-photo">
+            		<span class="product-image-container" style="width:165px;">
+    					<span class="product-image-wrapper" style="padding-bottom: 100%;">
+	    					<?php  $productImage = $block->getImage($_item, 'category_page_grid');
+	    					echo $productImage->toHtml()?>
+	        				<!--  <img class="product-image-photo" src="<?php //echo $imageUrl.$_item->getThumbnail()?>" alt="<?php echo $_item->getName()?>" width="100" height="100"></span>-->
+						</span>
+                 </a>
+                 <span class ="product-item-name"><?php echo $_item->getName()?></span>		
+             </td>
+	         <td class="col price" data-th="Price">
+    			<span class="price-excluding-tax" data-label="Excl. Tax">
+                    <span class="cart-price">
+                        <?php echo $currency->getCurrencySymbol()?><span id = "<?php echo $_item->getId()?>price" class="configurableprice price default-price"><?php if($_item->getData('special_price'))echo $_item->getData('special_price');else echo $_item->getData('price')?></span>            
+                    </span>
+	            </span>				
+             </td>
+	          <td class="col product-main-qty" data-th="Qty">
+	          	<div class="field qty">
+                	<label class="label" for="cart-161-qty">
+                   		<span><?php echo __('Qty')?></span>
+               		</label>
+		             <div class="control qty">
+		                   <input id="cart-<?php echo $_item->getId()?>-qty" name="<?php echo $_item->getId()?>[qty]" data-cart-item-id="<?php echo $_item->getName()?>" value="1" size="4" title="Qty" class="input-text qty qty-selection-product-configurable" maxlength="12" data-validate="{'validate-greater-than-zero':true}" data-role="cart-item-qty" type="number">
+		              </div>
+	             </div>
+	              <input type ="hidden" value ="" class ="product-combination">
+	              <div class ="error-message-qty"></div>
+                			<?php $config = $_item->getTypeInstance(true);
+                			$childproduct = $config->getUsedProducts($_item);
+                			$attributedata =[];
+                			foreach($childproduct as $cproduct){
+	                                  foreach($config->getConfigurableAttributesAsArray($_item) as $attributes){
+									$productAttributeId =$attributes['attribute_id'];
+									$attributeValue = $cproduct->getData($attributes['attribute_code']);
+									$options[$_item->getId()]['index'][$cproduct->getId()][$productAttributeId] = $attributeValue;
+
+                                  }
+                			}
+                			 foreach($options[$_item->getId()]['index'] as $k => $v)
+                			{
+                				$opt =[];
+                				$str = '';
+                				foreach($v as $k1 => $v1)
+                				{
+                					$str .= $k1.'-'.$v1.',';
+                				}
+                				$str = rtrim($str,',');
+                				$optionss[$_item->getId()][$k] = $str;
+                				
+                			} ?>
+	                <div class='configurable-options-select'>
+	                			
+	                <?php foreach($config->getConfigurableAttributesAsArray($_item) as $attributes)
+	                {
+	                ?>
+	                    <dl>
+	                        <dt><label class="required"><em>*</em><?php echo $attributes["label"]; ?></label></dt>
+	                        <dd>
+	                            <div class="input-box">
+	                            <input type ="hidden" value="<?php echo $attributes['attribute_id'] ?>" class="hidden-attribute-id" name="hidden-attribute-id"/>
+	                                <select name="<?php echo $_item->getId()?>[super_attribute][<?php echo $attributes['attribute_id'] ?>]"   id="attribute<?php echo $attributes['attribute_id'] ?>" class="super-attribute-select">
+	                                     <option value=""><?php /* @escapeNotVerified */ echo __('Choose a selection...') ?></option>
+	                                    <?php
+	                                    foreach($attributes["values"] as $values)
+	                                    {    
+	                                    	?>
+	                                    	
+	                                       <?php echo "<option value=".$values['value_index'].">".$values["label"]."</option>";
+	                                    }
+	                                    ?>
+	                                </select>
+	                            </div>
+	                        </dd>
+	                    </dl>
+	                    <?php
+	                } ?> 			
+	            </div>
+	          </td>
+	        <td class="col subtotal" data-th="Subtotal">                    
+	    		<span class="price-excluding-tax" data-label="Excl. Tax">
+	                  <span class="cart-price">
+	                      <?php echo $currency->getCurrencySymbol()?><span id = "<?php echo $_item->getId()?>subtotalprice" class="price subtotal-price"><?php echo $_item->getPrice()?></span>
+	                   </span>
+	            </span>
+	       </td>     
+       </tr>
+    
+       <?php }
+       elseif($_item->getTypeId()=='grouped'){
+ 			  $assoprice  = 0; $assoqty =0;
+              $config = $_item->getTypeInstance(true);
+              $groupedcount=0;
+              $_associatedProducts = $config->getAssociatedProducts($_item);
+              foreach ($_associatedProducts as $_items):
+              $assoprice+= ($_items->getQty() * 1)*($_items->getPrice());
+              $groupedcount++;
+              endforeach;;
+           ?>
+          <?php $flag =true;?>
+ <?php foreach ($_associatedProducts as $_items): ?>
+	<tr class="item-info grouped-product-tr">
+	<?php if($flag==true)
+  {?>
+    <td rowspan ="<?php echo $groupedcount?>">
+	     <div class="checkbox">
+	         <label>
+	            <input type="checkbox" name ="<?php echo $_item->getId()?>[checkbox]" value ="<?php echo $_item->getId()?>" id ="select-product-checkbox" class="select-product-checkbox"><span class="checkbox-material"><span class="check"></span></span>
+	         </label>         
+	     </div>
+    </td>
+    <td data-th="Item" class="col product-image" rowspan ="<?php echo $groupedcount?>">
+      <a href="<?php echo $_item->getProductUrl()?>" title="<?php echo $_item->getName();?>" tabindex="-1" class="product-item-photo">
+        <span class="product-image-container" style="width:165px;">
+			<span class="product-image-wrapper" style="padding-bottom: 100%;">
+  			<?php  $productImage = $block->getImage($_item, 'category_page_grid');
+    		echo $productImage->toHtml()?>
+            </span>
+	    </span>
+      </a>
+       <span class ="product-item-name"><?php echo $_item->getName()?></span>
+    </td>
+	  <?php  } ?>
+        <td data-th="<?php echo $block->escapeHtml(__('Product Name')); ?>" class="col price"> 
+          <strong class="product-item-name"><?php echo $block->escapeHtml($_items->getName()) ?></strong>
+          <?php if ($block->getCanShowProductPrice($_item)): ?>
+            <?php if ($block->getCanShowProductPrice($_items)): ?>
+              <?php /* @escapeNotVerified */ echo $block->getProductPrice($_items) ?>
+            <?php endif; ?>
+          <?php endif; ?>
+           </td>
+        <?php //endforeach;?>
+      <?php //foreach ($_associatedProducts as $_items):?>
+        <?php if ($_item->isSaleable()): ?>
+          <?php if ($_item->isSaleable()) : ?>
+          <td data-th="<?php echo $block->escapeHtml(__('Qty')); ?>" class="col product-main-qty">
+          <div class="field qty">
+            <label class="label" for="cart-161-qty">
+                <span><?php echo __('Qty')?></span>
+            </label>
+              <input class="group_child" type ="hidden"  id = "price-grouped-associated-<?php echo $_item->getId()?>-<?php echo $_items->getId()?>" value ="<?php echo $_items->getPrice()?>"/>
+              <div class="control qty">
+	              <input type="hidden" name= "qty-hidden-grouped-childs" class ="hidden-group-items-id" value ="<?php echo $_item->getId()?>"/>
+	              <input type="number" name="<?php echo $_item->getId()?>[super_group][<?php /* @escapeNotVerified */ echo $_items->getId() ?>]"
+	                               data-selector="super_group[<?php /* @escapeNotVerified */ echo $_items->getId() ?>]"
+	                               maxlength="12"
+	                               value="<?php /* @escapeNotVerified */ echo $_items->getQty() * 1 ? $_items->getQty():1 ?>"
+	                               title="<?php /* @escapeNotVerified */ echo __('Qty') ?>"
+	                               class="input-text qty group_child" id ="grouped-associated-<?php echo$_item->getId()?>-<?php echo $_items->getId()?>"/>             
+	          	<input type="hidden" name= "qty-hidden-grouped-child" class ="hidden-group-item-id" value ="<?php echo $_items->getId()?>"/>                                           
+          	</div>
+          </div>
+          <div class ="error-message-qty-grouped-<?php echo $_items->getId()?>-<?php echo $_item->getId()?>"></div>
+          <div class ="error-message-grouped-<?php echo $_items->getId()?>-<?php echo $_item->getId()?> error-message-title"></div>
+          <?php else: ?>
+          <div class="stock unavailable" title="<?php /* @escapeNotVerified */ echo __('Availability') ?>">
+              <span><?php /* @escapeNotVerified */ echo __('Out of stock') ?></span>
+          </div>
+          <?php endif; ?>
+          <?php endif; ?>
+          <?php if ($block->getCanShowProductPrice($_item)
+          && $block->getCanShowProductPrice($_items)
+          && trim($block->getProductPriceHtml(
+            $_item,
+              \Magento\Catalog\Pricing\Price\TierPrice::PRICE_CODE
+          ))): ?>
+                
+        <?php endif; ?>
+        </td>
+      <?php //endforeach; ?>
+    
+    <?php if ($flag==true){?>
+    <td class="col subtotal" data-th="Subtotal" rowspan ="<?php echo $groupedcount?>">                    
+    	<span class="price-excluding-tax" data-label="Excl. Tax">
+        <span class="cart-price">
+          <?php echo $currency->getCurrencySymbol()?><span id = "<?php echo $_item->getId()?>subtotalprice" class="price subtotal_price grouped_subtotal_price"><?php echo $assoprice ?></span>
+        </span>
+      </span>
+    </td>
+    <?php $flag=false;}?>
+  </tr>
+   <?php endforeach;?>
+
+	            <?php 
+	            }elseif($_item->getTypeId()=='downloadable'){?>
+	            
+	<tr class="item-info">
+	    <td>
+	    	<div class="checkbox">
+	    		 <label>
+                      <input type="checkbox" name ="<?php echo $_item->getId()?>[checkbox]" value ="<?php echo $_item->getId()?>" id ="select-product-checkbox" class="select-product-checkbox"><span class="checkbox-material"><span class="check"></span></span>
+                 </label>     
+            </div>
+	    </td>
+	    <td data-th="Item" class="col product-image">
+	       <a href="<?php echo $_item->getProductUrl()?>" title="<?php echo $_item->getName();?>" tabindex="-1" class="product-item-photo">
+	            <span class="product-image-container" style="width:165px;">
+    				<span class="product-image-wrapper" style="padding-bottom: 100%;">
+        			<?php  $productImage = $block->getImage($_item, 'category_page_grid');
+    				echo $productImage->toHtml()?>
+					</span>
+				</span>
+            </a>
+            <span class ="product-item-name"><?php echo $_item->getName()?></span>      			
+	     </td>
+	     <td class="col price" data-th="Price">
+    		<span class="price-excluding-tax" data-label="Excl. Tax">
+                 <span class="cart-price">
+                        <?php echo $currency->getCurrencySymbol()?><span class="price default-price"><?php if($_item->getSpecialPrice())echo $_item->getSpecialPrice();else echo $_item->getPrice()?></span>            
+                  </span>
+           </span>			
+         </td>
+         <td class="col product-main-qty" data-th="Qty">
+            	<div class="field qty">
+                	<label class="label" for="cart-161-qty">
+                   		<span><?php echo __('Qty')?></span>
+               		</label>
+                <div class="control product-main-qty">
+                    <input readonly ="readonly" id="cart-<?php echo $_item->getId()?>-qty" name="<?php echo $_item->getId()?>[qty]" data-cart-item-id="<?php echo $_item->getName()?>" value="1" size="4" title="Qty" class="input-text qty qty-selection-product" maxlength="12" data-validate="{'validate-greater-than-zero':true}" data-role="cart-item-qty" type="number">
+                </div>
+            </div>
+        	<div class ="error-message-qty"></div>
+	            	<?php $config = $_item->getTypeInstance(true);
+                  $_haslinks = $config->hasLinks($_item);
+                  $_linksPurchasedSeparately = $_item->getLinksPurchasedSeparately();
+                  $_links = $config->getLinks($_item);
+                  $_isRequired = $config->getLinkSelectionRequired($_item);
+                   if ($_item->isSaleable() && $_haslinks):?>
+                      <?php $_linksLength = 0; ?>
+                      <div class="field downloads<?php if ($_isRequired) echo ' required' ?><?php if (!$_linksPurchasedSeparately) echo ' downloads-no-separately' ?>">
+                          <div class="control" id="downloadable-links-list"
+                               data-mage-init='{"downloadable":{
+                                   "linkElement":"input:checkbox[value]",
+                                   "allElements":"#links_all",
+                                   "config":<?php /* @escapeNotVerified */ echo $block->getJsonConfig() ?>}
+                               }'
+                               data-container-for="downloadable-links">
+                              <?php foreach ($_links as $_link): ?>
+                                  <?php $_linksLength++;?>
+                                  <div class="field choice" data-role="link">
+                                      <?php if ($_linksPurchasedSeparately): ?>
+                                      <?php $store = $_item->getStore();?>
+                                          <input type="checkbox"
+                                                 <?php if ($_isRequired): ?> class="validate"<?php endif; ?>
+                                                 name="<?php echo $_item->getId()?>[links][]"
+                                                 id="links_<?php /* @escapeNotVerified */ echo $_link->getId() ?>"
+                                                 value="<?php /* @escapeNotVerified */ echo $_link->getId(); ?>" <?php /* @escapeNotVerified */ echo $block->getLinkCheckedValue($_link); ?> class ="validate"/>
+                                                 
+                                      <?php endif; ?>
+                                      <label class="label" for="links_<?php /* @escapeNotVerified */ echo $_link->getId() ?>">
+                                          <span><?php echo $block->escapeHtml($_link->getTitle()); ?></span>
+                                          <?php if ($_link->getSampleFile() || $_link->getSampleUrl()): ?>
+                                              <a class="sample link"
+                                                 href="<?php /* @escapeNotVerified */ echo $store->getUrl('downloadable/download/linkSample', ['link_id' => $_link->getId()]) ?>" target="_blank">
+                                                  <?php /* @escapeNotVerified */ echo __('sample') ?>
+                                              </a>
+                                          <?php endif; ?>
+                                          <?php if ($_linksPurchasedSeparately): ?>
+                                              <?php /* @escapeNotVerified */ echo $block->getLinkPrice($_link); ?>
+                                          <?php endif; ?>
+                                      </label>
+                                  </div>
+                              <?php endforeach; ?>
+                              <?php if ($_linksPurchasedSeparately && $_linksLength > 1): ?>         
+                              <?php endif; ?>
+                          </div>
+                          <?php if ($_isRequired): ?>
+                              <span id="links-advice-container"></span>
+                          <?php endif;?>
+                      </div>			
+          </td>
+           <?php endif; ?>
+        <td class="col subtotal" data-th="Subtotal">                    
+    		<span class="price-excluding-tax" data-label="Excl. Tax">
+                <span class="cart-price">
+                    <?php echo $currency->getCurrencySymbol()?><span id = "<?php echo $_item->getId()?>subtotalprice"class="price subtotal-price"><?php echo $_item->getPrice()?></span>
+                 </span>
+            </span>
+       </td>         	
+    </tr>
+	  <?php }
+      elseif($_item->getTypeId()=='bundle'){
+$selectionCollection = $_item->getTypeInstance(true)
+->getSelectionsCollection(
+		$_item->getTypeInstance(true)->getOptionsIds($_item),
+		$_item
+);
+$i =0;
+$bdefaultprice = 0;
+
+foreach ($selectionCollection as$key=>$proselection) {
+	$selectionArray['id'] = $proselection->getId();
+	$selectionArray['selection_product_name'] = $proselection->getName();
+	$selectionArray['selection_product_quantity'] = $proselection->getSelectionQty();
+	$selectionArray['selection_product_price'] = $proselection->getPrice();
+	$selectionArray['selection_product_id'] = $proselection->getProductId();
+	$selectionArray['selection_id'] = $proselection->getSelectionId();
+	$selectionArray['is_saleable'] = $proselection->getIsSalable();
+	$selectionArray['selection_can_change_qty'] = $proselection->getSelectionCanChangeQty();
+	$selectionArray['selection_qty'] = $proselection->getSelectionQty();
+	$selectionArray['is_default']= $proselection->getIsDefault();
+	if($proselection->getIsDefault()){
+		
+      $_objectManager->create('Magento\Checkout\Model\Session')->setDefaultQty($proselection->getSelectionQty());
+      $_objectManager->create('Magento\Checkout\Model\Session')->setDefaultPrice($proselection->getPrice());
+	 
+      $bdefaultprice+=$proselection->getSelectionQty()*$proselection->getPrice();
+     
+}
+	$selectionarray[$_item->getId()][$i] =$selectionArray;
+	$productsArray[$_item->getId()][$proselection->getOptionId()][$proselection->getSelectionId()] = $selectionArray;
+	$i++;
+}
+$optionsCollection = $_item->getTypeInstance(true)
+->getOptionsCollection($_item);
+
+foreach ($optionsCollection as $_options) {
+    $optionArray['option_id'] = $_options->getOptionId();
+    $optionArray['option_required'] = $_options->getRequired();
+	$optionArray['option_title'] = $_options->getDefaultTitle();
+	$optionArray['option_type'] = $_options->getType();
+	 $optionsArray[$_item->getId()][$_options->getOptionId()] =$optionArray;
+	 
+} ?>   
+	 <tr class="item-info">
+	 	<td>
+	             	 <div class="checkbox">
+                    <label>
+                      <input type="checkbox" name ="<?php echo $_item->getId()?>[checkbox]" value ="<?php echo $_item->getId()?>" id ="select-product-checkbox-<?php echo $_item->getId()?>" class="select-product-checkbox"><span class="checkbox-material"><span class="check"></span></span>
+                    </label>
+                    
+                  </div>
+	             	</td>
+	             		<td data-th="Item" class="col product-image">
+	             			<a href="<?php echo $_item->getProductUrl()?>" title="<?php echo $_item->getName();?>" tabindex="-1" class="product-item-photo">
+	            				<span class="product-image-container" style="width:165px;">
+    							<span class="product-image-wrapper" style="padding-bottom: 100%;">
+        						<?php  $productImage = $block->getImage($_item, 'category_page_grid');
+    							echo $productImage->toHtml()?>
+							</span>
+                            </a>
+                             <span class ="product-item-name"><?php echo $_item->getName()?></span>
+	                      </td>
+	                      <td class="col price" data-th="Price">
+    						<span class="price-excluding-tax" data-label="Excl. Tax">
+                    			<span class="cart-price">
+                        			<?php echo $currency->getCurrencySymbol()?><span id ="<?php echo $_item->getId()?>bundled-price" class="bundled-price price"><?php echo $bdefaultprice;?></span>            
+                        		</span>
+            				</span>
+            			</td>
+            			<td class ="col product-main-qty">
+            				<div class="field qty">
+                				<label class="label" for="cart-161-qty">
+                   					 <span><?php echo __('Qty')?></span>
+               					 </label>
+                			<div class="control qty">
+                    			<input id="cart-<?php echo $_item->getId()?>-qty" name="<?php echo $_item->getId()?>[qty]" data-cart-item-id="<?php echo $_item->getName()?>" value="1" size="4" title="Qty" class="input-text bundled-qty qty qty-selection-product" maxlength="12" data-validate="{'validate-greater-than-zero':true}" data-role="cart-item-qty" type="number">
+                			</div>
+            			</div>
+            		<div class ="error-message-qty"></div>
+                			
+                			<input type ="hidden" value ="<?php echo $bdefaultprice?>" class ="<?php echo $_item->getId()?>hidden-group-price group-total-price group-price-hidden" id = "<?php echo $_item->getId()?>hidden-group-price">
+            		<?php foreach( $optionsArray[$_item->getId()] as $key=>$_bundleditem):?>	
+            				<?php if($_bundleditem['option_type']=='select'){?>
+            				
+            				<div class="field option <?php echo ($_bundleditem['option_required']) ? ' required': ''; ?>">
+    <label class="label" for="bundle-option-<?php /* @escapeNotVerified */ echo $_bundleditem['option_id'] ?>">
+        <span><?php echo $block->escapeHtml($_bundleditem['option_title']) ?></span>
+    </label>
+    <div class="bundled-option-container control">
+        <?php if (0): ?>
+            <?php /* @escapeNotVerified */ echo $block->getSelectionTitlePrice($_selections[0]) ?>
+            <input type="hidden"
+                   class="bundle-option-<?php /* @escapeNotVerified */ echo  $optionsArray[$_item->getId()]['option_id'] ?>  product bundle option"
+                   name="<?php echo $_item->getId()?>[bundle_option][<?php /* @escapeNotVerified */ echo  $optionsArray[$_item->getId()]['option_id'] ?>]"
+                   value="<?php /* @escapeNotVerified */ echo $selectionarray[0]['selection_id']() ?>"/>
+        <?php else:?>
+            <select id="bundle-option-<?php /* @escapeNotVerified */ echo $_bundleditem['option_id'] ?>"
+                   onchange ="updateqtyprice('<?php echo $_bundleditem['option_id']?>','<?php echo $_item->getId()?>')" name="<?php echo $_item->getId()?>[bundle_option][<?php /* @escapeNotVerified */ echo $_bundleditem['option_id'] ?>]"
+                    data-selector="bundle_option[<?php /* @escapeNotVerified */ echo $_bundleditem['option_id'] ?>]"
+                    class="bundle-option-<?php /* @escapeNotVerified */ echo $_bundleditem['option_id'] ?> product bundle option bundle-option-select change-container-classname"
+                <?php if ($_bundleditem['option_required']) echo '' ?>>
+                <option value=""><?php /* @escapeNotVerified */ echo __('Choose a selection...') ?></option>
+                <?php foreach ($productsArray[$_item->getId()][$key] as $_selection): ?>
+                    <option value="<?php /* @escapeNotVerified */ echo $_selection['selection_id'] ?>"
+                        <?php if ($_selection['is_default']) echo ' selected="selected"' ?>
+                        <?php if (!$_selection['is_saleable']) echo ' disabled="disabled"' ?>>
+                        <?php echo $_selection['selection_product_name'].'+'.$_selection['selection_product_price']?>
+                       
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        <?php endif; ?>
+        <div class="nested">
+            <div class="field qty qty-holder">
+                <label class="label" for="bundle-option-<?php /* @escapeNotVerified */ echo  $_bundleditem['option_id'] ?>-qty-input">
+                    <span><?php /* @escapeNotVerified */ echo __('Quantity') ?></span>
+                </label>
+                <div class="control">
+                    <input disabled="disabled"
+                           id="bundle-option-<?php /* @escapeNotVerified */ echo  $_bundleditem['option_id'] ?>-qty-input"
+                           class="input-text qty
+                           type="number"
+                           name="<?php echo $_item->getId()?>[bundle_option_qty][<?php /* @escapeNotVerified */ echo $_bundleditem['option_id'] ?>]"
+                           data-selector="bundle_option_qty[<?php /* @escapeNotVerified */ echo $_bundleditem['option_id'] ?>]"
+                           value="<?php echo  $_objectManager->create('Magento\Checkout\Model\Session')->getDefaultQty()?>"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php } elseif($_bundleditem['option_type']=='radio'){?>
+	<div class="bundled-option-container field option <?php echo ($_bundleditem['option_required']) ? ' required': ''; ?>">
+    <label class="label" for="bundle-option-<?php /* @escapeNotVerified */ echo $_bundleditem['option_id'] ?>">
+        <span><?php echo $block->escapeHtml($_bundleditem['option_title']) ?></span>
+    </label>
+    <div class="control">
+        <?php if (0): ?>
+            <?php /* @escapeNotVerified */ echo $block->getSelectionTitlePrice($_selections[0]) ?>
+            <input type="hidden"
+                   class="bundle-option-<?php /* @escapeNotVerified */ echo  $optionsArray[$_item->getId()]['option_id'] ?>  product bundle option"
+                   name="bundle_option[<?php /* @escapeNotVerified */ echo  $optionsArray[$_item->getId()]['option_id'] ?>]"
+                   value="<?php /* @escapeNotVerified */ echo $selectionarray[$_item->getId()][0]['selection_id']() ?>"/>
+        <?php else:?>
+            
+                <?php foreach ($productsArray[$_item->getId()][$key] as $_selection): ?>
+                    <div class="field choice">
+                        <input type="radio" onclick ="updateqtypriceradio('<?php echo $_selection['selection_id'] ?>','<?php echo $_bundleditem['option_id']?>','<?php echo $_item->getId()?>')"
+                               class="radio product bundle option change-container-classname"
+                               id="bundle-option-<?php /* @escapeNotVerified */ echo $_bundleditem['option_id'] ?>-<?php /* @escapeNotVerified */ echo $_selection['selection_id'] ?>"
+                               <?php if ($_bundleditem['option_required']) echo ''?>
+                               name="<?php echo $_item->getId()?>[bundle_option][<?php /* @escapeNotVerified */ echo $_bundleditem['option_id'] ?>]"
+                               data-selector="bundle_option[<?php /* @escapeNotVerified */ echo $_bundleditem['option_id'] ?>]"
+                                <?php if (($_selection['is_default'])) echo ' checked="checked"' ?>
+                               value="<?php /* @escapeNotVerified */ echo $_selection['selection_id'] ?>"/>
+                        <label class="label"
+                               for="bundle-option-<?php /* @escapeNotVerified */ echo $_bundleditem['option_id'] ?>-<?php /* @escapeNotVerified */ echo $_selection['selection_id'] ?>">
+                            <span><?php /* @escapeNotVerified */ echo $_selection['selection_product_name'].'+'.$_selection['selection_product_price'] ?></span>
+                        </label>
+                    </div>
+                <?php endforeach; ?>
+            
+        <?php endif; ?>
+        <div class="nested">
+            <div class="field qty qty-holder">
+                <label class="label" for="bundle-option-<?php /* @escapeNotVerified */ echo $_bundleditem['option_id'] ?>-qty-input">
+                    <span><?php /* @escapeNotVerified */ echo __('Quantity') ?></span>
+                </label>
+                <div class="control">
+                    <input disabled="disabled"
+                           id="bundle-option-<?php /* @escapeNotVerified */ echo $_bundleditem['option_id'] ?>-qty-input"
+                           class="input-text qty
+                           type="number"
+                           name="<?php echo $_item->getId()?>[bundle_option_qty][<?php /* @escapeNotVerified */ echo $_bundleditem['option_id'] ?>]"
+                           data-selector="bundle_option_qty[<?php /* @escapeNotVerified */ echo$_bundleditem['option_id'] ?>]"
+                           value="<?php echo  $_objectManager->create('Magento\Checkout\Model\Session')->getDefaultQty()?>"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+	<?php }elseif($_bundleditem['option_type']=='checkbox'){?>
+	<div class="bundled-option-container field option <?php echo ($optionsArray[$_item->getId()]['option_required']) ? ' required': ''; ?>">
+    <label class="label">
+        <span><?php echo $block->escapeHtml($_bundleditem['option_title']) ?></span>
+    </label>
+    <div class="control">
+        <div class="nested options-list">
+            <?php if (0): ?>
+                <?php /* @escapeNotVerified */ echo $block->getSelectionQtyTitlePrice($_selections[0]) ?>
+                <input type="hidden"
+                       class="bundle-option-<?php /* @escapeNotVerified */ echo $optionArray['option_id'] ?>  product bundle option"
+                       name="bundle_option[<?php /* @escapeNotVerified */ echo $optionArray['option_id'] ?>]"
+                       value="<?php /* @escapeNotVerified */ echo $_selections[0]['selection_id'] ?>"/>
+            <?php else:?>
+                <?php foreach($productsArray[$_item->getId()][$key] as $_selection): ?>
+                    <div class="field choice">
+                    <input type ="hidden" name ="<?php echo $_item->getId()?>[bundled_checbkox_data][]" value="<?php echo $_selection['id']?>">
+                    <div class="checkbox">
+                    <label>
+   
+                        <input class="bundle-option-<?php /* @escapeNotVerified */ echo $_bundleditem['option_id'] ?> checkbox product bundle option change-container-classname bundle-checkbox"
+                               id="bundle-option-<?php /* @escapeNotVerified */ echo $_bundleditem['option_id'] ?>-<?php /* @escapeNotVerified */ echo $_selection['selection_id'] ?>"
+                               type="checkbox"
+                               <?php if ($_bundleditem['option_required']) echo ''?>
+                               name="<?php echo $_item->getId()?>[bundle_option][<?php /* @escapeNotVerified */ echo $_bundleditem['option_id'] ?>][]"
+                               data-selector="bundle_option[<?php /* @escapeNotVerified */ echo $_bundleditem['option_id'] ?>][<?php /* @escapeNotVerified */ echo $_selection['selection_id'] ?>]"
+                                <?php if (($_selection['is_default'])) echo ' checked="checked"' ?>
+                               <?php if (!$_selection['is_saleable']) echo ' disabled="disabled"' ?>
+                               value="<?php /* @escapeNotVerified */ echo $_selection['selection_id'] ?>"/>
+                               
+                               <span class="checkbox-material"><span class="check"></span></span>
+                               
+                               </label>
+                               </div>
+                               
+                        <label class="label"
+                               for="bundle-option-<?php /* @escapeNotVerified */ echo $_bundleditem['option_id'] ?>-<?php /* @escapeNotVerified */ echo $_selection['selection_id'] ?>">
+                            <span><?php /* @escapeNotVerified */  echo $_selection['selection_qty'].' x '.$_selection['selection_product_name'].'+'.$_selection['selection_product_price'] ?></span>
+                        </label>
+                    </div>
+                <?php endforeach; ?>
+                <div id="bundle-option-<?php /* @escapeNotVerified */ echo $_bundleditem['option_id'] ?>-container"></div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+	<?php }elseif($_bundleditem['option_type']=='multi'){?>
+	<div class=" bundled-option-container field option <?php echo ($_bundleditem['option_required']) ? ' required': ''; ?>">
+    <label class="label" for="bundle-option-<?php /* @escapeNotVerified */ echo $_bundleditem['option_id'] ?>">
+        <span><?php echo $block->escapeHtml($_bundleditem['option_title']) ?></span>
+    </label>
+    <div class="control">
+        <?php if (0): ?>
+            <?php /* @escapeNotVerified */ echo $block->getSelectionQtyTitlePrice($_selections[0]) ?>
+            <input type="hidden"
+                   name="bundle_option[<?php /* @escapeNotVerified */ echo $optionArray['option_id'] ?>]"
+                   value="<?php /* @escapeNotVerified */ echo $_selections[0]->getSelectionId() ?>"/>
+        <?php else: ?>
+            <select multiple="multiple"
+                    size="5"
+                    id="bundle-option-<?php /* @escapeNotVerified */ echo $_bundleditem['option_id'] ?>"
+                    name="<?php echo $_item->getId()?>[bundle_option][<?php /* @escapeNotVerified */ echo $_bundleditem['option_id'] ?>][]"
+                    data-selector="bundle_option[<?php /* @escapeNotVerified */ echo $_bundleditem['option_id'] ?>][]"
+                    class="bundle-option-<?php /* @escapeNotVerified */ echo $_bundleditem['option_id'] ?> multiselect product bundle option change-container-classname multiselect-bundle-selection"
+                    <?php if ($_bundleditem['option_required']) echo 'data-validate={}' ?>>
+                <?php if(!$_bundleditem['option_required']): ?>
+                    <option value=""><?php /* @escapeNotVerified */ echo __('None') ?></option>
+                <?php endif; ?>
+                <?php foreach ($productsArray[$_item->getId()][$key] as $_selection): ?>
+                    <option value="<?php /* @escapeNotVerified */ echo $_selection['selection_id'] ?>"
+                            <?php if ($_selection['is_default']) echo ' selected="selected"' ?>
+                            <?php if (!$_selection['is_saleable']) echo ' disabled="disabled"' ?>>
+                        <?php /* @escapeNotVerified */ echo $_selection['selection_qty'].' x '.$_selection['selection_product_name'].'+'.$_selection['selection_product_price'] ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        <?php endif; ?>
+    </div>
+</div>
+	<?php }?>
+	<?php endforeach;?>
+           				</td>
+	        <td class="col subtotal" data-th="Subtotal">                    
+				<span class="price-excluding-tax" data-label="Excl. Tax">
+				    <span class="cart-price">
+				           <?php echo $currency->getCurrencySymbol()?><span id = "<?php echo $_item->getId()?>subtotalprice" class="price subtotal-price"><?php echo $bdefaultprice?></span>
+				     </span>
+				</span>
+       		</td>
+              <?php }
+	            ?>
+	          <?php endforeach;?>     
+	 </tr>
+	            </tbody> 
+	        </table>
+	        <button type="button"  name ="add-button" title="<?php echo $block->escapeHtml(__('Add to Cart')); ?>" class="action primary tocart" id="product-addtocart-button" onclick ="validate()">
+	              <span><?php /* @escapeNotVerified */ echo __('Add Item To Cart') ?></span>
+	        </button>
+	        </form>
+	        <?php echo $block->getToolbarHtml() ?>
+	    </div>
+	    
+
+<script type="text/x-magento-init">
+    {
+        "#product_addtocart_form": {
+            "Magento_Catalog/product/view/validation": {
+                "radioCheckboxClosest": ".nested"
+            }
+        }
+    }
+
+</script>
+<script>         
+function validate()
+{	
+	var checkbox = document.getElementsByClassName('select-product-checkbox');
+   var ln=0;
+    for(var i=0; i< checkbox.length; i++) {
+        if(checkbox[i].checked)
+            ln++;
+    }
+    if(ln==0)
+    {
+
+    	alert('Please select atleast one.');
+    }  
+    else
+    {
+    	      var btn=document.getElementById('product-addtocart-button');
+    		      btn.setAttribute('type', 'submit');
+    }
+}
+require([
+         'jquery',
+         'mage/mage'
+     ], function($){
+
+         var dataForm = $('#product_addtocart_form');
+         var ignore = null;
+         dataForm.mage('validation', {
+                 ignore: ignore ? ':hidden:not(' + ignore + ')' : ':hidden'
+             }).find('input:text').attr('autocomplete', 'off');
+
+     });
+
+require(['jquery'], function($) {
+	$("#shopping-cart-table").on('change', '.qty-selection-product',function(){	
+	var qty = $(this).val();
+	 if((!jQuery.isNumeric(qty)) || (qty <= 0) || (Math.floor(qty) != qty))
+ 	{
+		 $(this).parents('tr').find('.error-message-qty').html('Please enter the valid qty');
+		 $(this).parents('tr').find('.error-message-qty').show();
+ 		jQuery(this).css('border-color','red');
+ 		jQuery('#product-addtocart-button').attr('disabled','true');
+ 		
+ 	}
+	 else{
+		 $(this).parents('tr').find('.error-message-qty').hide();
+	 		jQuery(this).css('border-color','#c2c2c2');
+	 		jQuery('#product-addtocart-button').removeAttr('disabled');
+	var price = $(this).parents('tr').find('.default-price').text();
+	$(this).parents('tr').find('.subtotal-price').text(parseInt(qty*price).toFixed(4));
+	
+	 }
+	
+});
+});
+require(['jquery'], function($) {
+	$("#shopping-cart-table").on('change', '.qty-selection-product-configurable',function(){	
+	var qty = $(this).val();
+	 if((!jQuery.isNumeric(qty)) || (qty <= 0) || (Math.floor(qty) != qty))
+ 	{
+		 $(this).parents('tr').find('.error-message-qty').html('Please enter the valid qty');
+		 $(this).parents('tr').find('.error-message-qty').show();
+ 		jQuery(this).css('border-color','red');
+ 		jQuery('#product-addtocart-button').attr('disabled','true');
+ 		
+ 	}
+	 else{
+		 $(this).parents('tr').find('.error-message-qty').hide();
+	 		jQuery(this).css('border-color','#c2c2c2');
+	 		jQuery('#product-addtocart-button').removeAttr('disabled');
+	 		var item_id = $(this).parents('tr').find('#select-product-checkbox').val();
+			var str = [];
+			 var price=0;
+			$(this).parents('tr').find('select').each( function(){
+				var attributeid = $(this).prev().val();
+				str.push(attributeid+'-'+$(this).val());
+			});
+			var final1 = str.join(',');
+			var finalaray = []
+			<?php //?>
+			 <?php foreach($optionss as $key => $val){ 
+        	?>
+        	var key = '<?php echo $key?>';
+        	if(key==item_id){
+                <?php foreach($val as $key5=>$val2){?>
+                var v = '<?php echo $val2?>';
+                if(v==final1){
+                    var price = '<?php  echo $_objectManager->create('Magento\Catalog\Model\Product')->load($key5)->getPrice();?>';
+   				 }
+               <?php  }?>
+            	}
+			
+       <?php } ?>
+	var configprice = $(this).parents('tr').find('.subtotal-price').text();
+	$(this).parents('tr').find('.subtotal-price').text(parseInt(price*qty).toFixed(4));
+	 }
+});
+});
+require(['jquery'], function($) {
+	$("#shopping-cart-table").on('click', '.select-product-checkbox',function(){
+	if($(this).is(':checked')){
+		$(this).parents('tr').find(':input').addClass('required-entry');
+		$(this).parents('tr').find('select').addClass('required-entry');
+	}
+	else{
+		$(this).parents('tr').find(':input').removeClass('required-entry');
+		$(this).parents('tr').find('select').removeClass('required-entry');
+	}
+	
+});
+});
+</script>
+<script>
+	function updateqtyprice(optionid,itemid){
+         var optionvalue = document.getElementById("bundle-option-"+optionid).value;
+         var item_id = document.getElementById("select-product-checkbox-"+itemid).value;
+         var selarray = new Array();
+      	 <?php foreach($productsArray as $key => $val){ ?>
+          var key = '<?php echo $key?>';
+      	 if(key ==item_id){
+          	 <?php foreach( $val as $data){?>
+      	 selarray.push('<?php echo json_encode($data); ?>');
+       <?php } ?>
+      	 }
+      	 <?php }?>
+         var selaray2 =JSON.parse(selarray);
+         console.log(selaray2);
+         if(typeof selaray2[optionvalue]!='undefined'){
+        // console.log(selaray2[optionvalue]['selection_id']);
+         if(selaray2[optionvalue].selection_can_change_qty==0){
+        	 var qty = document.getElementById("cart-"+itemid+'-qty').value;
+        	 document.getElementById("bundle-option-"+optionid+"-qty-input").disabled = true; 
+        	 jQuery("bundle-option-"+optionid+"-qty-input").addClass("qty-disabled")
+        	 document.getElementById("bundle-option-"+optionid+"-qty-input").value =  selaray2[optionvalue].selection_qty;
+        	 document.getElementById(itemid+"hidden-group-price").value = selaray2[optionvalue].selection_qty*selaray2[optionvalue].selection_product_price;
+        	 document.getElementById(itemid+"subtotalprice").textContent = parseInt((selaray2[optionvalue].selection_qty*selaray2[optionvalue].selection_product_price)*qty).toFixed(4);
+        	 document.getElementById(itemid+"bundled-price").textContent = parseInt((selaray2[optionvalue].selection_qty*selaray2[optionvalue].selection_product_price)).toFixed(4);
+             }
+         
+         else{
+        	 var qty = document.getElementById("cart-"+itemid+'-qty').value;
+        	 document.getElementById("bundle-option-"+optionid+"-qty-input").disabled = false; 
+        	 jQuery("bundle-option-"+optionid+"-qty-input").removeClass("qty-disabled")
+        	 document.getElementById("bundle-option-"+optionid+"-qty-input").value =  selaray2[optionvalue].selection_qty;
+        	 document.getElementById(itemid+"hidden-group-price").value = selaray2[optionvalue].selection_qty*selaray2[optionvalue].selection_product_price;
+        	 document.getElementById(itemid+"subtotalprice").textContent = parseInt((selaray2[optionvalue].selection_qty*selaray2[optionvalue].selection_product_price)*qty).toFixed(4);
+        	 document.getElementById(itemid+"bundled-price").textContent = parseInt((selaray2[optionvalue].selection_qty*selaray2[optionvalue].selection_product_price)).toFixed(4);
+              }
+         }
+         else{
+        	 document.getElementById(itemid+"subtotalprice").textContent = 0;
+        	 document.getElementById(itemid+"bundled-price").textContent = 0;
+             }
+		}   
+	function updateqtypriceradio(selectionid,optionid,itemid){
+        var selarray = new Array();
+        var item_id = document.getElementById("select-product-checkbox-"+itemid).value;
+       	 <?php foreach($productsArray as $key => $val){ ?>
+          var key = '<?php echo $key?>';
+      	 if(key ==item_id){
+          	 <?php foreach( $val as $data){?>
+      	 selarray.push('<?php echo json_encode($data); ?>');
+       <?php } ?>
+      	 }
+      	 <?php }?>
+        var selaray2 =JSON.parse(selarray);
+        if(typeof selaray2[selectionid]!='undefined'){
+        if(selaray2[selectionid].selection_can_change_qty==0){
+        	var qty = document.getElementById("cart-"+itemid+'-qty').value;
+       	 document.getElementById("bundle-option-"+optionid+"-qty-input").disabled = true; 
+       	 jQuery("bundle-option-"+optionid+"-qty-input").addClass("qty-disabled")
+       	 document.getElementById("bundle-option-"+optionid+"-qty-input").value =  selaray2[selectionid].selection_qty;
+       	document.getElementById(itemid+"hidden-group-price").value = selaray2[selectionid].selection_qty*selaray2[selectionid].selection_product_price;
+   	    document.getElementById(itemid+"subtotalprice").textContent = parseInt((selaray2[selectionid].selection_qty*selaray2[selectionid].selection_product_price)*qty).toFixed(4);
+            }
+        
+        else{
+        	var qty = document.getElementById("cart-"+itemid+'-qty').value;
+       	 document.getElementById("bundle-option-"+optionid+"-qty-input").disabled = false; 
+       	 jQuery("bundle-option-"+optionid+"-qty-input").removeClass("qty-disabled")
+       	 document.getElementById("bundle-option-"+optionid+"-qty-input").value =  selaray2[selectionid].selection_qty;
+       	document.getElementById(itemid+"hidden-group-price").value = selaray2[selectionid].selection_qty*selaray2[selectionid].selection_product_price;
+   	    document.getElementById(itemid+"subtotalprice").textContent = parseInt((selaray2[selectionid].selection_qty*selaray2[selectionid].selection_product_price)*qty).toFixed(4);
+         }
+
+        }
+        else{
+
+            }
+		}   
+	function updateprice(attributeid,itemid)
+	{
+		 var optionvalue ='';
+		if(attributeid)
+		var optionvalue = document.getElementById("attribute"+attributeid).value;
+        var qty = document.getElementById("cart-"+itemid+'-qty').value;
+        if((!jQuery.isNumeric(qty)) || (qty < 0) || (Math.floor(qty) != qty))
+	 	{
+	 		jQuery('#error_message').html('Please enter positive value for quantity.');
+	 		jQuery('#error_message').show();
+	 		jQuery('.qty').not(this).attr('disabled','true');
+	 		jQuery(this).css('border-color','red');
+	 		jQuery('#add').attr('disabled','true');
+	 	}
+        else{
+         var childproduct = new Array();
+        var childproduct2 =JSON.parse(childproduct);
+        if(!optionvalue){
+
+        	var span_Text = document.getElementById(itemid+"price").innerText;       
+        	document.getElementById(itemid+"subtotalprice").textContent=parseInt(span_Text * qty).toFixed(4);        
+			}
+        else{
+        	document.getElementById(itemid+"price").textContent=parseInt(childproduct2[optionvalue].price).toFixed(4);
+            document.getElementById(itemid+"subtotalprice").textContent=parseInt(childproduct2[optionvalue].price * qty).toFixed(4);
+        
+            }
+        }
+	}
+	require(['jquery'], function($) {
+		$("#shopping-cart-table").on('change', '.group_child',function(){
+		var qty = $(this).val();
+		var inputhiddenprev =$(this).prev().val();
+		var inputhidden =$(this).next().val();
+		var grpprod = new Array();
+		$(this).parents('table').find('.group_child').each( function(index){
+			grpprod.push($(this).val());
+		});
+ var gsm=0;
+
+		for(var i=0;i<grpprod.length;i+=2){
+			if(!grpprod[i+1])
+				continue;
+	        gsm += parseInt((grpprod[i+1]));
+				}
+var flag =false
+if( gsm == 0 || !gsm){
+	 $(this).parents('table').find('.error-message-grouped-'+inputhidden+'-'+inputhiddenprev).html('Please enter the qty');
+	 $(this).parents('table').find('.error-message-grouped-'+inputhidden+'-'+inputhiddenprev).show();
+	 jQuery('#product-addtocart-button').attr('disabled','true');
+	 flag =true;
+	}
+else{
+	$(this).parents('table').find('.error-message-grouped-'+inputhidden+'-'+inputhiddenprev).hide();
+	    jQuery(this).css('border-color','#c2c2c2');
+		jQuery('#product-addtocart-button').removeAttr('disabled'); 
+		
+	}
+		 if((!jQuery.isNumeric(qty)) || (qty < 0) || (Math.floor(qty) != qty))
+		 	{
+			  $(this).parents('table').find('.error-message-qty-grouped-'+inputhidden+'-'+inputhiddenprev).html('Please enter the valid qty');
+			 $(this).parents('table').find('.error-message-qty-grouped-'+inputhidden+'-'+inputhiddenprev).show();
+	 		jQuery(this).css('border-color','red');
+	 		jQuery('#product-addtocart-button').attr('disabled','true'); 
+		 	}
+		 else{
+			 if(!flag){
+			 $(this).parents('table').find('.error-message-qty-grouped-'+inputhidden+'-'+inputhiddenprev).hide();
+			 $(this).parents('table').find('.error-message-title').hide();
+			
+			  jQuery(this).css('border-color','#c2c2c2');
+			 }
+		var data = new Array();
+		$(this).parents('table').find('input.group_child').each( function(index){
+			data.push($(this).val());
+		});
+		var gsum=0;
+		for(var i=0;i<data.length;i+=2){
+        gsum += (data[i])*(data[i+1]);
+			}
+		$(this).parents('table').find('.grouped_subtotal_price').text(parseInt(gsum).toFixed(4));
+		 }
+	});
+	});
+	
+	function upadtegroupedproduct(itemid, associateditemid){
+
+		var qtyvalue = document.getElementById("grouped-associated-"+itemid+"-"+associateditemid).value;
+		var price = document.getElementById("price-grouped-associated-"+itemid+"-"+associateditemid).value;
+		}
+	require(['jquery'], function($) {
+		$("#shopping-cart-table").on('change', '.bundled-qty',function(){
+		var qty = $(this).val();
+		var price = $(this).parents('tr').find('.group-total-price').val();
+		$(this).parents('tr').find('.subtotal-price').text(parseInt(qty*price).toFixed(4));
+	});
+	});
+	require(['jquery'], function($) {
+		$("#shopping-cart-table").on('click', '.bundle-checkbox',function(){
+		var selectionid = $(this).val();
+		var item_id = $(this).parents('tr').find('.select-product-checkbox').val();
+		var selarray = new Array();
+		
+      	 <?php foreach($productsArray as $key => $val){ ?>
+          var key = '<?php echo $key?>';
+      	 if(key ==item_id){
+          	 <?php foreach( $val as $data){?>
+      	 selarray.push('<?php echo json_encode($data); ?>');
+       <?php } ?>
+      	 }
+      	 <?php }?>
+       var selaray2 =JSON.parse(selarray);
+		var input = document.getElementsByTagName("input");
+		for(i=0;i<input.length;i++){
+		    input[i].onchange = function(){
+			    //alert(this.value);
+		        if(this.checked){
+				        if(typeof selaray2[this.value]!='undefined'){
+				        var sum=0;
+				        sum = parseInt(sum);
+			        	var data =  $(this).parents('tr').find('.group-price-hidden');
+			        	var qty = selaray2[this.value].selection_qty;
+			        	var price = selaray2[this.value].selection_product_price;
+			            var lqty =(qty*price);
+			            var sum = lqty + parseInt(data.val()) ;
+			            data.val(parseInt(sum));
+			            var cqty  =  $(this).parents('tr').find('.bundled-qty').val();
+			            $(this).parents('tr').find('.bundled-price').text(parseInt(data.val()).toFixed(4));
+			            $(this).parents('tr').find('.subtotal-price').text(parseInt(cqty*data.val()).toFixed(4));
+			        } 
+		             
+		        }else{
+			        	if(typeof selaray2[this.value]!='undefined'){
+			        	var qty = selaray2[this.value].selection_qty;
+			        	var price = selaray2[this.value].selection_product_price
+			        	var data =  $(this).parents('tr').find('.group-price-hidden');
+			             data.val((data.val())-(qty*price));
+			             var cqty  =  $(this).parents('tr').find('.bundled-qty').val();
+			             $(this).parents('tr').find('.bundled-price').text(parseInt(data.val()).toFixed(4));
+				            $(this).parents('tr').find('.subtotal-price').text(parseInt(cqty*data.val()).toFixed(4));
+			        }
+		        }    
+		    }
+		   
+			
+		}
+		
+	});
+	});
+	require(['jquery'], function($) {
+		$("#shopping-cart-table").on('click', '.multiselect-bundle-selection',function(){
+			
+		var selectionid = $(this).val();
+		var item_id = $(this).parents('tr').find('.select-product-checkbox').val();
+		if(selectionid==null){
+			selectionid =0;
+			}
+        var str = selectionid.toString();
+		var selarray = new Array();
+		<?php foreach($productsArray as $key => $val){ ?>
+        var key = '<?php echo $key?>';
+    	 if(key ==item_id){
+        	 <?php foreach( $val as $data){?>
+    	 selarray.push('<?php echo json_encode($data); ?>');
+     <?php } ?>
+    	 }
+    	 <?php }?>
+          var selaray2 =JSON.parse(selarray);
+          var data =  $(this).parents('tr').find('.group-price-hidden');
+			console.log(selaray2);
+			 var lqty= 0
+			$.each(str.split(","), function(i,e){
+				if(typeof selaray2[e]!='undefined'){
+				console.log(e);
+			    var sum=0;
+		       
+	        	var qty = selaray2[e].selection_qty;
+	        	var price = selaray2[e].selection_product_price;
+	             lqty+= (qty*price);
+				}
+				else{
+					lqty =0; 
+					}
+			});
+			data.val(parseInt(lqty));
+			$(this).parents('tr').find('.bundled-price').text(parseInt(lqty).toFixed(4));
+			var cqty  =  $(this).parents('tr').find('.bundled-qty').val();
+            $(this).parents('tr').find('.subtotal-price').text(parseInt(cqty*data.val()).toFixed(4));
+		});
+	});
+	require(['jquery'], function($) {
+		
+		$("#shopping-cart-table").on('change', '.super-attribute-select',function(){
+
+			var item_id = $(this).parents('tr').find('#select-product-checkbox').val();
+			var str = [];
+			 var price=0;
+			$(this).parents('tr').find('select').each( function(){
+				var attributeid = $(this).prev().val();
+				str.push(attributeid+'-'+$(this).val());
+			});
+			var final1 = str.join(',');
+			//console.log(final1);
+			var finalaray = []
+			<?php //?>
+			 <?php foreach($optionss as $key => $val){ 
+        	?>
+        	var key = '<?php echo $key?>';
+        	if(key==item_id){
+                <?php foreach($val as $key5=>$val2){?>
+                var v = '<?php echo $val2?>';
+                if(v==final1){
+                    var price = '<?php  echo $_objectManager->create('Magento\Catalog\Model\Product')->load($key5)->getPrice();?>';
+   				 }
+               <?php  }?>
+            	}
+			
+       <?php } ?>
+       var qty = $(this).parents('tr').find('.qty-selection-product-configurable').val();
+       
+			$(this).parents('tr').find('.subtotal-price').text(parseInt(price).toFixed(4));
+
+			var data = $(this).parents('tr').find('.subtotal-price').text();
+
+			$(this).parents('tr').find('.subtotal-price').text(parseInt(data*qty).toFixed(4));
+			
+	});
+	});
+	require(['jquery'], function($) {
+	$( ".modes" ).hide();
+	$( ".pages" ).show();
+	$( ".toolbar-sorter" ).hide();
+	
+	});
+</script>
+        <?php }else{?>
+        <div class="message info empty"><span><?php /* @escapeNotVerified */ echo __('This Category Is Only For LoggedIn Customer'); ?></span>
+        </div>
+        <?php }
+}else{?>
+        <?php echo $block->getChildHtml('othercategory')
+        ?>
+        <?php }?>

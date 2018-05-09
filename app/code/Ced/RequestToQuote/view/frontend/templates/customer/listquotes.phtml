@@ -1,0 +1,124 @@
+<?php
+/**
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the End User License Agreement (EULA)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://cedcommerce.com/license-agreement.txt
+ *
+ * @category    Ced
+ * @package     Ced_RequestToQuote
+ * @author      CedCommerce Core Team <connect@cedcommerce.com>
+ * @copyright   Copyright CedCommerce (http://cedcommerce.com/)
+ * @license      http://cedcommerce.com/license-agreement.txt
+ */
+?>
+<?php
+$quoteModel = $this->getCollection();
+if(isset($quoteModel) && $quoteModel->count()>0){?>
+	<form action="<?php echo $this->getUrl('carttoquote/myquotes/massdelete');?>" method="post">
+		<table class="data-table" id="my-orders-table">
+			<thead>
+				<tr>
+					<th><?php echo __('Quote Increment Id');?></th>
+					<th><?php echo __('Quote Original Qty');?></th>
+					<th><?php echo __('Quote Original Price');?></th>
+					<th><?php echo __('Quote Settled Qty');?></th>
+					<th><?php echo __('Quote Settled Price');?></th>
+					<th><?php echo __('Address');?></th>
+					<th><?php echo __('State');?></th>
+					<th><?php echo __('Country');?></th>					
+					<th><?php echo __('Shipping Method Selected');?></th>
+					<th><?php echo __('Shipping Estimated Cost');?></th>
+					<th><?php echo __('Telephone Number');?></th>
+					<th><?php echo __('Current Status');?></th>
+					<th><?php echo __('Action');?></th>
+
+					
+
+				</tr>
+			</thead>
+			<tbody>
+		<?php
+		foreach($quoteModel as $value){
+			?>
+				<tr>
+						<td><?php echo $value->getQuoteIncrementId(); ?></td>
+						<td><?php echo $value->getQuoteTotalQty(); ?></td>
+						<td><span><?php echo $block->getCurrencyCode(); ?></span><?php echo $value->getQuoteTotalPrice() ?></td>
+						<td><?php echo $value->getQuoteUpdatedQty() ?></td>
+						<td><span><?php echo $block->getCurrencyCode(); ?></span><?php echo $value->getQuoteUpdatedPrice() ?></td>
+						<td><?php echo $value->getAddress() ?></td>
+						<td><?php echo $value->getState() ?></td>
+						<td><?php echo $value->getCountry() ?></td>
+						<td><?php echo $value->getShipmentMethod() ?></td>
+						<td><span><?php echo $block->getCurrencyCode(); ?></span><?php echo $value->getShippingAmount() ?></td>
+						<td><?php echo $value->getTelephone() ?></td>
+						<td><?php 
+							
+							$status = $value->getStatus();
+							$title = 'Edit';
+							if(isset($status)){
+								
+								switch ($status) {
+									
+									case '0': echo "<span style='color:red'>Pending<?php echo __('Pending');?></span>";
+										$title = __('Edit');
+										break;
+									case '1': echo "<span style='color:orange'>Processing<?php echo __('Processing');?></span>";
+										$title = __('Edit');
+										break;
+									case '2': echo "<span style='color:green'>Approved<?php echo __('Approved');?></span>";
+										$title = __('View');
+										break;
+									case '3': echo "<span style='color:red'>Cancelled<?php echo __('Cancelled');?></span>";
+										$title = __('View');
+										break;
+									case '4': echo "<span style='color:blue'>PO Created<?php echo __('PO Created');?></span>";
+										$title = __('View');
+										break;
+									case '5': echo "<span style='color:orange'>Partial Po<?php echo __('Partial Po');?></span>";
+										$title = __('View');
+										break;
+									case '6': echo "<span style='color:blue'>Ordered<?php echo __('Ordered');?></span>";
+										$title = __('View');
+										break;
+									case '7': echo "<span style='color:green'>Complete<?php echo __('Complete');?></span>";
+										$title = __('View');
+										break;
+									default:
+											echo "<span style='color:red'>Pending<?php echo __('Pending');?></span>";
+										break;
+								}
+							} ?>
+						</td>
+						<td>
+							<a class="action action-edit" href="<?php echo $this->getUrl('requesttoquote/customer/editquote/', ['quoteId'=>$value->getQuoteId()]); ?>" /><span><?php echo $title; ?> </span>
+						</td>
+
+			   </tr>
+		<?php }?>
+			</tbody>
+		</table>
+	</form>
+<?php if ($block->getPagerHtml()): ?>
+<div class="order-products-toolbar toolbar bottom"><?php echo $block->getPagerHtml(); ?></div>
+<?php endif; ?>
+<?php }else{?>
+<h3><?php echo __('No quotes available.');?></h3>
+<?php }?>
+<style type="text/css">
+	.column.main > form {
+    overflow-x: auto;
+}
+.data-table tr {
+    border-bottom: 1px solid #ccc;
+}
+.data-table tr td, .data-table tr th {
+    padding: 10px 15px;
+    vertical-align: middle;
+}
+</style>

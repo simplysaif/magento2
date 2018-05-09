@@ -1,0 +1,443 @@
+<?php
+/**
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the End User License Agreement (EULA)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://cedcommerce.com/license-agreement.txt
+ *
+ * @category    Ced
+ * @package     Ced_RequestToQuote
+ * @author      CedCommerce Core Team <connect@cedcommerce.com>
+ * @copyright   Copyright CedCommerce (http://cedcommerce.com/)
+ * @license      http://cedcommerce.com/license-agreement.txt
+ */
+
+/** @var $block \Magento\Wishlist\Block\Customer\Sharing */
+?>
+<?php $quote=$block->getCollection();
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+?>
+
+ <form class="form wishlist share"
+      action="<?php /* @escapeNotVerified */ echo $block->getSendUrl(); ?>"
+      id="form-validate"
+      method="POST"
+      data-hasrequired="<?php /* @escapeNotVerified */ echo __('* Required Fields') ?>"
+      data-mage-init='{"validation":{}}'>
+     
+     <div class="cart-container">
+        <div class="cart table-wrapper">
+        <input type='hidden' name="quote_id" value="<?php echo $block->getQuote()->getQuoteId(); ?>" >
+            <table class="cart items data table" id="shopping-cart-table">
+                <thead>
+                    <tr>
+                        <th scope="col" class="col item"><span><?php /* @escapeNotVerified */ echo __('Product') ?></span></th>
+                        <th scope="col" class="col price"><span><?php /* @escapeNotVerified */ echo __('Product SKU') ?></span></th>
+                        <th scope="col" class="col item"><span><?php /* @escapeNotVerified */ echo __('Actual Unit Price') ?></span></th>
+                        <th scope="col" class="col item"><span><?php /* @escapeNotVerified */ echo __('Quoted Qty') ?></span></th>
+                        <th scope="col" class="col item"><span><?php /* @escapeNotVerified */ echo __('Quoted Price') ?></span></th>
+                        <th scope="col" class="col item"><span><?php /* @escapeNotVerified */ echo __('Updated Unit Price') ?></span></th>
+                        <th scope="col" class="col item"><span><?php /* @escapeNotVerified */ echo __('Updated Qty') ?></span></th>
+                        
+                        <th scope="col" class="col item"><span><span><?php /* @escapeNotVerified */ echo __('Updated Subtotal') ?></span></th>
+                    </tr>
+                </thead>
+                <tbody class="cart item">
+                <?php foreach ($quote->getData() as $value) {
+                            $product_id = $value['product_id']; 
+                            $product = $block->getProduct($product_id);
+                            //print_r($product->getData());
+                            $productname = $product->getName();
+                            //print_r($product->getProductUrl());
+                            //echo get_class($block);die;
+                            $name = $block->getProductOwner();
+
+                           
+                             ?>
+                    <tr class="item-info">
+                        <td data-th="<?php echo $block->escapeHtml(__('Product')); ?>" class="col item">
+                            <a href="<?php /* @escapeNotVerified */ echo $block->getProducturl($value['product_id']); ?>"
+                                       title="<?php echo $productname; ?>"
+                                       tabindex="-1"
+                                       class="product-item-photo">
+                                       <span style="width:90px;" class="product-image-container">
+                                            <span style="padding-bottom: 100%;" class="product-image-wrapper">
+                                                <img width="165" height="165" alt="<?php echo $productname; ?>" src="<?php echo $block->getProductImage($product_id); ?>" class="product-image-photo"></span>
+                                        </span>
+                            </a>
+                            <div class="product-item-details">
+                                <strong class="product-item-name">
+                                    <a href="<?php echo $block->getProducturl($value['product_id']); ?> "><?php echo $productname?>
+                                    </a>
+                                </strong>
+                                 <span><strong><?php echo $block->escapeHtml(__('Seller')); ?>:</strong> <?php echo $name; ?></span>
+                            </div>
+                            </td>
+
+                            <td class="col sku" >
+                                  <span data-label="Excl. Tax" class="price-excluding-tax">
+                                            <span class="cart-price">
+                                                <span><?php echo $product->getSku() ?></span>
+                                            </span>
+                                    </span>
+                            </td> 
+
+                            <td class="col price" data-th="<?php echo $block->escapeHtml(__('Price')); ?>">
+                                  <span data-label="Excl. Tax" class="price-excluding-tax">
+                                            <span class="cart-price">
+                                                <span><span><?php echo $block->getCurrencyCode(); ?></span> <?php echo $product->getPrice(); ?></span>
+                                            </span>
+                                    </span>
+                            </td>
+                             
+                            <td class="col product_qty" >
+                                  <span data-label="Excl. Tax" class="price-excluding-tax">
+                                            <span class="cart-price">
+                                                <span><?php echo $value['product_qty']; ?></span>
+                                            </span>
+                                    </span>
+                            </td> 
+                            <td class="col price" >
+                                  <span data-label="Excl. Tax" class="price-excluding-tax">
+                                            <span class="cart-price">
+                                                <span><span><?php echo $block->getCurrencyCode(); ?></span> <?php echo $value['price']; ?></span>
+                                            </span>
+                                    </span>
+                            </td> 
+                            <td class="col updated_price" >
+                                  <span data-label="Excl. Tax" class="price-excluding-tax">
+                                            <span class="cart-price">
+                                                <span><span><?php echo $block->getCurrencyCode(); ?></span> <input id="updateprice[<?php echo $product_id;  ?>]" class="po-price-updated common numbersOnly" name="quoteproducts[<?php echo $product_id;  ?>]" value="<?php echo $value['unit_price'];  ?>" type="number" step="0.01" <?php if($block->getQuote()->getStatus() > \Ced\RequestToQuote\Model\Quote::QUOTE_STATUS_PROCESSING){?> readonly <?php }?>/></span>
+                                            </span>
+                                    </span>
+                            </td> 
+                            <td class="col quote_updated_qty" >
+                                  <span data-label="Excl. Tax" class="price-excluding-tax">
+                                            <span class="cart-price">
+                                                <span><input id="quantity_to_po[<?php echo $product_id;  ?>]" class="qty-field-po common numbersOnly" name="quoteupdqty[<?php echo $product_id;  ?>]" value="<?php echo $value['quote_updated_qty'];  ?>" type="number" step="0.01" <?php if($block->getQuote()->getStatus() > \Ced\RequestToQuote\Model\Quote::QUOTE_STATUS_PROCESSING){?> readonly <?php }?>/></span>
+                                            </span>
+                                    </span>
+                            </td> 
+                            <td class="col updated_price" >
+                                  <span data-label="Excl. Tax" class="price-excluding-tax">
+                                            <span class="cart-price">
+                                                <span><span><?php echo $block->getCurrencyCode(); ?></span> <input id="rowtotal[<?php echo $product_id;  ?>]" class="row-total common numbersOnly" name="row[<?php echo $product_id;  ?>]"  type="number" value="<?php echo $value['updated_price'];  ?>" readonly step="0.01"/></span>
+                                            </span>
+                                    </span>
+                            </td> 
+                    </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+     </div>
+
+    <fieldset class="fieldset">
+        <?php echo $block->getBlockHtml('formkey')?>
+        <br>
+
+        <legend class="legend"><span><?php /* @escapeNotVerified */ echo __('Quote Information') ?></span></legend><br />
+       <!--  <?php 
+                            /*foreach ($product->getOptions() as $value) {
+                   
+                                $option_id=$value->getOptionId();
+
+                                $html='<div class="field text">
+                                        <label class="label"><span>'.$value->getTitle().'</span></label>';
+                                $html.='<div class="control"><select data-selector="options['.$option_id.']" id="select_'.$option_id.'" name="options['.$option_id.']"> <option value="">-- Please Select --</option>';
+                                $values = $value->getValues();
+                                
+                                foreach ($values as $ovalues) {
+                                    $html.='<option price="'.$ovalues->getPrice().'" value="'.$ovalues->getOptionTypeId().'">'.$ovalues->getTitle().'</option>';
+                                }
+                                $html.='</select></div></div>';
+                                echo $html; 
+                            }*/
+                        ?> -->
+        <div class="field text">
+             <label class="label" for="quote_qty"><span><?php /* @escapeNotVerified */ echo __('Quote Increment Id') ?></span></label>
+            <div class="control">
+                <span><?php echo '#'.$block->getQuote()->getQuoteIncrementId(); ?></span>
+            </div> 
+        </div>
+
+        <div class="field text">
+            <label class="label" for="quote_comment"><span><?php /* @escapeNotVerified */ echo __('Comment') ?></span></label>
+            <div class="control">
+                <span><?php echo $block->getQuote()->getComments(); ?></span>
+            </div> 
+        </div>
+
+        <div class="field text">
+            <label class="label" name="shipping address"><span><?php /* @escapeNotVerified */ echo __('Address') ?></span></label>
+            <div class="control">
+                <span id="address" name="address"><?php echo $block->getQuote()->getAddress() ?></span><br>
+                <span><?php echo $block->getQuote()->getCity() ?></span><br>
+                <span><?php echo $block->getQuote()->getState() ?></span><br>
+                <span><?php echo $block->getQuote()->getCountry() ?></span><br>
+                <span><?php echo $block->getQuote()->getPincode() ?></span>
+            </div> 
+        </div>
+
+        <div class="field text">
+             <label class="label" name="telephone" for="quote_qty"><span><?php /* @escapeNotVerified */ echo __('Contact Info') ?></span></label>
+            <div class="control">
+                <span><?php echo $block->getQuote()->getTelephone(); ?></span>
+            </div> 
+        </div>
+
+        <div class="field text">
+             <label class="label" name="telephone" for="quote_qty"><span><?php /* @escapeNotVerified */ echo __('Quote Total') ?></span></label>
+            <div class="control">
+                <span><?php echo $block->getCurrencyCode(); ?></span><input type="number" step="0.01" name="quote_total" id="quote_total" class="numbersOnly" readonly value="<?php echo $block->getQuote()->getQuoteUpdatedPrice() ?>" />
+            </div> 
+        </div>
+        <br>
+    </fieldset>
+ <fieldset>   
+    <div class="actions-toolbar">
+        <div class="primary">
+         
+        </div>
+        <div class="secondary">
+            <a class="action back" href="<?php /* @escapeNotVerified */ echo $block->getBackUrl(); ?>"><span><?php /* @escapeNotVerified */ echo __('Back')?></span></a>
+        </div>
+    </div>
+
+    <?php if($block->getChatHistory() && !empty($block->getChatHistory())){?>
+        <legend class="legend"><span><?php /* @escapeNotVerified */ echo __('Chat for the Quote') ?></span></legend>
+        <div class="purchaseorder-history-block" id="purchaseorder-history-block">
+            <div class="field text">
+                    <label class="label" for="chat"><span><?php /* @escapeNotVerified */ echo __('Message') ?></span></label>
+                    <div class="control">
+                    <br>
+                        <textarea id="message" name="message" cols="60" rows="5"></textarea>
+                    </div>
+                </div>
+            <div class="purchaseorder-history-block-data">
+                <br>
+                <label for="history_comment" class="admin__field-label">
+                    <?php echo __('Chat History') ?>
+                </label>
+            </div>
+            <div class="purchaseorder-comment-wrapper">
+                <ul class="note-list">
+                    <?php foreach ($block->getChatHistory() as $_chathistory){?>
+                    <?php if($_chathistory->getSentBy() =='Customer'){ ?>
+                        <li class="purchaseorder-left-chat-column">
+                          <span class="purchaseorder-left-chat-column-date"><?php  echo $this->formatDate($_chathistory
+                                ->getCreatedAt(), \IntlDateFormatter::MEDIUM) ?></span>
+                          <span class="purchaseorder-left-chat-column-date"><?php  echo $this->formatTime($_chathistory
+                                ->getCreatedAt(), \IntlDateFormatter::MEDIUM) ?></span>
+                          <span class="separator">|</span>
+                          <span class="purchaseorder-left-chat-column-sender">
+                                <strong><?php //?></strong>
+                          </span>
+                          <?php if ($_chathistory->getMessage()){ ?>
+                              <div class="purchaseorder-left-chat-column-chat"><?php echo $this->escapeHtml($_chathistory->getMessage(), ['b', 'br', 'strong', 'i', 'u', 'a']) ?>
+                                
+                              </div>
+                          <?php } ?>
+                        </li>
+                    <?php } elseif($_chathistory->getSentBy() == 'Vendor'){?>
+                            <li class="purchaseorder-right-chat-column" style="background: #9dc5e7">
+                              <span class="purchaseorder-right-chat-column-date"><?php  echo $this->formatDate($_chathistory
+                                    ->getCreatedAt(), \IntlDateFormatter::MEDIUM) ?></span>
+                              <span class="purchaseorder-right-chat-column-time"><?php  echo $this->formatTime($_chathistory
+                                    ->getCreatedAt(), \IntlDateFormatter::MEDIUM) ?></span>
+                              <span class="separator">|</span>
+                              <span class="separator">Sent By: Vendor</span>
+                              
+                              <?php if ($_chathistory->getMessage()){ ?>
+                                  <div class="note-list-comment"><?php echo $this->escapeHtml($_chathistory->getMessage(), ['b', 'br', 'strong', 'i', 'u', 'a']) ?>
+                                        
+                                 </div>
+                              <?php } ?>
+                            </li>
+
+                    <?php }else{  ?>
+                        <li class="purchaseorder-right-chat-column" >
+                          <span class="purchaseorder-right-chat-column-date"><?php  echo $this->formatDate($_chathistory
+                                ->getCreatedAt(), \IntlDateFormatter::MEDIUM) ?></span>
+                          <span class="purchaseorder-right-chat-column-time"><?php  echo $this->formatTime($_chathistory
+                                ->getCreatedAt(), \IntlDateFormatter::MEDIUM) ?></span>
+                          <span class="separator">|</span>
+                          <span class="separator">Sent By: Admin</span>
+                          
+                          <?php if ($_chathistory->getMessage()){ ?>
+                              <div class="note-list-comment"><?php echo $this->escapeHtml($_chathistory->getMessage(), ['b', 'br', 'strong', 'i', 'u', 'a']) ?>
+                                    
+                             </div>
+                          <?php } ?>
+                        </li>
+                    <?php } ?>
+                    <?php } ?>
+                </ul>
+            </div>
+        </div>
+        <?php }?>
+
+            </fieldset>
+            
+            <div class="actions-toolbar">
+                <div class="primary">
+                    <button type="submit" title="<?php /* @escapeNotVerified */ echo __('Save and Send') ?>" class="action submit primary">
+
+                        <span><?php /* @escapeNotVerified */ echo __('Save and Send') ?></span>
+                    </button>
+                </div>
+                <div class="secondary">
+                    <a class="action back" href="<?php /* @escapeNotVerified */ echo $block->getBackUrl(); ?>"><span><?php /* @escapeNotVerified */ echo __('Back')?></span></a>
+                </div>
+            </div>  
+
+</form>
+
+<style type="text/css">
+.form.wishlist .legend span {
+    font-weight: bold;
+    margin-top: 20px;
+    display: block;
+}
+.form.wishlist .field.text::after {
+    clear: both;
+    content: "";
+    display: table;
+}
+.form.wishlist .field .label {
+    width: 10%;
+    float: left;
+}
+.form.wishlist .field .control {
+    float: right;
+    width: 85%;
+}
+    .purchaseorder-left-column {
+    width: 50%;
+    float: left;
+    }
+    .purchaseorder-right-column {
+        width: 50%;
+        float: right;
+    }
+    .vendor-rma-right-column {
+        width: 50%;
+        float: right;
+    }
+    .purchaseorder-left-chat-column {
+        width: 55%;
+        float: left;
+        background: none repeat scroll 0 0 #D3D3D3;
+        margin-bottom: 7px;
+        padding: 6px 13px;
+    }
+    .purchaseorder-right-chat-column {
+        width: 55%;
+        float: right;
+        background: none repeat scroll 0 0 #F3F3DF;
+        margin-bottom: 7px;
+        padding: 6px 13px;
+    }
+    .vendor-rma-right-chat-column {
+        width: 55%;
+        float: right;
+        background: none repeat scroll 0 0 #E9967A;
+        margin-bottom: 7px;
+        padding: 6px 13px;
+    }
+    .cart.table-wrapper {
+        overflow-x: auto;
+    } 
+    .cart.items.data.table tr td span, .cart.items.data.table tr th {
+        font-size: 14px;
+    }
+    .cart.table-wrapper .product-item-name {
+        font-size: 14px;
+    }
+    .cart.table-wrapper .product-item-details {
+        padding: 0;
+    }
+
+    .product-item-photo {
+        padding: 0 !important;
+    } 
+    .cart.items.data.table tr td, .cart.items.data.table tr th {
+        padding: 12px 15px !important;
+        vertical-align: middle;
+        text-align: center;
+    }
+    .cart.items.data.table .item-info {
+        border-bottom: 1px solid #ccc;
+    }
+    .cart.table-wrapper .product-item-details{
+        display: block;
+    }
+</style>
+<script type="text/javascript">
+
+    require(['jquery'], function($) {
+        
+        $("#shopping-cart-table").on('keyup', '.qty-field-po',function(){    
+            var data =new Array();      
+              var qty = $(this).val();
+               var price = $(this).closest('td').prev().find('.po-price-updated').val();   
+                    $(this).closest('td').next().find('.row-total').val(qty*price);   
+              $(this).parents('table').find('input.common').each( function(index){
+                    data.push($(this).val());
+                });
+              var sum=0;
+              for(var i=0;i<data.length;i+=3){
+                 
+                   sum += parseInt(data[i+2]);
+              }             
+              $('#quote_total').val(sum.toFixed(2));
+              $('#hide_quote_total').val(sum.toFixed(2));
+
+        });
+                     
+
+        $("#shopping-cart-table").on('keyup', '.po-price-updated',function(){    
+            var data =new Array();      
+            var price = $(this).val();
+            var qty = $(this).parents('tr').find('.qty-field-po').val();
+                   
+            $(this).parents('tr').find('.row-total').val(qty*price);   
+                    
+            $(this).parents('table').find('input.common').each( function(index){
+                data.push($(this).val());
+            });
+              
+          var sum=0;
+          for(var i=0;i<data.length;i+=3){
+             
+               sum += parseInt(data[i+2]);
+          }
+
+          $('#quote_total').val(sum.toFixed(2)); 
+          $('#hide_quote_total').val(sum.toFixed(2));            
+        });
+        
+        $(".numbersOnly").keydown(function (e) {
+        // Allow: backspace, delete, tab, escape, enter and .
+        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+             // Allow: Ctrl+A, Command+A
+            (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) || 
+             // Allow: home, end, left, right, down, up
+            (e.keyCode >= 35 && e.keyCode <= 40)) {
+                 // let it happen, don't do anything
+                 return;
+        }
+        // Ensure that it is a number and stop the keypress
+        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+            e.preventDefault();
+        }
+    });
+
+        
+    });
+
+</script>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--/**
+  * CedCommerce
+  *
+  * NOTICE OF LICENSE
+  *
+  * This source file is subject to the End User License Agreement (EULA)
+  * that is bundled with this package in the file LICENSE.txt.
+  * It is also available through the world-wide-web at this URL:
+  * http://cedcommerce.com/license-agreement.txt
+  *
+  * @category    Ced
+  * @package     Ced_Barcode
+  * @author      CedCommerce Core Team <connect@cedcommerce.com >
+  * @copyright   Copyright CEDCOMMERCE (http://cedcommerce.com/)
+  * @license      http://cedcommerce.com/license-agreement.txt
+  */ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+	<system>
+	    <tab id="barcode" translate="label" sortOrder="100">
+	        <label>CedCommerce</label>
+	    </tab>
+	    <section id="barcode" translate="label" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Barcode</label>
+            <tab>barcode</tab>
+            <resource>Ced_Barcode::barcode</resource>
+			<group id="active" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>General Settings</label>
+                <field id="enable" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable Barcode</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+			</group>
+			<group id="active11" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="1">
+                <label>Barcode settings</label>
+                <field id="banner" translate="label" type="image" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Logo</label>
+					<config_path>barcode/active11/banner</config_path>
+					<upload_dir config="system/filesystem/media" scope_info="0">ced/barcode</upload_dir>
+					<base_url type="media" scope_info="0">ced/barcode</base_url>
+					<backend_model>Ced\Barcode\Model\System\Config\Backend\Logo</backend_model>	
+                    <comment>Allowed file types:PNG, GIF, JPG, JPEG. Not all browsers support all these formats!</comment>
+				</field>
+				<field id="logolength" translate="label" type="text" sortOrder="6" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Select Logo Vertical Coordinates</label>
+                <comment>Give 2 (y1,y2) Coordinates for logo Length. </comment>
+                </field>
+                <field id="logowidth" translate="label" type="text" sortOrder="7" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Select Logo Horizontal Coordinates</label>
+                 <comment>Give 2 (x1,x2) Coordinates for logo width. </comment>
+                 </field>
+                <field id="desopt" translate="label comment tooltip" sortOrder="8" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Description Attributes</label>
+                    <frontend_model>Ced\Barcode\Block\System\Config\Form\Field\Details</frontend_model>
+                     <backend_model>Ced\Barcode\Model\Backend\Details</backend_model> 
+               <comment>Give 4 (x1,y1,x2,y2) Coordinates if you select Image Attribute and for others select 2 coordinates. </comment>
+                </field> 
+                 <field id="baroption" translate="label" type="select" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Select Barcode Value</label>
+                    <source_model>Ced\Barcode\Model\CodeOptions</source_model>
+                 </field>
+                <field id="encodeoption" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Select Barcode Type</label>
+                    <source_model>Ced\Barcode\Model\TypeOptions</source_model>
+                </field>
+                 <field id="leftOffset" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Select Left Offset for Barcode</label>
+                  </field>
+                  <field id="topOffset" translate="label" type="text" sortOrder="4" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Select Top Offset for Barcode</label>
+                  </field>
+			</group>
+        </section>
+	</system>
+</config>

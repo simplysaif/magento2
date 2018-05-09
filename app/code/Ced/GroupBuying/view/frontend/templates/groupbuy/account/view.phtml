@@ -1,0 +1,106 @@
+<?php 
+/**
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+*
+ * @category    design
+ * @package     base_default
+ * @author 		CedCommerce Core Team <coreteam@cedcommerce.com>
+ * @copyright   Copyright CEDCOMMERCE (http://cedcommerce.com/)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+ 
+
+$_gift = $block->getGift();
+$product=$block->getImages();
+$des=$block->getImageUrl();
+$_helper=$block->gethelper();
+$data = $this->getRequest()->getParams('Data');
+$allowed_guest = 5; 
+$guest=$block->getGuests();
+
+?>
+<style>
+ul{
+	list-style-type:none;
+}
+em{
+	color:red;
+}
+</style>
+<div class="page-title">
+    <h1><?php echo __('Group #'.$_gift->getId()) ?></h1>
+</div>
+<form id="myform" action="<?php echo $this->getUrl('groupbuying/account/post',array('gift_id'=>$_gift->getId()))?>" method="post" data-hasrequired="<?php /* @escapeNotVerified */ echo __('* Required Fields') ?>" data-mage-init='{"validation":{}}'>
+	<div>
+			<div class="fieldset">
+			<h2 class="legend"><?php echo __('Purchased Information'); ?></h2>
+			<ul class="form-list">
+				<li class="fields"> 
+					<div id="TextBoxesGroup">
+						
+						<div class="guest_count"></br>
+							<span><?php echo __('Name'); ?><em style="color:red">*</em></span>
+							<input name="name" type="text" class="required-entry" readonly value=<?php echo $guest?> >
+							<span><?php echo __('Purchased Quantity'); ?><em style="color:red">*</em></span>	
+							<input type="number" min=0 name="qty" class="required-entry" placeholder="Enter Quntity As You Want It " oninput="validity.valid||(value='');"/>
+						</div>
+					</div>
+				</li>
+			</ul>
+			 <input  type="submit" value="Submit">
+		</div>	
+		<div class="product media" style="border: 2px solid;padding: 20px; 
+              width: 300px;resize: both;overflow: auto;">
+				<div class="gallery-placeholder" data-gallery-role="gallery-placeholder">
+					<a href="<?php echo $des; ?>">
+					<p class="product-image">
+						<?php
+						$store = $this->_objectManager->get('Magento\Store\Model\StoreManagerInterface')->getStore();
+						
+						$imageUrl = $store->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) . 'catalog/product' . $product->getImage();
+						
+						
+						$_img = '<img src="'.$imageUrl.'" />';
+							echo $_helper->productAttribute($product, $_img, 'image');
+						?>
+					</p>
+					</a>
+				</div>
+			</div>
+ </div>
+</form>
+
+<script type="text/x-magento-init">
+    {
+        "#myform": {
+            "validation": {}
+        }
+    }
+</script>
+<script>
+require([
+    'jquery',
+    'mage/mage'
+], function($){
+
+    var dataForm = $('#myform');
+    var ignore = null;
+
+    dataForm.mage('validation', {
+            ignore: ignore ? ':hidden:not(' + ignore + ')' : ':hidden'
+        }).find('input:text').attr('autocomplete', 'off');
+   
+
+});
+</script>
+
+
+
+

@@ -1,0 +1,155 @@
+<?php
+/**
+ * Copyright © 2016 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var \Magento\Customer\Block\Account\Dashboard\Info $block */
+?>
+<?php //print_r($block->getCustomerList()->getData());die;?>
+<div class="membership-info">
+    <div class="block-title"><strong><?php /* @escapeNotVerified */ echo __('Customer List') ?></strong></div>
+    <div class="block-content">
+        <div class="box box-information">
+          <?php if(count($block->getCustomerList()->getData())>0){
+          	?>
+          	 <div class="table-wrapper membership-history">
+        <table class="data table table-membership-history" id="my-membership-history">
+            <caption class="table-caption"><?php /* @escapeNotVerified */ echo __('Vendor List') ?></caption>
+            <thead>
+                <tr>
+                    <th scope="col" class="col planname"><?php /* @escapeNotVerified */ echo __('Customer Name') ?></th>
+                    <th scope="col" class="col price"><?php /* @escapeNotVerified */ echo __('Customer Email') ?></th>
+                    <th scope="col" class="col duration"><?php /* @escapeNotVerified */ echo __('Group') ?></th>
+                   <!--   <th scope="col" class="col category"><?php /* @escapeNotVerified */ //echo __('Category') ?></th>-->
+                    <th scope="col" class="col expiration"><?php /* @escapeNotVerified */ echo __('Logged') ?></th>
+                    <th scope="col" class="col status"><?php /* @escapeNotVerified */ echo __('Conversation') ?></th>
+                    <th scope="col" class="col status"><?php /* @escapeNotVerified */ echo __('Message') ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($block->getCustomerList() as $_customer): 
+                       
+                      $customer = $this->_objectManager->create('Magento\Customer\Model\Customer')->load($_customer->getId());
+                //print_r($customer->getData());die;
+              //  print_r($vendor->getData());die;
+                ?>
+                    <tr>
+                        <td  class="col planname"><?php /* @escapeNotVerified */ echo $customer->getName(); ?></td>
+                        <td  class="col price"><?php /* @escapeNotVerified */ echo $customer->getEmail() ?></td>
+                       <!--   <td  class="col category"><?php /* @escapeNotVerified */ //echo $_request['category'] ?></td>-->
+                        <td  class="col duration"><?php /* @escapeNotVerified */ echo $this->_objectManager->create('Magento\Customer\Model\Group')->load($_customer->getGroupId())->getCustomerGroupCode()?></td>
+                       
+                         <td  class="col expiration"><?php /* @escapeNotVerified */ echo $this->formatDate($customer->getCreatedAt(), \IntlDateFormatter::MEDIUM,
+                false) ?></td>
+                           <td class="customer-view">
+                          <a href="<?php echo $this->getUrl('teammember/customer/conversation',array('customeremail'=>$customer->getEmail()));?>"  class="action-conversation" id ="conversation-message">
+                                <span><?php /* @escapeNotVerified */ echo __('View Conversation') ?></span>
+                                </a>
+                                </td>
+                         <td  class="col customer-view">
+                            <a href="#" value ="hello" class="action view" id ="send-message" onclick  ="callFancyBox('<?php echo $customer->getId()?>','<?php echo $customer->getEmail()?>')">
+                                <span><?php /* @escapeNotVerified */ echo __('Send Message') ?></span>
+                        </td>
+                        <?php //endforeach;?>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+        <?php echo $block->getPagerHtml(); ?>
+    </div>
+          <?php }
+          else{
+          	?>
+          	  <div class="message info empty"><span><?php /* @escapeNotVerified */ echo __('There Are No Vendors Yet'); ?></span></div>
+            <?php } ?>
+        </div>
+      
+    </div>
+</div>
+
+<div id="message-content" style="display:none">
+   <div class="control">
+	   <textarea name="comments" value="" maxlength ="2000" title="<?php /* @escapeNotVerified */ //echo __('Detailed Description') ?>" class="input-textarea required-entry" id="ced-messages"></textarea>
+	</div>
+</div>
+
+<script>
+ 
+function callFancyBox(customerid,customeremail) {
+ 	
+ 	require(['jquery','Magento_Ui/js/modal/modal'], function ($,modal) {
+		 var options = {
+                type: 'popup',
+                responsive: true,
+                innerScroll: true,
+                title: 'Send Message To Vendor',
+                buttons: [{
+                    text: $.mage.__('Send'),
+                    click: function () {
+                    
+                    if($('#ced-messages').val().length)
+                        {
+                    	jQuery.ajax({
+                    		type:'POST',
+                    		url: '<?php echo $this->geturl('teammember/customer/sendmessage')?>',
+                    		data:{
+                    			'customerid': customerid,
+                    			'message':document.getElementById('ced-messages').value,
+                    			'customeremail':customeremail,
+                    			
+                    			},
+                    		success:function( data, textStatus, jQxhr){
+                    	
+                    		}
+                    	});
+                                        
+                        this.closeModal();
+                           }
+                         else 
+                         {
+                            alert('please fill above field');
+                         }  
+                    }
+                }]
+            };
+		 
+            
+            var popup = modal(options, $('#message-content'));
+
+            $('#message-content').modal('openModal');
+
+        }); 
+}
+
+</script>
+<style type="text/css">
+   
+    .customer-view a {
+    background: #286090;
+    padding: 6px 15px;
+    border-radius: 3px;
+    text-decoration: none;
+}
+
+.customer-view a span {
+    color: #fff;
+}
+.column.main {
+    background: #eeeeee none repeat scroll 0 0;
+    border: 1px solid #ccc;
+    padding: 15px;
+}
+.data.table.table-membership-history tr th {
+    font-weight: bold;
+}
+.data.table.table-membership-history tr td, .data.table.table-membership-history tr th {
+    border: 1px solid #ccc !important;
+    padding: 15px 10px;
+}
+ .data.table.table-membership-history {
+    margin-top: 15px;
+}
+</style>

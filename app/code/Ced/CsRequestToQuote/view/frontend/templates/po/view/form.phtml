@@ -1,0 +1,67 @@
+<?php
+
+/**
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the End User License Agreement (EULA)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://cedcommerce.com/license-agreement.txt
+ *
+ * @category    Ced
+ * @package     Ced_RequestToQuote
+ * @author      CedCommerce Core Team <connect@cedcommerce.com>
+ * @copyright   Copyright CedCommerce (http://cedcommerce.com/)
+ * @license      http://cedcommerce.com/license-agreement.txt
+ */
+
+?>
+
+<?php
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $priceHelper = $objectManager->create('Magento\Framework\Pricing\Helper\Data');
+    $poId = $block->getPoIncrementId();
+    $created = $block->getCreatedAt();
+    $address = $block->getCustomerAddress();
+    $po = $block->getItems();
+    $quoteData = $block->getQuoteData();
+    $poData = $block->getPoData();
+    $products = $block->getProductId();
+    $vendor_id = $block->getVendorId();
+    $subtotal = 0;
+
+?>
+<div id="container" class="main-col">
+<?php echo $this->getChildHtml('po_account_info');?>
+<?php echo $this->getChildHtml('po_shipping_info');?>
+<?php echo $this->getChildHtml('po_item_info');?>
+
+    
+
+   
+</div>
+
+<style>
+.order-billing-address{
+    float: left;
+    width: 47%;
+}
+.order-billing-method{
+    float: right;
+    width: 47%;
+}
+.order-totals{
+    float: right;
+    width: 50%;
+}
+.order-information{
+    float: left;
+    width: 47%;
+}
+.order-account-information{
+    float: right;
+    width: 47%;
+}
+</style>

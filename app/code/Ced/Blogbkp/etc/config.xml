@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- /**
+  * CedCommerce
+  *
+  * NOTICE OF LICENSE
+  *
+  * This source file is subject to the End User License Agreement (EULA)
+  * that is bundled with this package in the file LICENSE.txt.
+  * It is also available through the world-wide-web at this URL:
+  * http://cedcommerce.com/license-agreement.txt
+  *
+  * @category  Ced
+  * @package   Ced_Blog
+  * @author    CedCommerce Core Team <connect@cedcommerce.com >
+  * @copyright Copyright CEDCOMMERCE (http://cedcommerce.com/)
+  * @license   http://cedcommerce.com/license-agreement.txt
+  */ -->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../Store/etc/config.xsd">
+    <default>
+        <ced_blog>										<!--  section name-->
+        	<general>									<!--  group name-->
+        		<activation>1</activation>								
+        		<post_activation>5</post_activation>	<!--  field name-->		
+                <route_activation>blog</route_activation> 
+                <blog_date_activation>0</blog_date_activation>  
+          		<blog_title_activation>Blog</blog_title_activation>
+          		<bookmarks_activation>1</bookmarks_activation>
+          		<bookmarks_posts_activation>1</bookmarks_posts_activation>
+          		<recent_post_activate>5</recent_post_activate>
+                <post_text_limit>200</post_text_limit>
+	        	<tag_menu_activate>5</tag_menu_activate>
+          	</general>
+          	<comment>1</comment>
+          	<enable_comments_login>0</enable_comments_login>
+          	<auto_approve_comments>0</auto_approve_comments>
+	   </ced_blog>  
+    </default>
+</config>

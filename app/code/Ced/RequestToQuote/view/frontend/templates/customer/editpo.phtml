@@ -1,0 +1,174 @@
+<?php 
+/**
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the End User License Agreement (EULA)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://cedcommerce.com/license-agreement.txt
+ *
+ * @category    Ced
+ * @package     Ced_RequestToQuote
+ * @author      CedCommerce Core Team <connect@cedcommerce.com>
+ * @copyright   Copyright CedCommerce (http://cedcommerce.com/)
+ * @license      http://cedcommerce.com/license-agreement.txt
+ */
+?>
+<?php 
+$poData = $block->getPoData();
+$subtotal = 0;
+$customer_id = $block->getCustomerId();
+$customer_email = $block->getCustomer($customer_id)->getEmail();
+$customer_name = $block->getCustomer($customer_id)->getName();
+$address = $block->getCustomerAddress();
+$po_info = $block->getPoInfo();
+
+?>
+<span class="order-status"><?php echo $block->getPoStatus();?></span>
+<ul class="items order-links">
+    <li class="nav item current">
+        <strong>PO Items</strong>
+    </li>
+    <?php if($po_info->getStatus() === '0'){?>
+    <li class="nav item current">
+        <span>
+            <a href="<?php echo $this->getUrl('requesttoquote/customer/cancelpo', array('po_incId' => $po_info->getPoIncrementId()));?>"><?php echo __('Cancel PO');?></a>
+        </span>
+    </li>
+    <li class="nav item current">
+        <span>
+            <a href="<?php echo $this->getUrl('requesttoquote/customer/poapprove', array('po_id' => $po_info->getPoIncrementId()));?>"><?php echo __('Approve PO');?></a>
+        </span>
+    </li>
+    <?php }?>
+</ul>
+<div class="order-details-items ordered">
+    <div class="order-title">
+        <strong>PO Items</strong>
+    </div>
+    <div class="table-wrapper order-items">
+        <table class="data table table-order-items" id="my-orders-table" summary="Items Ordered">
+            <caption class="table-caption">PO Items</caption>
+            <thead>
+                <tr>
+                    <th class="col name"><?php echo __('Product Name');?></th>
+                    <th class="col sku"><?php echo __('SKU');?></th>
+                    <th class="col price"><?php echo __('Quoted Unit Price');?></th>
+                    <th class="col qty"><?php echo __('Qty');?></th>
+                    <th class="col subtotal"><?php echo __('Subtotal');?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php 
+                foreach ($poData->getData() as $value) {
+                    $product_id = $value['product_id'];
+                    $product = $block->getProduct($product_id);
+                    $unitprice = $block->getProductIndividualPrice($product_id);
+                    $remainingQty = $block->getRemainingQty($product_id);
+                    $subtotal += $value['po_price'];
+                    //print_r($value);die("dfkshf0");
+                ?>
+                <tr id="order-item-row-48">
+                    <td class="col name" data-th="Product Name">
+                        <strong class="product name product-item-name"><?php echo $product->getName();  ?></strong>
+                    </td>
+                    <td class="col sku" data-th="SKU"><?php echo $product->getSku();  ?></td>
+                    <td class="col price" data-th="Price">
+                        <span class="price-excluding-tax" data-label="Excl. Tax">
+                            <span class="cart-price">
+                                <span class="price"><?php echo $this->_objectManager->create('Magento\Framework\Pricing\Helper\Data')->currency($value['po_price']/$value['product_qty'], true, false);  ?></span>            
+                            </span>
+                        </span>
+                    </td>
+                    <td class="col qty" data-th="Qty">
+                        <ul class="items-qty">
+                            <li class="item">
+                                <span class="title">Ordered</span>
+                                <span class="content"><?php echo $value['product_qty'];  ?></span>
+                            </li>
+                        </ul>
+                    </td>
+                    <td class="col subtotal" data-th="Subtotal">
+                        <span class="price-excluding-tax" data-label="Excl. Tax">
+                            <span class="cart-price">
+                                <span class="price"><?php echo $this->_objectManager->create('Magento\Framework\Pricing\Helper\Data')->currency($value['po_price'], true, false);  ?></span>            
+                            </span>
+                        </span>
+                    </td>
+                </tr>
+                    <?php }?>
+            </tbody>
+            <tfoot>
+                <tr class="subtotal">
+                    <th colspan="4" class="mark" scope="row"><?php echo __('Subtotal');?></th>
+                    <td class="amount" data-th="Subtotal">
+                        <span class="price">
+                                <?php echo $this->_objectManager->create('Magento\Framework\Pricing\Helper\Data')->currency($subtotal, true, false);?>
+                        </span>                    
+                    </td>
+                </tr>
+                <tr class="shipping">
+                    <th colspan="4" class="mark" scope="row"><?php echo __('Shipping &amp; Handling');?></th>
+                    <td class="amount" data-th="Shipping &amp; Handling">
+                        <span class="price"><?php echo $this->_objectManager->create('Magento\Framework\Pricing\Helper\Data')->currency($block->getShippingAmount(), true, false);?></span>                    
+                    </td>
+                </tr>
+                <tr class="grand_total">
+                    <th colspan="4" class="mark" scope="row">
+                        <strong><?php echo __('Grand Total')?></strong>
+                    </th>
+                    <td class="amount" data-th="Grand Total">
+                        <strong><span class="price"><?php echo $this->_objectManager->create('Magento\Framework\Pricing\Helper\Data')->currency($subtotal + $block->getShippingAmount(), true, false);?></span></strong>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div class="actions-toolbar">
+        <div class="secondary">
+            <a class="action back" href="<?php echo $this->getUrl('requesttoquote/customer/po');?>">
+                <span>Back to My PO</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="block block-order-details-view">
+    <div class="block-title">
+        <strong>Order Information</strong>
+    </div>
+    <div class="block-content">
+        <div class="box box-order-shipping-address">
+            <strong class="box-title">
+                <span>Shipping Address</span>
+            </strong>
+            <div class="box-content">
+                <address><?php echo $customer_name;?><br>
+                    <?php echo $address['street'];?><br>
+                    <?php echo $address['city'];?>, <?php echo $address['state'];?>, <?php echo $address['pincode'];?><br>
+                    <?php echo $address['country'];?><br>
+                    T: <?php echo $address['telephone'];?>
+
+                </address>
+            </div>
+        </div>
+
+        <div class="box box-order-shipping-method">
+            <strong class="box-title">
+                <span><?php echo __('Shipping Method');?></span>
+            </strong>
+            <div class="box-content"><?php echo $block->getShippingMethod();?></div>
+        </div>
+    </div>
+</div>
+<style type="text/css">
+    .order-status{
+        float: right;
+    }
+    .order-links .item {
+        float: left;
+        margin: 0 3px 2px 0;
+    }
+</style>

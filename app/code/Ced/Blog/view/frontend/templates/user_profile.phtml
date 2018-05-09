@@ -1,0 +1,37 @@
+<?php
+/**
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the End User License Agreement (EULA)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://cedcommerce.com/license-agreement.txt
+ *
+ * @category    Ced
+ * @package     Ced_Blog
+ * @author   	 CedCommerce Core Team <connect@cedcommerce.com >
+ * @copyright   Copyright CEDCOMMERCE (http://cedcommerce.com/)
+ * @license      http://cedcommerce.com/license-agreement.txt
+ */
+?>
+<div class = "profile">
+    <h4>Author Profile </h4>
+    <?php if(count($block->getProfileData())>0)
+    {
+        foreach ($block->getProfileData() as $data) {?>
+            <div class ="author-profile">
+                <h3>Author Profile:</h3>
+                <img src="<?php echo $block->getUrl('pub/media/').$data->getProfile()?>" height="200px" width="250px"/>
+            </div>
+            <div class ="author-about">
+                <h3>Description: </h3>
+                <p><?php  echo $data->getAbout()?></p>
+            </div>
+        <?php }
+    }else{?>
+        <h2><?php echo 'user is not assigned as author'?></h2>
+    <?php } ?>
+</div>
+

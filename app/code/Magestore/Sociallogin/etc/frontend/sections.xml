@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2016 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Customer:etc/sections.xsd">
+    <action name="sociallogin/popup/login"/>
+    <action name="sociallogin/sociallogin/allogin"/>
+    <action name="sociallogin/sociallogin/amazonlogin"/>
+    <action name="sociallogin/sociallogin/callogin"/>
+    <action name="sociallogin/sociallogin/fblogin"/>
+    <action name="sociallogin/sociallogin/foursQuareredirecturl"/>
+    <action name="sociallogin/sociallogin/fqlogin"/>
+    <action name="sociallogin/sociallogin/gologin"/>
+    <action name="sociallogin/sociallogin/instagramlogin"/>
+    <action name="sociallogin/sociallogin/linkedlogin"/>
+    <action name="sociallogin/sociallogin/livelogin"/>
+    <action name="sociallogin/sociallogin/ljlogin"/>
+    <action name="sociallogin/sociallogin/openlogin"/>
+    <action name="sociallogin/sociallogin/orglogin"/>
+    <action name="sociallogin/sociallogin/perlogin"/>
+    <action name="sociallogin/sociallogin/selogin"/>
+    <action name="sociallogin/sociallogin/twlogin"/>
+    <action name="sociallogin/sociallogin/vklogin"/>
+    <action name="sociallogin/sociallogin/wplogin"/>
+    <action name="sociallogin/sociallogin/yalogin"/>
+    <action name="sociallogin/popup/createAcc">
+        <section name="cart"/>
+        <section name="checkout-data"/>
+        <section name="customer"/>
+    </action>
+</config>

@@ -1,0 +1,90 @@
+.product-matrix {
+  overflow: hidden;
+  
+}
+.product-matrix .next, 
+.product-matrix .prev {
+  border: 1px solid #a19191;
+  border-radius: 100%;
+  cursor: pointer;
+  height: 26px !important;
+  padding-top: 6px;
+  position: absolute;
+  text-align: center;
+  top: 0;
+  width: 33px;
+}
+.product-matrix .prev {
+  left: 0;
+}
+.product-matrix .next {
+  right: 0;
+}
+.matrix-table{
+  transition:0.4s all;
+}
+.matrix-table td{
+
+}
+.matrix-table td input {
+  width: 145px;
+}
+.matrix-table .heading-tr td {
+  background-color: #006f90;
+  color: white;
+  text-align: center;
+}
+.matrix-table .qty-available {
+  background: #f4f4f4 none repeat scroll 0 0;
+  font-size: 11px;
+  line-height: 19px;
+  padding: 5px 2px;
+  text-align: center;
+  display: none;
+}
+.matrix-table .div-lable {
+  background: #f3f3f2 none repeat scroll 0 0;
+  font-size: 13px;
+  padding-bottom: 2px;
+  padding-top: 2px;
+  text-align: center;
+  width: 145px;
+}
+.product-matrix-vertical-layout
+{
+  height: 300px;
+  overflow-y: scroll;
+}
+
+
+/* style 2 */
+.product-matrix-matrix-layout.layout-2 {
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+.vertical-div {
+  background: #078eaf none repeat scroll 0 0;
+  float: left;
+  width: 15%;
+
+}
+.vertical {
+  background: #006f90 none repeat scroll 0 0;
+  color: #fff;
+  margin-bottom: -31px;
+  margin-top: 42px;
+  padding-bottom: 36px;
+  padding-top: 36px;
+  text-align: center;
+}
+.product-matrix-matrix-layout.layout-2 .style-2-table-wrap {
+  float: right;
+  overflow-x: hidden;
+  width: 84%;
+}
+.product-matrix-matrix-layout.layout-2 .style-2-table-wrap .matrix-table td input {
+  width: 120px;
+}
+.product-matrix .next img, .product-matrix .prev img {
+  width: 22px;
+}

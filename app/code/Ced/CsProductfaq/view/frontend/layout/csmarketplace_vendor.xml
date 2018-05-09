@@ -1,0 +1,68 @@
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="vendorpanel" xsi:noNamespaceSchemaLocation="../../../../../../../lib/internal/Magento/Framework/View/Layout/etc/page_configuration.xsd">
+<!--  /**
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the End User License Agreement (EULA)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://cedcommerce.com/license-agreement.txt
+ *
+ * @category Ced
+ * @package Ced_CsProductfaq
+ * @author CedCommerce Core Team
+ * @copyright Copyright CEDCOMMERCE (http://cedcommerce.com/)
+ * @license http://cedcommerce.com/license-agreement.txt
+ */ -->
+     <head>
+        <meta name="x_ua_compatible" content="IE=edge,chrome=1"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+        
+        <css src="mage/calendar.css"/>
+        <css src="Ced_CsMarketplace::bower_components/bootstrap/dist/css/bootstrap.min.css" />
+        <css src="Ced_CsMarketplace::bower_components/metisMenu/dist/metisMenu.min.css"/>
+        <css src="Ced_CsMarketplace::dist/css/timeline.css"/>
+        <css src="Ced_CsMarketplace::dist/css/sb-admin-2.css"/>
+        <css src="Ced_CsMarketplace::bower_components/morrisjs/morris.css"/>
+        <css src="Ced_CsMarketplace::bower_components/font-awesome/css/font-awesome.min.css"/>
+        <css src="Ced_CsMarketplace::css/ced/csmarketplace/vpanel.css"/> 
+        <css src="Ced_CsMarketplace::css/ced/csmarketplace/vpanel-admin.css"  media="all"/> 
+        <link src="Ced_CsProductfaq::js/faq.js"/> 
+        <link src="Ced_CsProductfaq::css/faq.css"/>
+    </head>
+   
+     
+    
+    <body>
+        <referenceBlock name="csmarketplace_vendor_navigation">
+         <!-- <block class="Ced\CsMarketplace\Block\Links" name="csmarketplace_vendor_navigation" >  -->
+            <block class="Ced\CsMarketplace\Block\Link\Current" name="vendor_productfaq" after="vendor_orders" ifconfig="ced_csmarketplace/general/csproductfaq"> 
+                        <arguments>
+                            <argument name="name" xsi:type="string">vendor_productfaq</argument>
+                            <argument name="label" xsi:type="string">Vendor Product Faq</argument>
+                            <argument name="path" xsi:type="string">#</argument>
+                            <argument name="font_awesome" xsi:type="string">fa fa-question</argument>
+                            <argument name="sort_order" xsi:type="string">80</argument>
+                            <argument name="level" xsi:type="string">1</argument>
+                        </arguments>
+                        <block class="Ced\CsMarketplace\Block\Links" name="vendor_faq_container" as="vendor_faq_container">
+                            <arguments>
+                                <argument name="css_class" xsi:type="string">nav nav-second-level collapse</argument>
+                            </arguments>
+                            <block class="Ced\CsMarketplace\Block\Link\Current" name="product_faq">
+                                <arguments>
+                                    <argument name="name" xsi:type="string">vendor_productfaq</argument>
+                                    <argument name="label" xsi:type="string">Vendor Product Faq</argument>
+                                    <argument name="path" xsi:type="string">csproductfaq/csfaq/index</argument>
+                                    <argument name="font_awesome" xsi:type="string">fa fa-question</argument>
+                                    <argument name="sort_order" xsi:type="string">30</argument>
+                                    <argument name="level" xsi:type="string">2</argument>
+                                </arguments>
+                            </block>
+                        </block>
+                    </block>
+                    <!-- </block> -->
+        </referenceBlock>
+    </body>
+</page>

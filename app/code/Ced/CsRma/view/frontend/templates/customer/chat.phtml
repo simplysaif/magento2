@@ -1,0 +1,44 @@
+<!-- /**
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the End User License Agreement (EULA)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://cedcommerce.com/license-agreement.txt
+ *
+ * @category    Ced
+ * @package     Ced_CsRma
+ * @author      CedCommerce Core Team <connect@cedcommerce.com>
+ * @copyright   Copyright CedCommerce (http://cedcommerce.com/)
+ * @license      http://cedcommerce.com/license-agreement.txt
+ */ -->
+<div class="block block-order-details-view" >
+    <form class="form-rma-view" action="<?php  echo $block->getSubmitUrl() ?>" method="post" id="form-validate" enctype="multipart/form-data" data-mage-init='{"validation":{}}'>
+      <?php echo $block->getBlockHtml('formkey'); ?>
+         <div class="field chat required">
+              <label class="label" for="description"><span><?php echo __('Messgae') ?></span></label>
+                  <div class="control">
+                      <textarea name="chat" cols="35" rows="3" data-validate="{required:true}"></textarea>
+                </div>
+          </div>
+      <div>
+          <span><?php echo __('Attch Your File')?></span><br>
+          <input type="file" name="rma_file">
+      </div>
+      <div class="actions-toolbar" style="float: right;">
+        <div class="primary">
+            <button type="submit" class="action save primary" data-action="save-rma" title="<?php /* @escapeNotVerified */ echo __('Submit RMA Request') ?>">
+                <span><?php /* @escapeNotVerified */ echo __('Send Messgae') ?></span>
+            </button>
+        </div>
+        <div class="secondary">
+            <a class="action back" href="<?php echo $block->escapeUrl($block->getBackUrl()) ?>"><span><?php /* @escapeNotVerified */ echo __('Go back') ?></span></a>
+        </div>
+      </div>
+  </form>
+</div>
+
+
+

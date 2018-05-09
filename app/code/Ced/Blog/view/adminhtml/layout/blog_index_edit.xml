@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+     <head>
+      <!--  <link src="Ced_Blog::js/attribute_options.js"/>    -->
+   	 </head>
+     <update handle="editor"/>
+    <body>
+	   <referenceContainer name="left">
+            	<block class="Ced\Blog\Block\Adminhtml\Blog\Edit\Tabs" name="ced_blog_edit_tabs">
+           
+            <container label="Main" name="main">
+                    <block class="Ced\Blog\Block\Adminhtml\Blog\Edit\Tab\Main" name="ced_blog_edit_tab_main" as="base"/>
+                    <!-- <block class="Ced\Blog\Block\Adminhtml\Options" as="advanced"/> -->
+            </container>
+			
+				<action method="addTab">
+                    <argument name="name" xsi:type="string">main_section</argument>
+                    <argument name="block" xsi:type="string">ced_blog_edit_tab_main</argument>
+                </action>
+				<!--CedAddTab-->
+			</block>
+        </referenceContainer>
+    	<referenceContainer name="content">
+            <block class="Ced\Blog\Block\Adminhtml\Blog\Edit" name="blog_blog_edit">
+             <!-- <block class="Ced\Blog\Block\Adminhtml\Options" name="blog_blog_options"/> -->
+             </block> 
+        </referenceContainer>
+    </body>
+</page>

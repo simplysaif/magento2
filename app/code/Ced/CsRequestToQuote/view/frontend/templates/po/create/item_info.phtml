@@ -1,0 +1,182 @@
+<?php 
+        
+      $quote_data = $block->getQuoteData();
+      $customer_data = $block->getCustomer();
+      $address = $block->getCustomerAddress();
+      $quotes = $block->getItems();
+      $quoteData = $block->getQuoteData();
+      $products = $block->getProductId();
+      $vendor_id = $block->getVendorId();
+
+?>
+<section class="admin__page-section">
+        <div class="admin__page-section-title">
+            <span class="title">Items Ordered</span>
+        </div>
+        <div class="admin__table-wrapper">
+            <table class="data-table admin__table-primary edit-order-table" id ="edit-order-table">
+                <thead>
+                    <tr class="headings">
+                        <th class="col-product"><span><?php echo __("Product"); ?></span></th>
+                        <!-- <th class="col-status"><span><?php echo __("Item Status"); ?></span></th> -->
+                        <th class="col-price-original"><span><?php echo __("Actual Price"); ?></span></th>
+                        <th class="col-price"><span><?php echo __("Quoted Price"); ?></span></th>
+                        <th class="col-price"><span><?php echo __("Updated Unit Price"); ?></span></th>
+                        <th class="col-ordered-qty"><span><?php echo __("Quoted Qty"); ?></span></th>
+                        <th class="col-ordered-qty"><span><?php echo __("Updated Quote Qty"); ?></span></th>
+                        <th class="col-subtotal"><span><?php echo __("Subtotal"); ?></span></th>
+                        <th class="col-total last"><span><?php echo __("Row Total"); ?></span></th>
+                    </tr>
+                </thead>
+                
+                <tbody class="even">
+                <input id="noofproducts" type="hidden" name="noofproducts" value="<?php echo $block->getNoOfProducts();  ?>">
+
+                    <?php 
+                        $total = 0;
+                        foreach ($quotes->getData() as $value) {
+                        $product_id = $value['product_id'];
+                        $product = $block->getProduct($product_id);
+                        $unitprice = $block->getProductIndividualPrice($product_id); ?>
+                        <input id="product[<?php echo $product_id;  ?>]" value="<?php echo $product_id;  ?>" type="hidden">
+                        <tr>
+                            <td class="col-product">
+                                <div id="order_item_2_title" class="product-title"><?php echo $product->getName();  ?>
+                                </div>
+                                <div class="product-sku-block">
+                                    <span><?php echo __("SKU:"); ?></span> <?php echo $product->getSku();  ?>
+                                </div>
+                            </td>
+                            
+                            <td class="col-price-original"><span><?php echo $block->getCurrencyCode();  ?></span><span class="price"><?php echo $product->getPrice();  ?></span>
+                            </td>
+
+                            <td class="col-price">
+                                <div class="price-excl-tax">
+                                <span><?php echo $block->getCurrencyCode();  ?></span>                
+                                    <span class="price"><?php echo $value['updated_price'];  ?></span>
+                                </div>
+                            </td>
+
+                            <td class="col-price">
+                                <div class="price-excl-tax">
+                                <?php 
+                                    $max_price = $value['updated_price'];
+                                ?>
+                                <span><?php echo $block->getCurrencyCode();  ?></span>             
+                                    <input max="<?php echo $max_price;?>" id="updateprice[<?php echo $product_id;  ?>]" class="input-text admin__control-text qty-input po-price-updated common numbersOnly" name="quoteproducts[<?php echo $product_id;  ?>]" value="<?php echo $value['unit_price'];  ?>" type="text">
+                                </div>
+                            </td>
+
+
+                            <td class="col-ordered-qty">
+                                <table class="qty-table">
+                                    <tbody>
+                                        <tr>
+                                            <th><?php echo __("Quantity to PO"); ?> :</th>
+                                            <?php 
+
+                                                if($value['remaining_qty']){
+                                                    $max = $value['remaining_qty'];
+                                                    $poed_qty = $value['quote_updated_qty'] - $value['remaining_qty'];
+                                                }elseif($value['remaining_qty'] === '0'){
+                                                    $max = 0;
+                                                    $poed_qty = $value['quote_updated_qty'];
+                                                }else{
+                                                    $max = $value['quote_updated_qty'];
+                                                    $poed_qty = 0;
+                                                }
+                                            ?>
+                                            <td class="col-qty-invoice">
+                                                <input max="<?php echo $max;?>" id="quantity_to_po[<?php echo $product_id;  ?>]" class="input-text admin__control-text qty-input qty-field-po common numbersOnly" name="quoteproducts[<?php echo $product_id;  ?>]" value="<?php echo $max  ?>" type="text">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th><?php echo __(" Quantity Already POed"); ?> :</th>
+                                            <td><b><?php echo $poed_qty;  ?></b></td>
+                                        </tr>                                   
+                                    </tbody>
+                                </table>
+                            </td>
+                            <td class="col-price">
+                                <div class="price-excl-tax">                
+                                    <span class="price" id="quote_qty"><?php echo $value['quote_updated_qty'];  ?></span>
+                                </div>
+                            </td>
+                            <td class="col-qty">
+                                <div class="price-excl-tax">
+                                <span><?php echo $block->getCurrencyCode();  ?></span>
+                                   <input class="input-text admin__control-text qty-input subtotal-po numbersOnly" name="subtotal[<?php echo $product_id;  ?>]"  type="text"  readonly value="<?php echo $value['unit_price'] * $max;  ?>">
+                                </div>
+                            </td>
+
+                            <td class="col-subtotal">
+                                <div class="price-excl-tax"> 
+                                <span><?php echo $block->getCurrencyCode();  ?></span>              
+                                   <input id="rowtotal" class="input-text admin__control-text qty-input row-total common numbersOnly" name="row_total[<?php echo $product_id;  ?>]"  type="text" value="<?php echo $value['unit_price'] * $max;  ?>" readonly>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php 
+                        $total += $value['unit_price'] * $max;
+                        }
+
+                    ?>             
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="admin__page-section">
+        <div class="admin__page-section-title">
+            <span class="title"><?php echo __("Purchase Order Total");?></span>
+        </div>
+        <div class="admin__page-section-content">
+            <div class="admin__page-section-item order-totals">
+                <table class="data-table admin__table-secondary order-subtotal-table">
+                    <tfoot>
+                        <tr class="col-0">
+                            <td class="">
+                                <strong><?php echo __("Grand Total");?></strong>
+                            </td>
+                            <td>
+                                <span><?php echo $block->getCurrencyCode();?></span>
+                                <span><input type="text" id="grandtotalofpo" name="grandtotalofpo" readonly value="<?php echo $quoteData->getShippingAmount() + $total;?>" /></span>
+                            </td>
+                        </tr>
+                        <tr class="col-3">
+                            <td class="">
+                                <strong><?php echo __("Total Due");?></strong>
+                            </td>
+                            <td>
+                                <span><?php echo $block->getCurrencyCode();?></span>
+                                <span><input type="text" id="totaldue" name="totaldue" readonly value="<?php echo $quoteData->getShippingAmount() + $total;?>" /></span>
+                            </td>                            
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        <tr class="col-0">
+                            <td class=""><?php echo __("Subtotal");?></td>
+                            <td>
+                                <span><?php echo $block->getCurrencyCode();?></span>
+                                <span><input type="text" id="subtotalofpo" name="subtotalofpo" readonly value="<?php echo $total?>" /></span>
+
+                            </td>
+                        </tr>   
+                        <tr class="col-1">
+                            <td class=""><?php echo __("Shipping & Handling");?></td>
+                            <td>
+                                <span><span class="price" id="shiping_and_handling"><span><?php echo $block->getCurrencyCode();?></span><?php echo $quoteData->getShippingAmount();?></span></span>
+                                    <input type="hidden" id="shipprice" value="<?php echo $quoteData->getShippingAmount();?>">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="actions">
+                    <button title="Submit Order" type="submit" class="action primary" data-ui-id="widget-button-0">
+                        <span><?php echo __("Submit Purchase Order");?></span>
+                    </button>
+                </div>
+            </div>
+        </div>    
+    </section>

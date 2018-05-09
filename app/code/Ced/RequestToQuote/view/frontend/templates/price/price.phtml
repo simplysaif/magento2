@@ -1,0 +1,60 @@
+<!--
+/**
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the End User License Agreement (EULA)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://cedcommerce.com/license-agreement.txt
+ *
+ * @category    Ced
+ * @package     Ced_RequestToQuote
+ * @author 		CedCommerce Core Team <connect@cedcommerce.com>
+ * @copyright   Copyright CedCommerce (http://cedcommerce.com/)
+ * @license      http://cedcommerce.com/license-agreement.txt
+ */
+-->
+<?php
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance ();
+$customer_Session=$objectManager->create('\Magento\Customer\Model\Session');
+$scopeconfig=$objectManager->create('\Magento\Framework\App\Config\ScopeConfigInterface');
+$pricemsg = __('Login to see price.');
+$hideprice=$scopeconfig->getValue('requesttoquote_configuration/active/hideprice');
+$groups = explode(',',$hideprice);
+
+	if(!$customer_Session->isLoggedIn()){
+	    $groupId = '0';
+	}
+	else{
+	    $groupId =  $customer_Session->getCustomer()->getGroupId();
+	}
+	if (in_array($groupId, $groups)){
+	    echo '<div class="price"><a href='.$this->getUrl("customer/account/login").'>'.$pricemsg.'</a></div>';
+	return;
+	}
+?>
+
+<?php /** @var \Magento\Framework\Pricing\Render\Amount $block */ ?>
+
+<span class="price-container <?php /* @escapeNotVerified */ echo $block->getAdjustmentCssClasses() ?>"
+        <?php echo $block->getSchema() ? ' itemprop="offers" itemscope itemtype="http://schema.org/Offer"' : '' ?>>
+    <?php if ($block->getDisplayLabel()): ?>
+        <span class="price-label"><?php /* @escapeNotVerified */ echo $block->getDisplayLabel(); ?></span>
+    <?php endif; ?>
+    <span <?php if ($block->getPriceId()): ?> id="<?php /* @escapeNotVerified */ echo $block->getPriceId() ?>"<?php endif;?>
+        <?php echo($block->getPriceDisplayLabel()) ? 'data-label="' . $block->getPriceDisplayLabel() . $block->getPriceDisplayInclExclTaxes() . '"' : '' ?>
+        data-price-amount="<?php /* @escapeNotVerified */ echo $block->getDisplayValue(); ?>"
+        data-price-type="<?php /* @escapeNotVerified */ echo $block->getPriceType(); ?>"
+        class="price-wrapper <?php /* @escapeNotVerified */ echo $block->getPriceWrapperCss(); ?>"
+        <?php echo $block->getSchema() ? ' itemprop="price"' : '' ?>>
+        <?php /* @escapeNotVerified */ echo $block->formatCurrency($block->getDisplayValue(), (bool)$block->getIncludeContainer()) ?>
+    </span>
+    <?php if ($block->hasAdjustmentsHtml()): ?>
+        <?php echo $block->getAdjustmentsHtml() ?>
+    <?php endif; ?>
+    <?php if ($block->getSchema()): ?>
+        <meta itemprop="priceCurrency" content="<?php /* @escapeNotVerified */ echo $block->getDisplayCurrencyCode()?>" />
+    <?php endif; ?>
+</span>

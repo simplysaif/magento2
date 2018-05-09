@@ -1,0 +1,138 @@
+<?php
+/**
+  * CedCommerce
+  *
+  * NOTICE OF LICENSE
+  *
+  * This source file is subject to the End User License Agreement (EULA)
+  * that is bundled with this package in the file LICENSE.txt.
+  * It is also available through the world-wide-web at this URL:
+  * https://cedcommerce.com/license-agreement.txt
+  *
+  * @category    Ced
+  * @package     Ced_CsMultiSeller
+  * @author      CedCommerce Core Team <connect@cedcommerce.com >
+  * @copyright   Copyright CEDCOMMERCE (https://cedcommerce.com/)
+  * @license      https://cedcommerce.com/license-agreement.txt
+  */
+namespace Ced\CsMultiSeller\Controller\Product;
+
+
+class MassStatus extends \Ced\CsMarketplace\Controller\Vproducts
+{
+  
+	/**	
+	* Update product(s) status action	
+	*	
+	*/
+	
+    public function execute()
+    {
+
+    	if(!$this->_getSession()->getVendorId())
+			return;
+		
+		if(!$this->_objectManager->get('Ced\CsMultiSeller\Helper\Data')->isEnabled()) {
+			$this->_redirect('\Ced\CsMarketplace\Controller\Vendor\Index');
+			return;
+		}
+
+		$ids = (array)$this->getRequest()->getParam('product');
+		$storeId = (int)$this->getRequest()->getParam('store', 0);
+		$status  = (int)$this->getRequest()->getParam('status');
+		try {
+
+			$productIds=$this->_validateMassStatus($ids, $status);
+			if(count(array_diff($productIds,$ids))>0 || count($productIds)==0)
+
+				$this->messageManager->addError(__('Some of the processed products have not approved. Only Approved Products status can be changed.'));
+
+			//Mage::getSingleton('catalog/product_action')
+			$this->_objectManager->get('Magento\Catalog\Model\Product\Action')
+				->updateAttributes($productIds, array('status' => $status), $storeId);
+
+	
+
+			$this->messageManager->addSuccess(
+					__('Total of # %1 record(s) have been updated.', count($productIds))
+			);
+		}
+
+		catch (Mage_Core_Model_Exception $e) {
+			$this->messageManager->addError($e->getMessage());
+
+		}
+
+		catch (Mage_Core_Exception $e) {
+			$this->messageManager->addError($e->getMessage());
+		}
+
+		catch (Exception $e) {
+			$this->messageManager
+			->addException($e, __('An error occurred while updating the product(s) status.'));
+
+		}
+		$this->_redirect('*/*/', array('store'=> $storeId));
+
+	}
+	
+	/**
+	 * 
+	 * @param array $productIds
+	 * @return $approvedIds
+	 */
+	
+	
+	public function _validateMassStatus(array $productIds, $status)
+	
+	{
+	
+		if ($status == \Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED) {
+	
+			if (! $this->_objectManager->get('Magento\Catalog\Model\Product')->isProductsHasSku($productIds)) {
+	
+				throw new Mage_Core_Exception(
+	
+						__('Some of the processed products have no SKU value defined. Please fill it prior to performing operations on these products.')
+	
+				);
+	
+			}
+	
+		}
+	
+		$approvedProducts = $this->_objectManager->get('Ced\CsMarketplace\Model\Vproducts')->getCollection()->addFieldToFilter('check_status',array('eq'=>\Ced\CsMarketplace\Model\Vproducts::APPROVED_STATUS))
+	
+		->addFieldToFilter('is_multiseller',array('eq'=>1))
+	
+		->addFieldToFilter('product_id',array('in'=>explode(',',$productIds[0])));
+	
+		$approvedIds=array();
+	
+		foreach ($approvedProducts as $row){
+	
+			$approvedIds[]=$row->getProductId();
+	
+		}
+	
+		return $approvedIds;
+	
+	}
+	
+	/**
+	 * Set current store
+	 */
+	
+	public function setCurrentStore(){
+	
+		if($this->_objectManager->get('Magento\Framework\Registry')->registry('ced_csmarketplace_current_store')) {
+	
+			$currentStoreId = $this->_objectManager->get('Magento\Framework\Registry')->registry('ced_csmarketplace_current_store');
+	
+			$this->_objectManager->get('Magento\Store\Model\StoreManagerInterface')->setCurrentStore($currentStoreId);
+	
+		}
+	
+	}
+	
+}

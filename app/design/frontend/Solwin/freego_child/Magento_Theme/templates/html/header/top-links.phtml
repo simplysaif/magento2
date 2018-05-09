@@ -1,0 +1,41 @@
+<?php
+/**
+ * @category    design
+ * @package     accessshop_lite_default
+ * @copyright   Copyright (c) 2015 AccessShop Themes (http://www.accessshopthemes.com)
+ *
+ * @see Mage_Page_Block_Template_Links
+ */
+?>
+
+
+<ul class="links list-inline">
+    
+    
+    <li class="first" ><a href="<?php echo  Mage::getBaseUrl() ?>/customer/account" title="Registrarse"><i class="fa fa-plus" aria-hidden="true"></i> Regístrate</a></li>
+    <li class="ingresa"><a href="<?php echo  Mage::getBaseUrl() ?>customer/account/login/" title="Iniciar sesión"><i class="fa fa-sign-in" aria-hidden="true"></i> Inicia Sesión</a></li>
+    
+       
+       <li><a href="<?php echo  Mage::getBaseUrl() ?>customer/account" title="Mi cuenta"><i class="fa fa-user" aria-hidden="true"></i> Mi Cuenta</a></li>
+        <li><a href="<?php echo Mage::helper('customer')->getLogoutUrl(); ?>" title="Salir"><i class="fa fa-times" aria-hidden="true"></i> Salir</a></li> 
+        
+        
+    
+
+   
+    <li class="first" ><small><a href="<?php echo  Mage::getBaseUrl() ?>wishlist/" title="Mi lista de artículos de interés"><i class="fa fa-heart" aria-hidden="true"></i> Lista de Deseos</a></small></li>
+    <li class="first" ><small><a href="<?php echo  Mage::getBaseUrl() ?>blog/" title="Mi lista de artículos de interés"><i class="fa fa-book" aria-hidden="true"></i> Blog</a></small></li>
+</ul>
+
+
+
+<!--<?php //if(count($_links)>0): ?>
+<ul class="links list-inline"<?php //if($this->getName()): ?> id="<?php //echo $this->getName() ?>"<?php //endif;?>>
+    <li class="Links-top">
+	<?php //echo $this->getLayout()->createBlock('cms/block')->setBlockId('home-link')->toHtml(); ?>
+	
+	</li>
+</ul>!-->
+
+
+<?php //endif; ?>

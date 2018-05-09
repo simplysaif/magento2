@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!--
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the End User License Agreement (EULA)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://cedcommerce.com/license-agreement.txt
+ *
+ * @category    Ced
+ * @package     Ced_Vbadges
+ * @author    CedCommerce Core Team <connect@cedcommerce.com>
+ * @copyright   Copyright CedCommerce (http://cedcommerce.com/)
+ * @license      http://cedcommerce.com/license-agreement.txt
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../Backend/etc/menu.xsd">
+    <menu>
+        <add id="Ced_CsMarketplace::managevendor_badges" title="Vendor Badges" module="Ced_CsMarketplace" sortOrder="80" parent="Ced_CsMarketplace::csmarketplace" resource="Ced_CsMarketplace::managevendor_configuration" dependsOnConfig="ced_csmarketplace/vbadge/active"/>
+        <add id="Ced_CsMarketplace::vendor_badges" title="Order Based Badges" module="Ced_CsMarketplace" sortOrder="10" parent="Ced_CsMarketplace::managevendor_badges" action="csvendorbadges/badges/badgesview" resource="Ced_CsMarketplace::vendor_badges" dependsOnConfig="ced_csmarketplace/vbadge/active"/>
+        <add id="Ced_CsMarketplace::review_badges" title="Review Based Badges" module="Ced_CsMarketplace" sortOrder="20" parent="Ced_CsMarketplace::managevendor_badges" action="csvendorbadges/review/badgesview" resource="Ced_CsMarketplace::review_badges" dependsOnConfig="ced_csmarketplace/vbadge/active"/>
+        <add id="Ced_CsMarketplace::rating_points" title="Rating Points View" module="Ced_CsMarketplace" sortOrder="30" parent="Ced_CsMarketplace::managevendor_badges" action="csvendorbadges/points/view" resource="Ced_CsMarketplace::rating_points" dependsOnConfig="ced_csmarketplace/vbadge/active"/>
+    </menu>
+</config>

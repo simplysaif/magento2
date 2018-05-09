@@ -1,0 +1,104 @@
+<?php
+/**
+ * CedCommerce
+  *
+  * NOTICE OF LICENSE
+  *
+  * This source file is subject to the End User License Agreement (EULA)
+  * that is bundled with this package in the file LICENSE.txt.
+  * It is also available through the world-wide-web at this URL:
+  * http://cedcommerce.com/license-agreement.txt
+  *
+  * @category    Ced
+  * @package     Ced_CsVendorAttribute
+  * @author       CedCommerce Core Team <connect@cedcommerce.com >
+  * @copyright   Copyright CEDCOMMERCE (http://cedcommerce.com/)
+  * @license      http://cedcommerce.com/license-agreement.txt
+  */
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php $_invoice = $block->getInvoice() ?>
+<?php $_order   = $block->getOrder() ?>
+<?php 
+ $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$vendorId = $objectManager->get('Magento\Customer\Model\Session')->getVendorId();
+if ($vendorId) {
+    $this->_vendor = $objectManager->create('Ced\CsMarketplace\Model\Vendor');
+    $vendor_info = $this->_vendor->load($vendorId);
+    $seller = $objectManager->create('Ced\CsMarketplace\Model\Vendor\Attribute')->getCollection();
+}
+?>
+<?php if ($_invoice && $_order): ?>
+    <?php if ($vendorId) { ?>
+        <table class="email-items" style="border: 1px solid #bebebe;">
+            <th class="item-info">
+                <h3><? echo __('Seller information : ') ?></h3>
+            </th>
+            <?php  if($vendor_info->getPublicName()){ ?>
+                <tr>
+                    <th class="item-info" style="padding-bottom: 5px">
+                        <? echo __('Public Name') ?>
+                    </th>
+                    <td  style="padding-bottom: 5px">
+                        <? echo __($vendor_info->getPublicName()) ?>
+                    </td>
+                </tr>
+            <?php } ?>
+            <?php  if($vendor_info->getName()){ ?>
+                <tr>
+                    <th class="item-info"  style="padding-bottom: 5px">
+                        <? echo __('Seller Name') ?>
+                    </th>
+                    <td  style="padding-bottom: 5px">
+                        <? echo __($vendor_info->getName()) ?>
+                    </td>
+                </tr>
+            <?php } ?>
+            <?php foreach ($seller as $value){ 
+                if($value['attribute_code']=='public_name'|| $value['attribute_code']=='name'){continue;}
+                    if ($value['use_in_invoice']=='1') {
+                ?>
+                    <tr>
+                        <th class="item-info"  style="padding-bottom: 5px">
+                            <? echo __($value['frontend_label']) ?>
+                        </th>
+                        <td  style="padding-bottom: 5px">
+                            <? echo __($vendor_info->getData($value['attribute_code'])) ?>
+                        </td>
+                    </tr>
+                    <?php } ?>
+            <?php } ?>
+        </table>
+    <?php } ?>
+    
+    <table class="email-items">
+        <thead>
+            <tr>
+                <th class="item-info">
+                    <? echo __('Items') ?>
+                </th>
+                <th class="item-qty">
+                    <? echo __('Qty') ?>
+                </th>
+                <th class="item-subtotal">
+                    <? echo __('Subtotal') ?>
+                </th>
+            </tr>
+        </thead>
+        <?php foreach ($_invoice->getAllItems() as $_item): ?>
+            <?php
+                if ($_item->getOrderItem()->getParentItem()) {
+                    continue;
+                }
+            ?>
+            <tbody>
+                <?= $block->getItemHtml($_item) ?>
+            </tbody>
+        <?php endforeach; ?>
+        <tfoot class="order-totals">
+            <?= $block->getChildHtml('invoice_totals') ?>
+        </tfoot>
+    </table>
+<?php endif; ?>

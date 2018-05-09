@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the End User License Agreement (EULA)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://cedcommerce.com/license-agreement.txt
+ *
+ * @category    Ced
+ * @package     Ced_Blog
+ * @author   	 CedCommerce Core Team <connect@cedcommerce.com >
+ * @copyright   Copyright CEDCOMMERCE (http://cedcommerce.com/)
+ * @license      http://cedcommerce.com/license-agreement.txt
+ */
+
+?>
+<?php $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$model = $objectManager->create('Ced\Blog\Model\Blogcat')->getCollection();
+?>
+<div id="intro_cat">
+    <h3>CATEGORIES</h3>
+    <?php foreach ($model as $category)
+    {
+        ?>
+        <a href="<?php echo $category->getListUrl().'?id='.$category->getId(); ?>"><h5 style="color:#f1703d"><?php echo $category->getTitle() ?></h5></a>
+
+        <?php
+
+    }?>
+
+</div>

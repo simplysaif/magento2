@@ -1,0 +1,66 @@
+<?php 
+
+ /**
+  * CedCommerce
+  *
+  * NOTICE OF LICENSE
+  *
+  * This source file is subject to the End User License Agreement (EULA)
+  * that is bundled with this package in the file LICENSE.txt.
+  * It is also available through the world-wide-web at this URL:
+  * http://cedcommerce.com/license-agreement.txt
+  *
+  * @category    Ced
+  * @package     Ced_Blog
+  * @author   	 CedCommerce Core Team <connect@cedcommerce.com >
+  * @copyright   Copyright CEDCOMMERCE (http://cedcommerce.com/)
+  * @license      http://cedcommerce.com/license-agreement.txt
+  */
+
+?>
+
+<?php 
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$scopeConfig = $objectManager->create('Magento\Framework\App\Config\ScopeConfigInterface');
+	$model = $this->objectManager->create('Ced\Blog\Model\BlogPost')->getCollection();
+
+	$tag_value=$scopeConfig->getValue('ced_blog/general/tag_menu_activate', \Magento\Store\Model\ScopeInterface::SCOPE_STORE,0); 
+?>
+
+<div id="post_tags">
+
+<h3>Tags:</h3>
+
+<?php 
+
+
+foreach ($model as $tag_values)
+
+{
+  $i=0;
+	$tags=$tag_values->getTags();
+
+	$tag=array_map('trim', explode(',',$tags));
+  
+	foreach($tag as $val){
+
+			if($tag_value==$i)
+        {
+           break;
+        }
+        
+        ?>
+          
+				<a href="<?php echo $tag_values->getTagUrl($val) ?>"><h5><?php echo $val.'<br>'; ?></h5></a>
+
+			<?php 
+
+			$i++;
+    }  
+
+}
+
+?>
+
+</div>
+

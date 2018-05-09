@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../Backend/etc/menu.xsd">
+    <menu>
+     <add id="Ced_TeamMember::view" title="TeamMember" module="Ced_TeamMember" sortOrder="20" resource="Ced_TeamMember::view" dependsOnConfig="teammember_section/teammember/enable"/>
+        <add id="Ced_TeamMember::teammemberview" title="Manage Team Member" module="Ced_TeamMember" sortOrder="10" parent="Ced_TeamMember::view" action="tmember/manage/index" resource="Ced_TeamMember::view"/>
+        <add id="Ced_TeamMember::teammember" title="Chat" module="Ced_TeamMember" sortOrder="20" parent="Ced_TeamMember::view" action="tmember/member/index" resource="Ced_TeamMember::view"/>
+    </menu>
+</config>

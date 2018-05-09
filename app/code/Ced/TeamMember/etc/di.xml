@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:frameworkSmiley SurprisedbjectManager/etc/config.xsd">
+    <type name="Ced\TeamMember\Model\Session">
+        <arguments>
+            <argument name="storage" xsi:type="object">Ced\TeamMember\Model\Session\Storage</argument>
+        </arguments>
+    </type>
+</config>

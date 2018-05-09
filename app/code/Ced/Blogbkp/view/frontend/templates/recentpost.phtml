@@ -1,0 +1,63 @@
+<?php 
+ /**
+  * CedCommerce
+  *
+  * NOTICE OF LICENSE
+  *
+  * This source file is subject to the End User License Agreement (EULA)
+  * that is bundled with this package in the file LICENSE.txt.
+  * It is also available through the world-wide-web at this URL:
+  * http://cedcommerce.com/license-agreement.txt
+  *
+  * @category    Ced
+  * @package     Ced_Blog
+  * @author   	 CedCommerce Core Team <connect@cedcommerce.com >
+  * @copyright   Copyright CEDCOMMERCE (http://cedcommerce.com/)
+  * @license      http://cedcommerce.com/license-agreement.txt
+  */
+
+?>
+
+<?php
+
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$scopeConfig = $objectManager->create('Magento\Framework\App\Config\ScopeConfigInterface');
+$model = $block->getCollection();
+$model = $objectManager->create('Ced\Blog\Model\BlogPost')->getCollection();
+
+?>
+
+<div id="recent_post">
+
+<h3>Recent Posts</h3>
+
+<?php 
+
+	 $config_value=$scopeConfig->getValue('ced_blog/general/recent_post_activate', \Magento\Store\Model\ScopeInterface::SCOPE_STORE,0);
+
+	 $i=0;
+
+	 ?>
+
+<?php foreach ($model as $recentpost)
+
+{
+
+	if($i==$config_value)
+
+		break;
+
+?>
+
+<a href="<?php echo $recentpost->getPostUrl() ?>"><h5 style="color:#f1703d"><?php echo $recentpost->getTitle() ?></h5></a>
+
+<?php  
+
+	$i++;
+
+}
+
+?>
+
+</div>
+

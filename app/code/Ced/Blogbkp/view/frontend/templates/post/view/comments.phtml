@@ -1,0 +1,39 @@
+<?php
+ /**
+  * CedCommerce
+  *
+  * NOTICE OF LICENSE
+  *
+  * This source file is subject to the End User License Agreement (EULA)
+  * that is bundled with this package in the file LICENSE.txt.
+  * It is also available through the world-wide-web at this URL:
+  * http://cedcommerce.com/license-agreement.txt
+  *
+  * @category    Ced
+  * @package     Ced_Blog
+  * @author      CedCommerce Core Team <connect@cedcommerce.com >
+  * @copyright   Copyright CEDCOMMERCE (http://cedcommerce.com/)
+  * @license      http://cedcommerce.com/license-agreement.txt
+  */
+?>
+<?php //if ($block->commentsType()) { 
+    $x=5; 
+    if($x==0):
+?>
+    <div id="disqus_thread"></div>
+    <script>
+        var disqus_config = function () {
+            this.page.url = "<?php echo $block->getPost()->getPostUrl() ?>";
+            this.page.identifier = "<?php echo $block->getPost()->getUrl() ?>"
+        };
+
+        (function() {
+            var d = document, s = d.createElement('script');
+            s.src = '//<?php echo $block->getDisqusForumShortname() ?>.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    </div>
+<?php endif; ?>
+<?php //} ?>

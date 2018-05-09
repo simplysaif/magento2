@@ -1,0 +1,406 @@
+<?php
+$quote_data = $block->getQuoteData();
+$customer_data = $block->getCustomerData();
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$priceHelper = $objectManager->create('Magento\Framework\Pricing\Helper\Data'); 
+$quoteItems = $block->getItems();
+$filter_a = array('like' => 'Vendor');
+$filter_b = array('like' => 'Customer');
+$chatshistory = $objectManager->create('Ced\RequestToQuote\Model\Message')->getCollection()->addFieldToFilter('quote_id',$block->getQuoteId())->addFieldToFilter('sent_by',array($filter_a,$filter_b));
+?>
+<section class="admin__page-section">
+    <div class="admin__page-section-title">
+        <span class="title"><?php echo __('Items Ordered');?></span>
+    </div>
+    <div class="admin__table-wrapper">
+    	<table class="data-table admin__table-primary edit-order-table" id ="edit-order-table">
+	        <thead>
+	            <tr class="headings">
+	                <th class="col-product"><span><?php echo __("Product:");?></span></th>
+	                <th class="col-status"><span><?php echo __("Item Stock:");?></span></th>
+	                <th class="col-price-original"><span><?php echo __("Actual Price:");?></span></th>
+	                <th class="col-price"><span><?php echo __("Quoted Price:");?></span></th>
+	                <th class="col-ordered-qty"><span><?php echo __("Updated Unit Price:");?></span></th>
+	                <th class="col-subtotal"><span><?php echo __("Quoted Qty:");?></span></th>
+	                <th class="col-tax-amount"><span><?php echo __("Updated Quote Qty:");?></span></th>
+	                <th class="col-tax-percent"><span><?php echo __("Subtotal:");?></span></th>
+	                <th class="col-discont"><span><?php echo __("Row Total");?></span></th>
+	            </tr>
+	        </thead>
+            <tbody class="even">
+            <?php 
+                    $total = 0;
+                    foreach ($quoteItems->getData() as $value) {
+                        $product_id = $value['product_id'];
+                        $product = $block->getProduct($product_id);
+
+                        $unitprice = $block->getProductIndividualPrice($product_id); 
+                        $subtotal = 0;
+                        if($value['remaining_qty']) {
+                            $subtotal = $value['remaining_qty'] * $value['unit_price']; 
+                        }elseif($value['remaining_qty'] === '0'){
+                            $subtotal = 0;
+                        }else{ 
+                            $subtotal =  $value['quote_updated_qty'] * $value['unit_price']; 
+                        }
+                        $qty_to_po = 0;
+                        if($value['remaining_qty']) {
+                            $qty_to_po = $value['remaining_qty']; 
+                        }elseif($value['remaining_qty'] === '0'){
+                            $qty_to_po = 0;
+                        }else{
+                            $qty_to_po = $value['quote_updated_qty']; 
+                        }
+                        $qty_already_poed = 0;
+                        if($value['remaining_qty']){
+                            $qty_already_poed =  $value['quote_updated_qty'] - $value['remaining_qty'];
+                        }elseif($value['remaining_qty'] === '0'){
+                            $qty_already_poed = $value['quote_updated_qty'];
+                        }else{
+                            $qty_already_poed = 0;
+                        }
+                        $total += $subtotal;
+
+
+                        ?>
+                        <input id="product[<?php echo $product_id;  ?>]" value="<?php echo $product_id;  ?>" type="hidden">
+                <tr>
+                    <td class="col-product">
+	                    <div id="order_item_<?php echo $product_id;  ?>">
+	    					<div id="order_item_<?php echo $product_id;  ?>_title" class="product-title"><?php echo $product->getName();?></div>
+	    					<div class="product-sku-block">
+	        					<span>SKU:</span> <?php echo $product->getSku();  ?>    
+	        				</div>
+	        			</div>
+	        		</td>
+                    <td class="col-status"><?php echo $block->getProductStock($product_id);  ?></td>
+                    <td class="col-price-original">
+                    	<span class="price"><?php echo $priceHelper->currency($product->getPrice(), true, false)?></span>
+                    </td>
+                    <td class="col-price"><div class="price-excl-tax">
+						<span class="price"><?php echo $priceHelper->currency($value['updated_price'], true, false)?></span></div>
+					</td>
+                    <td class="col-price">
+                        <div class="price-excl-tax">
+                            <span>
+                            	<?php echo $block->getCurrencyCode();  ?>
+                              	<input id="updateprice[<?php echo $product_id;  ?>]" class="input-text admin__control-text qty-input po-price-updated common currency numbersOnly" name="unitprice[<?php echo $product_id;  ?>]" value="<?php echo $value['unit_price'];  ?>" type="text">
+                            </span>
+                        </div>
+                    </td>
+                    <td class="col-ordered-qty">
+                        <table class="qty-table">
+                            <tbody>
+                                <tr>
+                                    <th><?php echo __("Quantity to PO"); ?>:</th>
+                                    <td class="col-qty-invoice">
+                                        <input id="quantity_to_po[<?php echo $product_id;  ?>]" class="input-text admin__control-text qty-input qty-field-po common numbersOnly" name="quoteproducts[<?php echo $product_id;  ?>]" value="<?php echo $qty_to_po; ?>" type="text" onkeyup="if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,'')">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><?php echo __(" Quantity Already POed"); ?>:</th>
+                                    <td><b><?php echo $qty_already_poed;  ?></b></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                    <td class="col-price">
+                        <div class="price-excl-tax">
+                            <span class="price" id="quote_qty"></span><span><?php echo $value['quote_updated_qty'];  ?></span>
+                        </div>
+                    </td>
+                    <td class="col-qty">
+                        <div class="price-excl-tax">
+                            <span><?php echo $block->getCurrencyCode();  ?></span>
+                            <input class="input-text admin__control-text qty-input subtotal-po currency numbersOnly" name="subtotal[<?php echo $product_id;  ?>]"  type="text"  readonly value="<?php echo $subtotal;?>">
+                        </div>
+                    </td>
+                    <td class="col-subtotal">
+                        <div class="price-excl-tax">
+                            <span><?php echo $block->getCurrencyCode();  ?></span>
+                            <input id="rowtotal" class="input-text admin__control-text qty-input row-total common currency numbersOnly" name="row_total[<?php echo $product_id;  ?>]"  type="text" value="<?php echo $subtotal; ?>" readonly>
+                        </div>
+                    </td>
+    			</tr>
+                <?php }?>
+            </tbody>
+        </table>
+	</div>
+</section>
+<section class="admin__page-section">
+        <div class="admin__page-section-title">
+            <span class="title"><?php echo __("Messaging section"); ?> </span>
+        </div>
+        <div class="admin__page-section-content">
+            <div class="admin__page-section-item order-comments-history">
+                <div class="admin__page-section-item-title">
+                    <span class="title"><?php echo __("Chat History"); ?></span>
+                </div>
+                <div id="history_form" class="admin__page-section-item-content order-history-form">
+                    <div class="admin__field">
+
+                        <div class="viewhistory">
+                            <input id="showhistory" type="button" value="<?php echo __("View Message History"); ?>">
+                        </div>
+                        <div class="message_history" id="message_history">
+                            <?php if($chatshistory && count($chatshistory)>0 && !empty($chatshistory->getData())){
+                            ?>
+                                <ul class="note-list">
+                                    <?php foreach ($chatshistory as $_chathistory){?>
+                                        <?php if($_chathistory->getSentBy()=='Admin' || $_chathistory->getSentBy()!='Vendor'){ ?>
+                                            <li class="purchaseorder-left-chat-column">
+                                                <span class="purchaseorder-left-chat-column-date"><?php  echo $this->formatDate($_chathistory
+                                                        ->getCreatedAt(), \IntlDateFormatter::MEDIUM) ?></span>
+                                                <span class="purchaseorder-left-chat-column-date"><?php  echo $this->formatTime($_chathistory
+                                                        ->getCreatedAt(), \IntlDateFormatter::MEDIUM) ?></span>
+                                                <span class="separator">|</span>
+                                                <span class="purchaseorder-left-chat-column-sender">
+                                                    <strong><?php //?></strong>
+                                                </span>
+                                                <?php if ($_chathistory->getMessage()){ ?>
+                                                    <div class="purchaseorder-left-chat-column-chat"><?php echo $this->escapeHtml($_chathistory->getMessage(), ['b', 'br', 'strong', 'i', 'u', 'a']) ?>
+
+                                                    </div>
+                                                <?php } ?>
+                                            </li>
+                                        <?php } else{  ?>
+                                            <li class="purchaseorder-right-chat-column" >
+                                                <span class="purchaseorder-right-chat-column-date"><?php  echo $this->formatDate($_chathistory->getCreatedAt(), \IntlDateFormatter::MEDIUM) ?></span>
+                                                <span class="purchaseorder-right-chat-column-time"><?php  echo $this->formatTime($_chathistory
+                                                        ->getCreatedAt(), \IntlDateFormatter::MEDIUM) ?></span>
+                                                <span class="separator">|</span>
+
+                                                <?php if ($_chathistory->getMessage()){ ?>
+                                                    <div class="note-list-comment"><?php echo $this->escapeHtml($_chathistory->getMessage(), ['b', 'br', 'strong', 'i', 'u', 'a']) ?>
+
+                                                    </div>
+                                                <?php } ?>
+                                            </li>
+
+                                        <?php } ?>
+                                    <?php } ?>
+                                </ul>
+                            <?php } ?>
+                        </div>
+
+                        <label for="invoice_comment_text" class="admin__field-label">
+                            <span><?php echo __("Send a message"); ?></span>
+                        </label>
+                        <div class="admin__field-control">
+                            <textarea id="invoice_comment_text" name="message" class="admin__control-textarea" rows="2" cols="5"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="invoice_totals" class="admin__page-section-item order-totals">
+                <div class="admin__page-section-item-title">
+                    <span class="title"><?php echo __("Quote Totals"); ?></span>
+                </div>
+                <div class="admin__page-section-item-content order-totals-actions">
+                    <table class="data-table admin__table-secondary order-subtotal-table">
+
+                        <tfoot>
+                        <tr class="col-0">
+                            <td class="">
+                                <strong><?php echo __("Grand Total");?></strong>
+                            </td>
+                            <td>
+                                <span><?php echo $block->getCurrencyCode();?></span>
+                                <span><input class="input-text admin__control-text " type="text" id="grandtotalofpo" name="grandtotalofpo" readonly value="<?php echo $total;?>" /></span>
+                            </td>
+                        </tr>
+
+                        <tr class="col-3">
+                            <td class="">
+                                <strong><?php echo __("Total Due");?></strong>
+                            </td>
+                            <td>
+                                <span><?php echo $block->getCurrencyCode();?></span>
+                                <span><input class="input-text admin__control-text " type="text" id="totaldue" name="totaldue" readonly value="<?php echo $total + $quote_data->getShippingAmount()?>" /></span>
+                            </td>
+                        </tr>
+                        <tr class="col-3">
+                            <td class="">
+                                <strong><?php echo __("Status");?></strong>
+                            </td>
+                            <td>
+                            <?php $status = $quote_data->getStatus(); ?>
+                                <select name="status" class="admin__control-select">
+                                    <?php if($status==0) { ?>
+                                        <option value="0" selected><?php echo __("Pending");?></option>
+                                    <?php } 
+                                    else{
+                                        ?>
+                                        <option value="0"><?php echo __("Pending");?></option>
+                                    <?php } ?>
+                                    <?php if($status==1) { ?>
+                                        <option value="1" selected><?php echo __("Processing");?></option>
+                                    <?php } 
+                                    else{
+                                        ?>
+                                        <option value="1"><?php echo __("Processing");?></option>
+                                    <?php } ?>
+                                    <?php if($status==2) { ?>
+                                        <option value="2" selected><?php echo __("Approved");?></option>
+                                    <?php } 
+                                    else{
+                                        ?>
+                                        <option value="2"><?php echo __("Approved");?></option>
+                                    <?php } ?>
+                                    <?php if($status==3) { ?>
+                                        <option value="3" selected><?php echo __("Cancelled");?></option>
+                                    <?php } 
+                                    else{
+                                        ?>
+                                        <option value="3"><?php echo __("Cancelled");?></option>
+                                    <?php } ?>
+                                    <?php if($status==4) { ?>
+                                        <option value="4" selected><?php echo __("PO created");?></option>
+                                    <?php } 
+                                    else{
+                                        ?>
+                                        <option value="4"><?php echo __("PO created");?></option>
+                                    <?php } ?>
+                                    <?php if($status==5) { ?>
+                                        <option value="5" selected><?php echo __("Partial Po");?></option>
+                                    <?php } 
+                                    else{
+                                        ?>
+                                        <option value="5"><?php echo __("Partial Po");?></option>
+                                    <?php } ?>
+                                    <?php if($status==6) { ?>
+                                        <option value="6" selected><?php echo __("Ordered");?></option>
+                                    <?php } 
+                                    else{
+                                        ?>
+                                        <option value="6"><?php echo __("Ordered");?></option>
+                                    <?php } ?>
+                                    <?php if($status==7) { ?>
+                                        <option value="7" selected><?php echo __("Complete");?></option>
+                                    <?php } 
+                                    else{
+                                        ?>
+                                        <option value="7"><?php echo __("Complete");?></option>
+                                    <?php } ?>
+                                </select>
+                            </td>
+                        </tr>
+                        </tfoot>
+
+                        <tbody>
+                        <tr class="col-0">
+                            <td class=""><?php echo __("Subtotal");?></td>
+                            <td>
+                                <span><?php echo $block->getCurrencyCode();?></span>
+                                <span><input class="input-text admin__control-text " type="text" id="subtotalofpo" name="subtotalofpo" readonly value="<?php echo $total;?>" /></span>
+
+                            </td>
+                        </tr>
+
+                        <tr class="col-1">
+                            <td class=""><?php echo __("Shipping & Handling");?></td>
+                            <td>
+                                <span><span class="input-text admin__control-text price" id="shiping_and_handling"><span><?php echo $block->getCurrencyCode();?></span><?php echo $quote_data->getShippingAmount();?></span>
+                                <input type="hidden" id="shiping_and_handling_charges" value="<?php echo $quote_data->getShippingAmount();?>"></span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <?php if($status != 3){?>
+                    <div class="actions">
+                        <button id="submit" title="Save Quote" type="submit" class="action-default scalable save submit-button primary" >
+                            <span><?php echo __("Save Quote"); ?></span>
+                        </button>
+                    </div>
+                    <?php }?>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<script type="text/javascript">
+
+    require(['jquery'], function($) {
+
+        $("#edit-order-table").on('keyup', '.qty-field-po',function(){
+            var data =new Array();
+            var shipping = $('#shiping_and_handling_charges').val();
+            var qty = $(this).val();
+            var price = $(this).parents('tr').find('.po-price-updated').val();
+            $(this).parents('tr').find('.subtotal-po').val(qty*price);
+            $(this).parents('tr').find('.row-total').val(qty*price);
+            $(this).parents('table').find('input.common').each( function(index){
+                data.push($(this).val());
+            });
+            var sum=0;
+            for(var i=0;i<data.length;i+=3){
+                sum += parseFloat(data[i+2]);
+            }
+            var total = parseFloat(sum)+parseFloat(shipping);
+            $('#subtotalofpo').val(sum.toFixed(2));
+            $('#grandtotalofpo').val(total.toFixed(2));
+            $('#totaldue').val(total.toFixed(2));
+
+
+        });
+
+
+        $("#edit-order-table").on('keyup', '.po-price-updated',function(){
+            var data =new Array();
+            var shipping = $('#shiping_and_handling_charges').val();
+            var price = $(this).val();
+            var qty = $(this).parents('tr').find('.qty-field-po').val();
+            $(this).parents('tr').find('.subtotal-po').val(qty*price);
+            $(this).parents('tr').find('.row-total').val(qty*price);
+
+            $(this).parents('table').find('input.common').each( function(index){
+                data.push($(this).val());
+            });
+
+            var sum=0;
+            for(var i=0;i<data.length;i+=3){
+
+                sum += parseFloat(data[i+2]);
+            }
+
+            var total = parseFloat(sum)+parseFloat(shipping);
+            $('#subtotalofpo').val(sum.toFixed(2));
+            $('#grandtotalofpo').val(total.toFixed(2));
+            $('#totaldue').val(total.toFixed(2));
+        });
+
+        $(document).ready(function(){
+            $('.message_history').hide();
+            $('#showhistory').on('click', function(event) {
+                $('#message_history').toggle();
+                var x = document.getElementById('message_history');
+                if (x.style.display === 'none') {
+                    x.style.display = 'block';
+                } else {
+                    x.style.display = 'none';
+                }
+            });
+        });
+
+        $(".numbersOnly").keydown(function (e) {
+        // Allow: backspace, delete, tab, escape, enter and .
+        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+             // Allow: Ctrl+A, Command+A
+            (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) || 
+             // Allow: home, end, left, right, down, up
+            (e.keyCode >= 35 && e.keyCode <= 40)) {
+                 // let it happen, don't do anything
+                 return;
+        }
+        // Ensure that it is a number and stop the keypress
+        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+            e.preventDefault();
+        }
+    });
+
+    });
+
+
+
+</script>

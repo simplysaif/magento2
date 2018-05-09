@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * CedCommerce
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the End User License Agreement (EULA)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://cedcommerce.com/license-agreement.txt
+ *
+ * @category    Ced
+ * @package     Ced_RequestToQuote
+ * @author      CedCommerce Core Team <connect@cedcommerce.com>
+ * @copyright   Copyright CedCommerce (http://cedcommerce.com/)
+ * @license      http://cedcommerce.com/license-agreement.txt
+ */
+-->
+
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../Magento/Config/etc/system_file.xsd">
+    <system>
+        <tab id="requesttoquote" translate="label" sortOrder="100">
+            <label>Request For Quotation Management</label>
+        </tab>
+        <section id="requesttoquote_configuration" showInStore="1" showInWebsite="1" showInDefault="1"> 
+            <tab>requesttoquote</tab>
+            <label>Request For Quotation Management</label>
+            <resource>Ced_RequestToQuote::requesttoquote</resource>
+            <group id="active" translate="label" type="text" sortOrder="1" showInStore="1" showInWebsite="1" showInDefault="1">
+                <label>Request For Quotation Configuration Options</label>
+
+
+                <!-- <source_model>Magento\Config\Model\Config\Source\Yesno</source_model> -->
+
+                <field id="enable" translate="label" type="select" sortOrder="1" showInStore="1" showInWebsite="1" showInDefault="1">
+                    <label>Enable Request For Quotation Management</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+
+                </field>
+                <field id="custgroups" translate="label" type="multiselect" sortOrder="2" showInStore="1" showInWebsite="1" showInDefault="1">
+                    <label>Allowed Customer Groups to access RFQ</label>
+                    <source_model>Ced\RequestToQuote\Model\System\Config\Customer\Groups</source_model>
+                    <depends><field id="enable">1</field></depends>
+                </field>
+                <field id="hidecart" translate="label" type="multiselect" sortOrder="4" showInStore="1" showInWebsite="1" showInDefault="1">
+                    <label>Hide Add to Cart Button for Customers</label>
+                    <source_model>Ced\RequestToQuote\Model\System\Config\Customer\Groups</source_model>
+                    <depends><field id="enable">1</field></depends>
+                </field>
+                <field id="hideprice" translate="label" type="multiselect" sortOrder="5" showInStore="1" showInWebsite="1" showInDefault="1">
+                    <label>Hide Price of Product Customers</label>
+                    <source_model>Ced\RequestToQuote\Model\System\Config\Customer\Groups</source_model>
+                    <depends><field id="enable">1</field></depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

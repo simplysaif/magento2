@@ -1,0 +1,73 @@
+<?php
+$quote_data = $block->getQuoteData();
+$customer_data = $block->getCustomerData();
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$priceHelper = $objectManager->create('Magento\Framework\Pricing\Helper\Data'); 
+
+?><section class="admin__page-section order-view-account-information">
+    <div class="admin__page-section-title">
+        <span class="title"><?php echo __('Quote &amp; Account Information');?></span>
+    </div>
+    <div class="admin__page-section-content">
+        <div class="admin__page-section-item order-information">
+            <div class="admin__page-section-item-title">
+            <input type="hidden" name="id" value="<?php echo $block->getQuoteId();?>" />
+                <span class="title">
+                    <?php echo __('Order #'. $block->getQuoteIncrementId());?> (<span><?php echo __('The quote email was sent');?></span>)
+                </span>
+            </div>
+            <div class="admin__page-section-item-content">
+                <table class="admin__table-secondary order-information-table">
+                    <tbody>
+                        <tr>
+                            <th><?php echo __('Quote Date')?></th>
+                            <td><?php echo $quote_data->getCreatedAt()?></td>
+                        </tr>
+                                        <tr>
+                            <th><?php echo __('Current Quote Status')?></th>
+                            <td><span id="order_status"><?php echo $block->getQuoteStatus();?></span></td>
+                        </tr>
+                        <tr>
+                            <th><?php echo __("Quote Created From");?></th>
+                            <td><?php echo $block->getStoreDetails();?></td>
+                        </tr>
+                        <tr>
+                            <th><?php echo __("Quoted Total Quantity");?></th>
+                            <td><?php echo $quote_data->getQuoteTotalQty();?></td>
+                        </tr>
+                        <tr>
+                            <th><?php echo __("Quoted Total Price");?></th>
+                            <td><?php echo $priceHelper->currency($quote_data->getQuoteTotalPrice(), true, false)?></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="admin__page-section-item order-account-information">
+            <div class="admin__page-section-item-title">
+                <span class="title"><?php echo __('Account Information')?></span>
+                <div class="actions"></div>
+            </div>
+            <div class="admin__page-section-item-content">
+                <table class="admin__table-secondary order-account-information-table">
+                    <tbody>
+                        <tr>
+                            <th><?php echo __('Customer Name')?></th>
+                            <td><?php echo $customer_data->getName();?></td>
+                        </tr>
+                        <tr>
+                            <th><?php echo __('Email')?></th>
+                            <td><a href="mailto:<?php echo $customer_data->getEmail();?>"><?php echo $customer_data->getEmail();?></a></td>
+                             <input type="hidden" name="customer_email" value="<?php echo $customer_data->getEmail();?>">
+                        </tr>
+                        <tr>
+                            <th><?php echo __('Customer Group')?></th>
+                            <td><?php echo $block->getCustomerGroup();?></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
