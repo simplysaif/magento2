@@ -36,7 +36,7 @@ $showhomelink = $helper->getEnablehomelink();
             $usuario="fabio.baron";
             $password="w1Ls9Ct2ZHv8bytuHbUW";
             $bd="market";
-            $conexion = mysqli_connect($servidor,$usuario,$password,$bd);
+            $conexion = $this->resourceConnection->getConnection();
             $query="SELECT ccv.value,ccv1.value FROM yx_catalog_category_entity_int cci INNER JOIN yx_catalog_category_entity cce ON cce.entity_id = cci.row_id AND cce.level = 2 INNER JOIN yx_catalog_category_entity_varchar ccv ON ccv.row_id = cci.row_id AND ccv.attribute_id = 41 INNER JOIN yx_catalog_category_entity_varchar ccv1 ON ccv1.row_id = cci.row_id AND ccv1.attribute_id = 43 WHERE cci.attribute_id = 42 AND cci.value = 1 GROUP BY cci.row_id LIMIT 15;";
             
             if(!$conexion){
@@ -48,7 +48,7 @@ $showhomelink = $helper->getEnablehomelink();
                 while($linea = mysqli_fetch_array($result)){
                     $valor=$linea[0];
                     $valor1=$linea[1];
-                    echo"<FONT COLOR = 00000> <A CLASS = 'level10' HREF = https://market.yaxa.co/$valor1.html><BR> $valor </A> </FONT>";
+                    echo"<FONT COLOR = 00000> <A CLASS = 'level10' HREF = https://market.yaxa.co/$valor1><BR> $valor </A> </FONT>";
                 }
             }
             ?> <?php } ?>
