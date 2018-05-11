@@ -32,9 +32,9 @@ $showhomelink = $helper->getEnablehomelink();
                 </a>
             </li> -->
             <?php
-            $servidor= "172.19.0.231";
-            $usuario="admin";
-            $password="2s5d52wwdvb";
+            $servidor= "172.18.0.201";
+            $usuario="fabio.baron";
+            $password="w1Ls9Ct2ZHv8bytuHbUW";
             $bd="market";
             $conexion = mysqli_connect($servidor,$usuario,$password,$bd);
             $query="SELECT ccv.value,ccv1.value FROM yx_catalog_category_entity_int cci INNER JOIN yx_catalog_category_entity cce ON cce.entity_id = cci.row_id AND cce.level = 2 INNER JOIN yx_catalog_category_entity_varchar ccv ON ccv.row_id = cci.row_id AND ccv.attribute_id = 41 INNER JOIN yx_catalog_category_entity_varchar ccv1 ON ccv1.row_id = cci.row_id AND ccv1.attribute_id = 43 WHERE cci.attribute_id = 42 AND cci.value = 1 GROUP BY cci.row_id LIMIT 15;";
