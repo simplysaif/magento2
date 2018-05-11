@@ -44,7 +44,7 @@ $showhomelink = $helper->getEnablehomelink();
                 exit();
             }
             else{
-                $result= mysqli_query($conexion,$query);
+                $result= mysqli_query($conexion,$query);   
                 while($linea = mysqli_fetch_array($result)){
                     $valor=$linea[0];
                     $valor1=$linea[1];
