@@ -22,6 +22,7 @@
                 <div class="field email required">
                     <label class="label" for="email"><span><?php /* @escapeNotVerified */ echo __('Email / Phone') ?></span></label>
                     <div class="control">
+                        <!--<input name="login[username]" value="<?php // echo $block->escapeHtml($block->getUsername()) ?>" <?php //if ($block->isAutocompleteDisabled()) :?> autocomplete="off"<?php //endif; ?> id="email" type="text" class="input-text" title="<?php /* @escapeNotVerified */ //echo __('Email/Phone') ?>" data-validate="{required:true, 'validate-email':false}">-->
                         <input name="login[username]" value="<?php echo $block->escapeHtml($block->getUsername()) ?>" <?php if ($block->isAutocompleteDisabled()) :?> autocomplete="off"<?php endif; ?> id="email" type="text" class="input-text" title="<?php /* @escapeNotVerified */ echo __('Email/Phone') ?>" data-validate="{required:true, 'validate-email':false}">
                     </div>
                 </div>
