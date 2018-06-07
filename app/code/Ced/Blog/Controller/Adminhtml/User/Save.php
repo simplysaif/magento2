@@ -29,7 +29,10 @@ class Save extends \Magento\User\Controller\Adminhtml\User\Save
      */
     public function execute()
     {
-        $userId = (int)$this->getRequest()->getParam('user_id');
+        $data = $this->getRequest()->getParams();
+       if(array_key_exists('user_id',$data)){
+           $userId = (int)$this->getRequest()->getParam('user_id');
+       }
         $data = $this->getRequest()->getPostValue();
         $blog_category = implode(',', $data['blog_category']);
 
@@ -37,11 +40,14 @@ class Save extends \Magento\User\Controller\Adminhtml\User\Save
             $this->_redirect('adminhtml/*/');
             return;
         }
-        $model = $this->_userFactory->create()->load($userId);
-        if ($userId && $model->isObjectNew()) {
-            $this->messageManager->addError(__('This user no longer exists.'));
-            $this->_redirect('adminhtml/*/');
-            return;
+        $model = $this->_userFactory->create();
+        if(array_key_exists('user_id',$data)){
+            $model = $this->_userFactory->create()->load($userId);
+            if ($userId && $model->isObjectNew()) {
+                $this->messageManager->addError(__('This user no longer exists.'));
+                $this->_redirect('adminhtml/*/');
+                return;
+            }
         }
         $model->setData($this->_getAdminUserData($data));
         $uRoles = $this->getRequest()->getParam('roles', []);
@@ -49,14 +55,14 @@ class Save extends \Magento\User\Controller\Adminhtml\User\Save
             $model->setRoleId($uRoles[0]);
         }
         $currentUser = $this->_objectManager->get('Magento\Backend\Model\Auth\Session')->getUser();
-
-        if ($userId == $currentUser->getId() && $this->_objectManager->get(
-                'Magento\Framework\Validator\Locale')->isValid($data['interface_locale']))
-        {
-            $this->_objectManager->get(
-                'Magento\Backend\Model\Locale\Manager')->switchBackendInterfaceLocale($data['interface_locale']);
+        if(array_key_exists('user_id',$data)){
+            if ($userId == $currentUser->getId() && $this->_objectManager->get(
+                    'Magento\Framework\Validator\Locale')->isValid($data['interface_locale']))
+            {
+                $this->_objectManager->get(
+                    'Magento\Backend\Model\Locale\Manager')->switchBackendInterfaceLocale($data['interface_locale']);
+            }
         }
-
         /**
          *
          * Before updating admin user data, ensure that password of current admin user is entered and is correct
@@ -70,12 +76,12 @@ class Save extends \Magento\User\Controller\Adminhtml\User\Save
             if (!($isCurrentUserPasswordValid && $currentUser->verifyIdentity($data[$currentUserPasswordField]))) {
                 throw new AuthenticationException(__('You have entered an invalid password for current user.'));
             }
-
             $model->save();
 
             /* saving data in blog user */
-            $collection = $this->_objectManager->create('Ced\Blog\Model\User')->load($data['user_id'],'user_id');
-            if ($collection->getData()){
+
+            if (array_key_exists('user_id', $data)){
+                $collection = $this->_objectManager->create('Ced\Blog\Model\User')->load($data['user_id'],'user_id');
                 $blogUserId = $collection->getId();
                 $newcollection = $this->_objectManager->create('Ced\Blog\Model\User')->load($blogUserId);
                 if($_FILES['profile']['name'] !="") {

@@ -87,9 +87,11 @@ class Validator
                 $warnings[] = sprintf('%s is a required field', $label);
             }
         }
-        if (!filter_var($address->getEmail(), FILTER_VALIDATE_EMAIL)) {
+        /* if (!filter_var($address->getEmail(), FILTER_VALIDATE_EMAIL)) {
+        	echo $address->getEmail();
+        	echo get_class($address);
             $warnings[] = 'Email has a wrong format';
-        }
+        } */
         if (!filter_var(in_array($address->getAddressType(), [Address::TYPE_BILLING, Address::TYPE_SHIPPING]))) {
             $warnings[] = 'Address type doesn\'t match required options';
         }

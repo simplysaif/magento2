@@ -1,5 +1,4 @@
 
-
 <?php
 /**
  * Copyright © 2015 Magento. All rights reserved.
@@ -39,7 +38,7 @@ $showhomelink = $helper->getEnablehomelink();
             $password="123456qwertyasdfgh";
             $bd="m2_clean";
             $conexion = mysqli_connect($servidor,$usuario,$password,$bd);
-            $query="SELECT ccv.value,ccv1.value FROM em2_catalog_category_entity_int cci INNER JOIN em2_catalog_category_entity cce ON cce.entity_id = cci.row_id AND cce.level = 2 INNER JOIN em2_catalog_category_entity_varchar ccv ON ccv.row_id = cci.row_id AND ccv.attribute_id = 41 INNER JOIN em2_catalog_category_entity_varchar ccv1 ON ccv1.row_id = cci.row_id AND ccv1.attribute_id = 43 WHERE cci.attribute_id = 42 AND cci.value = 1 GROUP BY cci.row_id LIMIT 15;";
+            $query="SELECT ccv.value,ccv1.value FROM em2_catalog_category_entity_int cci INNER JOIN em2_catalog_category_entity cce ON cce.entity_id = cci.row_id AND cce.level = 2 INNER JOIN em2_catalog_category_entity_varchar ccv ON ccv.row_id = cci.row_id AND ccv.attribute_id = 41 INNER JOIN em2_catalog_category_entity_varchar ccv1 ON ccv1.row_id = cci.row_id AND ccv1.attribute_id = 43 WHERE cci.attribute_id = 42 AND cci.value = 1 GROUP BY cci.row_id LIMIT 15;";14186
             
             if(!$conexion){
                 echo "Error conectando a la base de datos";
