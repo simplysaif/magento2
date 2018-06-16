@@ -70,6 +70,7 @@ if ($cacheConfigs) {
 function fatalErrorHandler()
 {
     $error = error_get_last();
+	print_r($error);die;
     if ($error !== null) {
         http_response_code(500);
     }
