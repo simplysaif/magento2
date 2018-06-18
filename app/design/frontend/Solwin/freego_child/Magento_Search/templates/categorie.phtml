@@ -22,6 +22,9 @@ $baseUrl = $helper->getBaseUrl();
 $curr_Url = $helper->getCurrentUrl();
 $ishome = $helper->getIsHomePage();
 $showhomelink = $helper->getEnablehomelink();
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$categoryCollection = $objectManager->get('Magento\Catalog\Model\ResourceModel\Category\CollectionFactory')->create()->addAttributeToSelect('*');
+$categoryCollection->getSelect()->limit(15);
 ?>
 <div class="nav-yaxa hidden-xs">
     <span><?php echo __('Categories') ?></span>
@@ -54,6 +57,11 @@ $showhomelink = $helper->getEnablehomelink();
                 }
             }
             ?> <?php } ?>
+            <?php if(count($categoryCollection->getData()>0)):?>
+            <?php foreach($categoryCollection as $collection):?>
+            	<a href="<?php echo $this->getUrl($collection->getUrlPath().'.html')?>"><?php echo $collection->getName()?></a>
+            <?php endforeach;?>
+            <?php endif;?>
         <?php /* @escapeNotVerified */ echo $_menu; ?>
         </ul>
     </nav>
